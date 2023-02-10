@@ -1,0 +1,410 @@
+﻿@using UCOMProject.Models;
+@{
+    ViewBag.Title = "Apply";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    HolidayViewModel vm = Model;
+}
+
+@section Style{
+    <style>
+        .card:hover {
+            border-color: yellow;
+            cursor: pointer;
+            transition: 0.5s;
+        }
+
+        input {
+            text-align: center;
+        }
+
+        #startDatepicker, #endDatepicker {
+            background-color: white;
+            color: black;
+        }
+
+
+        body, .card, [draggable=true] {
+            /*避免使用者選取拖曳物件的內容*/
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .block {
+            height: 180px;
+            border: 1px dashed rgba(0,0,0,0.5);
+        }
+
+        .dragging {
+            transition: 0.25s;
+            border: initial;
+        }
+
+        .draghover {
+            transition: 0.5s;
+            background-color: wheat;
+        }
+
+        #target {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: stretch;
+            justify-content: space-around;
+            z-index: 2;
+            position: relative;
+            z-index: 10;
+        }
+
+        #point {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: yellow;
+        }
+
+        .workday {
+            background-color: cornflowerblue;
+        }
+    </style>
+
+}
+
+<div class="container">
+    <div class="row">
+        <!--拖放區-->
+        <div class="col-md-4">
+            <div id="target" class="block text-center">
+                <span class="h4" id="point">請將假別拖曳至此</span>
+            </div>
+            <hr />
+            <!--假別儀錶板-->
+            <div class="row" id="source_container">
+                @foreach (HolidayModel holiday in vm.Holidays)
+                {
+                    string cardID = "leave" + holiday.HId;
+                    <div id="@cardID" class="col-xl-6 mb-3 ad" draggable="true">
+                        <div class="card shadow h-100 py-2">
+                            <div class="card-body border-2">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <h4 class="text-center font-weight-bold mb-3" style="color:#000">
+                                            @holiday.Title
+                                        </h4>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800 text-center text-info">
+                                            <h4>
+                                                <span class="badge badge-success" data-day="day">@holiday.CanUseDays&nbsp;天</span>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!--表單區-->
+        <div class="col-md-8">
+            <div id="app">
+                <div class=" o-hidden border-0 shadow-lg">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 mb-4">休假申請</h1>
+                                    </div>
+                                    <hr />
+                                    <form class="user">
+                                        <div class="form-group row">
+                                            <input type="hidden" name="eid" value="@vm.employee.EId" />
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control form-control-user text-center" value="@vm.employee.EId @vm.employee.Name" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control form-control-user text-center" value="@vm.employee.Branch  @vm.employee.Shift 班" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <input type="text" id="leave_title" class="form-control form-control-user text-center" value="尚未選擇假別" disabled required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <input type="text" class="form-control form-control-user text-center text-danger" id="canUseDayid" v-model="canUseDay" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <input type="text" id="startDatepicker" class="form-control form-control-user" placeholder="開始日期" onchange="setEndDate()" readonly required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" id="endDatepicker" class="form-control form-control-user" placeholder="結束日期" onchange="getEndDate()" readonly required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <input type="text" class="form-control form-control-user text-center" placeholder="請假事由" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="submit" class="btn btn-primary btn-user btn-block" value="送出">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    @*<div class="row">
+            <div class="col-xl-3 col-md-6 mb-4 board board1" v-for="leave in holidays" :key="leave.Lid" @@click="checkLeave(leave.Lid , leave.title)">
+                <div class="card shadow h-100 py-2">
+                    <div class="card-body border-2" :class="leave.checkLeaveColor">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <h4 class="text-lg-center font-weight-bold mb-3" style="color:#000">
+                                    {{leave.title}}
+                                </h4>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800 text-sm-center text-info">
+                                    <h4>
+                                        <span class="badge badge-success">{{leave.canUseDays}}&nbsp;天</span>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+</div>
+@section Script{
+    <script>
+        moment.locale("zh-tw");
+        moment().format("LT"); // 11:33
+        moment().format("LTS"); // 11:33:14
+        moment().format("L"); // 2023/01/28
+
+        var selectYear = `${new Date().getFullYear()} : ${new Date().getFullYear()}`;
+
+        $(function () {
+            //拖曳物件
+            let dragSources = document.querySelectorAll('[draggable="true"]');
+            dragSources.forEach(item => {
+                item.addEventListener('dragstart', myDragStart);
+                item.addEventListener('dragend', myDragEnd);
+            })
+            var tragObj = null;
+
+            //拖曳物件開始拖曳時事件
+            function myDragStart(e) {
+                tragObj = this;
+                e.dataTransfer.setData('text/plain', e.target.id)
+                this.classList.add('dragging');
+            }
+            //拖曳物件被拖曳時持續觸發事件
+            function myDrag(e) {
+                this.classList.add('dragging')
+            }
+            //拖曳物件結束時事件
+            function myDragEnd(e) {
+                this.classList.remove('dragging');
+            }
+
+            //拖曳的放置目標
+            let target = document.querySelector('#target');
+            target.addEventListener('drop', myDrop);
+            target.addEventListener('dragenter', myDragenter);
+            target.addEventListener('dragover', myDragover);
+            target.addEventListener('dragleave', myDragleave);
+
+            var activeObj = null;
+            //拖曳物件進入範圍時觸發
+            function myDragenter(e) {
+                mycancelDefault(e);
+                $('#point').remove();
+                if ($('#target').children().length) {
+                    let activeObj = $('#target').children(':first-child');
+                    activeObj.addClass('col-xl-6');
+                    activeObj.addClass('mb-3');
+                    $('#source_container').append(activeObj);
+                }
+                this.classList.add('draghover');
+            }
+            //拖曳物件進入範圍時持續觸發
+            function myDragover(e) {
+                mycancelDefault(e);
+            }
+
+            //拖曳物件離開範圍時觸發
+            function myDragleave(e) {
+                mycancelDefault(e);
+                if (activeObj == null) {
+                    let point = '<span class="h4" id="point">請將假別拖曳至此</span>';
+                    $('#target').prepend(point);
+                    $('#leave_title').val('尚未選擇假別');
+                    $('#canUseDayid').val('選擇"日期"與"假別"將自動計算剩餘天數');
+                }
+                else {
+                    activeObj.removeClass('col-xl-6');
+                    activeObj.classList.remove('mb-3');
+                    $('#target').append(activeObj);
+                }
+                this.classList.remove('draghover');
+            }
+            //拖曳物件放置時觸發
+            function myDrop(e) {
+                mycancelDefault(e);
+                let id = e.dataTransfer.getData('text/plain');
+                let activeObj = document.querySelector(`#${id}`);
+
+                let leaveDayStr = $(`#${id} [data-day="day"]`).text();
+                let canUseDay = leaveDayStr.split('天')[0];
+                vm.canUseDay = canUseDay;
+
+                this.classList.remove('draghover');
+                activeObj.classList.remove('col-xl-6');
+                activeObj.classList.remove('mb-3');
+                e.target.appendChild(document.querySelector(`#${id}`));
+                let title = document.querySelector(`#${id} h4`).innerText;
+                $('#leave_title').val(title);
+            }
+            // 元素預設行為是不能被放置拖曳物的，因此在拖曳對象出現在放置目標上時，取消預設行為，讓放置目標可以被放置
+            function mycancelDefault(e) {
+                e.preventDefault()
+                e.stopPropagation()
+                return false
+            }
+
+            //-------------------------------------------------------------------------------------------
+
+            //JQuery DatePicker
+            //請假開始的日期選單
+            $("#startDatepicker").datepicker({
+                changeMonth: true,
+                //changeYear: true,
+                dateFormat: "yy-mm-dd",
+                dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"],
+                monthNamesShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                //minDate: new Date(),
+                yearRange: selectYear,
+                showAnim: "fade",
+                firstDay: 1,
+                beforeShowDay:vm.getWorkDayOfYearByMonth,
+            });
+
+              //請假結束的日期選單
+            $("#endDatepicker").datepicker({
+                changeMonth: true,
+                //changeYear: true,
+                dateFormat: "yy-mm-dd",
+                dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"],
+                monthNamesShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                //minDate: new Date(),
+                yearRange: selectYear,
+                showAnim: "fade",
+                firstDay: 1,
+                beforeShowDay:vm.getWorkDayOfYearByMonth,
+            });
+
+
+        });
+        //設定結束日期需在開始日期之後
+        function setEndDate() {
+            let start = $("#startDatepicker").datepicker("getDate");
+            let end = $("#endDatepicker").datepicker("getDate");
+            $("#endDatepicker").datepicker("option", "minDate", new Date(start));
+            vm.getSelectedDate(start,end);
+        };
+        function getEndDate() {
+            let start = $("#startDatepicker").datepicker("getDate");
+            let end = $("#endDatepicker").datepicker("getDate");
+            vm.getSelectedDate(start, end);
+        };
+
+        //Vue
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                employee: {},//元工資料
+                holidays: {},//假別資料
+                startDate:'',
+                endDate:'',
+                title: '請選擇假別',
+                canUseDay: '選擇"日期"與"假別"將自動計算剩餘天數',
+                workDayOfYearByMonth: {},//日期選擇器初始資料
+            },
+            mounted() {
+                let data = @Html.Raw(ViewBag.vm);
+                this.employee = data.employee;
+                this.holidays = data.holidays;
+                this.workDayOfYearByMonth = data.workDayOfYearByMonth;
+                this.holidays.forEach(leave => {
+                    this.$set(leave, 'checkLeaveColor', '');
+                })
+            },
+            methods: {
+                checkLeave(id, title) {
+                    this.title = title;
+                    this.holidays.forEach(leave => {
+                        if (leave.Lid === id) {
+                            leave.checkLeaveColor = 'badge-warning';
+                        } else {
+                            leave.checkLeaveColor = '';
+                        }
+                    });
+                },
+                getSelectedDate(start, end) {
+                    this.startDate = start;
+                    this.endDate = end;
+                    let year = this.startDate.getFullYear();
+                    let month = this.startDate.getMonth();
+                    let date = this.startDate.getDate();
+                    console.log(this.startDate);
+                    console.log(this.endDate);
+                    //開始與結束日期都輸入在計算
+                    if (this.startDate && this.endDate) {
+                        //計算開始與結束之間總共有幾天
+                        let range = Math.abs(this.endDate - this.startDate) / (1000 * 60 * 60 * 24);
+                        //同一天不需要跑回圈
+                        while (range) {
+                            //日期相差一天也不需要計算,所以range-1 > 1 再計算
+                            if (--range) {
+                                //***重要:date.setDate()會將原本date物件資料修改,所以initialDay是用來初始化開始日期,確保每次進行累加的起始日天數,都是同一個開始日期計算
+                                let initialDay = new Date(year, month, date);
+                                //***重要:開始日期加上range
+                                let getDay = this.startDate.getDate() + range;
+                                //***重要:把計算出來日期轉成日期物件
+                                let result = new Date(initialDay.setDate(getDay));
+                            }
+                        }
+                    }
+                },
+                //datepicker的beforeShowDay初始化日期fun，員工的工作日時才可選擇，非工作日不能選(做2休2)
+                getWorkDayOfYearByMonth(date) {
+                    let matchMonth = this.workDayOfYearByMonth[date.getMonth()];
+                    //some只要一找到相符的直就跳出
+                    let isWork =  matchMonth.some(item => {
+                        let workDate = new Date(item.workDate);
+                        return workDate.valueOf() === date.valueOf() && item.shiftType === this.employee.shift;
+                    })
+                    return [isWork, '', ''];
+                },
+            }
+        })
+    </script>
+}

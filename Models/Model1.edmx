@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MyDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Employees">
+          <Key>
+            <PropertyRef Name="EId" />
+          </Key>
+          <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Image" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Branch" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Rank" Type="int" Nullable="false" />
+          <Property Name="Sex" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="50" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="EnglishName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Shift" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="HolidayDetails">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="HId" Type="int" Nullable="false" />
+          <Property Name="UsedHours" Type="float" Nullable="false" />
+          <Property Name="BeginDate" Type="datetime" Nullable="false" />
+          <Property Name="EndDate" Type="datetime" Nullable="false" />
+          <Property Name="State" Type="bit" Nullable="false" />
+          <Property Name="Remark" Type="nvarchar(max)" />
+          <Property Name="UsedDays" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Holidays">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TotalDays" Type="float" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_HolidayDetail_Employees">
+          <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+          <End Role="HolidayDetails" Type="Self.HolidayDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="EId" />
+            </Principal>
+            <Dependent Role="HolidayDetails">
+              <PropertyRef Name="EId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LeaveDetail_Leave">
+          <End Role="Holidays" Type="Self.Holidays" Multiplicity="1" />
+          <End Role="HolidayDetails" Type="Self.HolidayDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Holidays">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="HolidayDetails">
+              <PropertyRef Name="HId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MyDBModelStoreContainer">
+          <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HolidayDetails" EntityType="Self.HolidayDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_HolidayDetail_Employees" Association="Self.FK_HolidayDetail_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="HolidayDetails" EntitySet="HolidayDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LeaveDetail_Leave" Association="Self.FK_LeaveDetail_Leave">
+            <End Role="Holidays" EntitySet="Holidays" />
+            <End Role="HolidayDetails" EntitySet="HolidayDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MyDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="MyDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Employees" EntityType="MyDBModel.Employee" />
+          <EntitySet Name="HolidayDetails" EntityType="MyDBModel.HolidayDetail" />
+          <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
+          <AssociationSet Name="FK_HolidayDetail_Employees" Association="MyDBModel.FK_HolidayDetail_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="HolidayDetail" EntitySet="HolidayDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LeaveDetail_Leave" Association="MyDBModel.FK_LeaveDetail_Leave">
+            <End Role="Holiday" EntitySet="Holidays" />
+            <End Role="HolidayDetail" EntitySet="HolidayDetails" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EId" />
+          </Key>
+          <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Image" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Branch" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Rank" Type="Int32" Nullable="false" />
+          <Property Name="Sex" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EnglishName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Shift" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetail_Employees" FromRole="Employee" ToRole="HolidayDetail" />
+        </EntityType>
+        <EntityType Name="HolidayDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="HId" Type="Int32" Nullable="false" />
+          <Property Name="UsedHours" Type="Double" Nullable="false" />
+          <Property Name="BeginDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="State" Type="Boolean" Nullable="false" />
+          <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UsedDays" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_HolidayDetail_Employees" FromRole="HolidayDetail" ToRole="Employee" />
+          <NavigationProperty Name="Holiday" Relationship="MyDBModel.FK_LeaveDetail_Leave" FromRole="HolidayDetail" ToRole="Holiday" />
+        </EntityType>
+        <EntityType Name="Holiday">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TotalDays" Type="Double" Nullable="false" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_LeaveDetail_Leave" FromRole="Holiday" ToRole="HolidayDetail" />
+        </EntityType>
+        <Association Name="FK_HolidayDetail_Employees">
+          <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="MyDBModel.HolidayDetail" Role="HolidayDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EId" />
+            </Principal>
+            <Dependent Role="HolidayDetail">
+              <PropertyRef Name="EId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LeaveDetail_Leave">
+          <End Type="MyDBModel.Holiday" Role="Holiday" Multiplicity="1" />
+          <End Type="MyDBModel.HolidayDetail" Role="HolidayDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Holiday">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="HolidayDetail">
+              <PropertyRef Name="HId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MyDBModelStoreContainer" CdmEntityContainer="MyDBEntities">
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="MyDBModel.Employee">
+              <MappingFragment StoreEntitySet="Employees">
+                <ScalarProperty Name="Shift" ColumnName="Shift" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="EnglishName" ColumnName="EnglishName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Sex" ColumnName="Sex" />
+                <ScalarProperty Name="Rank" ColumnName="Rank" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Branch" ColumnName="Branch" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="EId" ColumnName="EId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HolidayDetails">
+            <EntityTypeMapping TypeName="MyDBModel.HolidayDetail">
+              <MappingFragment StoreEntitySet="HolidayDetails">
+                <ScalarProperty Name="UsedDays" ColumnName="UsedDays" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="BeginDate" ColumnName="BeginDate" />
+                <ScalarProperty Name="UsedHours" ColumnName="UsedHours" />
+                <ScalarProperty Name="HId" ColumnName="HId" />
+                <ScalarProperty Name="EId" ColumnName="EId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Holidays">
+            <EntityTypeMapping TypeName="MyDBModel.Holiday">
+              <MappingFragment StoreEntitySet="Holidays">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

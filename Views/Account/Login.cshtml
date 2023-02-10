@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <script src="~/Scripts/jquery-3.6.3.js"></script>
+    <link href="~/Content/Login.css" rel="stylesheet" />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+    <form class="form" id="form" action="login" method="post">
+        @Html.AntiForgeryToken()
+        <div class="field email">
+            <div class="icon"></div>
+            <input class="input" id="email" type="text" placeholder="ID" autocomplete="off" name="id" v-model="id" />
+        </div>
+        <div class="field password">
+            <div class="icon"></div>
+            <input class="input" id="password" type="password" placeholder="Password" name="pwd" v-model="pwd" />
+        </div>
+        <input class="button" @@click="demo" value="Demo">
+        <div class="side-top-bottom"></div>
+        <div class="side-left-right"></div>
+
+        <button class="button" id="submit" @@click="submit">
+            LOGIN
+            <div class="side-top-bottom"></div>
+            <div class="side-left-right"></div>
+        </button>
+    </form>
+
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/Login.js"></script>
+
+    <script type="text/javascript">
+        new Vue({
+            el: '#form',
+            data: {
+                id: '',
+                pwd: '',
+            },
+            mounted() {
+                let status = @Html.Raw(ViewBag.status);
+                if (status.logout)
+                    this.alertLogout(status.msg);
+                else if (status.msg)
+                    this.alertError(status.msg);
+             
+            },
+            methods: {
+                demo() {
+                    this.id = 'E001';
+                    this.pwd = 'A123456789';
+                },
+                submit() {
+                    $('#submit').submit();
+                },
+                alertError(msg) {
+                    Swal.fire({
+                        title: msg,
+                        icon: 'error',
+                        confirmButtonText: '確認'
+                    })
+                },
+                alertLogout(msg) {
+                    Swal.fire({
+                        title: msg,
+                        icon: 'success',
+                        confirmButtonText: '確認'
+                    })
+                },
+            }
+        })
+       
+    </script>
+</body>
+</html>
