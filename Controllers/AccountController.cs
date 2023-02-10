@@ -11,6 +11,12 @@ namespace UCOMProject.Controllers
 {
     public class AccountController : Controller
     {
+        /// <summary>
+        /// 登入
+        /// </summary>
+        /// <param name="logout"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
         public ActionResult Login(bool? logout, string msg)
         {
             ViewBag.status = JsonConvert.SerializeObject(new { logout = logout, msg = msg });
