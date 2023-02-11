@@ -11,8 +11,8 @@ namespace UCOMProject.Models
         public string EId { get; set; }
         public int HId { get; set; }
         public double UsedHours { get; set; }
-        public System.DateTime BeginDate { get; set; }
-        public System.DateTime EndDate { get; set; }
+        public DateTime BeginDate { get; set; }
+        public DateTime EndDate { get; set; }
         public bool State { get; set; }
         public string Remark { get; set; }
         public double UsedDays { get; set; }

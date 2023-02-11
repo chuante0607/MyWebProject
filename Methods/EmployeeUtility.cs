@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Web;
 using UCOMProject.Models;
 
 namespace UCOMProject.Methods
@@ -22,8 +19,6 @@ namespace UCOMProject.Methods
             using (MyDBEntities db = new MyDBEntities())
             {
                 Employee emp = db.Employees.SingleOrDefault(e => e.EId == id && e.Password == pwd);
-
-
                 //員工基本資料
                 //將DB的employee轉換至employeeModel
                 if (emp == null)

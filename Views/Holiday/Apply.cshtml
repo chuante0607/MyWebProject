@@ -22,7 +22,6 @@
             color: black;
         }
 
-
         body, .card, [draggable=true] {
             /*避免使用者選取拖曳物件的內容*/
             user-select: none;
@@ -67,6 +66,9 @@
 
         .workday {
             background-color: cornflowerblue;
+        }
+        form.user .form-control-user {
+            font-size: 1rem;
         }
     </style>
 
@@ -166,15 +168,10 @@
         </div>
     </div>
 
-
-
-
-
-
     @*<div class="row">
-            <div class="col-xl-3 col-md-6 mb-4 board board1" v-for="leave in holidays" :key="leave.Lid" @@click="checkLeave(leave.Lid , leave.title)">
+            <div class="col-xl-3 col-md-6 mb-4 board board1" v-for="leave in holidays" :key="leave.Lid" @@click="checkHoliday(leave.Lid , leave.title)">
                 <div class="card shadow h-100 py-2">
-                    <div class="card-body border-2" :class="leave.checkLeaveColor">
+                    <div class="card-body border-2" :class="leave.checkHolidayColor">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <h4 class="text-lg-center font-weight-bold mb-3" style="color:#000">
@@ -202,14 +199,13 @@
         var selectYear = `${new Date().getFullYear()} : ${new Date().getFullYear()}`;
 
         $(function () {
-            //拖曳物件
+            //拖曳設定
             let dragSources = document.querySelectorAll('[draggable="true"]');
             dragSources.forEach(item => {
                 item.addEventListener('dragstart', myDragStart);
                 item.addEventListener('dragend', myDragEnd);
             })
             var tragObj = null;
-
             //拖曳物件開始拖曳時事件
             function myDragStart(e) {
                 tragObj = this;
@@ -224,14 +220,12 @@
             function myDragEnd(e) {
                 this.classList.remove('dragging');
             }
-
             //拖曳的放置目標
             let target = document.querySelector('#target');
             target.addEventListener('drop', myDrop);
             target.addEventListener('dragenter', myDragenter);
             target.addEventListener('dragover', myDragover);
             target.addEventListener('dragleave', myDragleave);
-
             var activeObj = null;
             //拖曳物件進入範圍時觸發
             function myDragenter(e) {
@@ -249,7 +243,6 @@
             function myDragover(e) {
                 mycancelDefault(e);
             }
-
             //拖曳物件離開範圍時觸發
             function myDragleave(e) {
                 mycancelDefault(e);
@@ -292,8 +285,8 @@
 
             //-------------------------------------------------------------------------------------------
 
-            //JQuery DatePicker
-            //請假開始的日期選單
+            //日期選擇器 JQuery DatePicker
+            //起始日期選單
             $("#startDatepicker").datepicker({
                 changeMonth: true,
                 //changeYear: true,
@@ -307,7 +300,7 @@
                 beforeShowDay:vm.getWorkDayOfYearByMonth,
             });
 
-              //請假結束的日期選單
+            //結束日期選單
             $("#endDatepicker").datepicker({
                 changeMonth: true,
                 //changeYear: true,
@@ -321,27 +314,26 @@
                 beforeShowDay:vm.getWorkDayOfYearByMonth,
             });
 
-
         });
         //設定結束日期需在開始日期之後
         function setEndDate() {
             let start = $("#startDatepicker").datepicker("getDate");
             let end = $("#endDatepicker").datepicker("getDate");
             $("#endDatepicker").datepicker("option", "minDate", new Date(start));
-            vm.getSelectedDate(start,end);
+            vm.getSelectedRange(start,end);
         };
         function getEndDate() {
             let start = $("#startDatepicker").datepicker("getDate");
             let end = $("#endDatepicker").datepicker("getDate");
-            vm.getSelectedDate(start, end);
+            vm.getSelectedRange(start, end);
         };
 
         //Vue
         const vm = new Vue({
             el: '#app',
             data: {
-                employee: {},//元工資料
-                holidays: {},//假別資料
+                employee: {},
+                holidays: {},
                 startDate:'',
                 endDate:'',
                 title: '請選擇假別',
@@ -354,21 +346,22 @@
                 this.holidays = data.holidays;
                 this.workDayOfYearByMonth = data.workDayOfYearByMonth;
                 this.holidays.forEach(leave => {
-                    this.$set(leave, 'checkLeaveColor', '');
+                    this.$set(leave, 'checkHolidayColor', '');
                 })
             },
             methods: {
-                checkLeave(id, title) {
+                checkHoliday(id, title) {
                     this.title = title;
-                    this.holidays.forEach(leave => {
-                        if (leave.Lid === id) {
-                            leave.checkLeaveColor = 'badge-warning';
+                    this.holidays.forEach(holiday => {
+                        if (holiday.hid === id) {
+                            holiday.checkHolidayColor = 'badge-warning';
                         } else {
-                            leave.checkLeaveColor = '';
+                            holiday.checkHolidayColor = '';
                         }
                     });
                 },
-                getSelectedDate(start, end) {
+                getSelectedRange(start, end) {
+                    //計算請假天數
                     this.startDate = start;
                     this.endDate = end;
                     let year = this.startDate.getFullYear();
@@ -376,7 +369,7 @@
                     let date = this.startDate.getDate();
                     console.log(this.startDate);
                     console.log(this.endDate);
-                    //開始與結束日期都輸入在計算
+                    //開始與結束日期都輸入再計算
                     if (this.startDate && this.endDate) {
                         //計算開始與結束之間總共有幾天
                         let range = Math.abs(this.endDate - this.startDate) / (1000 * 60 * 60 * 24);

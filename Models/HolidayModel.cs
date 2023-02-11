@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web.ModelBinding;
 
 namespace UCOMProject.Models
 {
@@ -14,16 +11,15 @@ namespace UCOMProject.Models
             public double Days { get; set; }
         }
 
-        public HolidayModel()
-        {
-
-        }
-        private readonly int _workHours = 10;
-        public int HId { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; }
         public double TotalDays { get; set; }
+        public int Type { get; set; }
+
+        public int HId { get; set; }
         public double UsedDays { get; set; }
 
+        [BindNever]
         public double CanUseDays
         {
             get
@@ -31,22 +27,5 @@ namespace UCOMProject.Models
                 return TotalDays - UsedDays;
             }
         }
-        public double CanUseHours
-        {
-            get
-            {
-                return CanUseDays * _workHours;
-            }
-        }
-        public double UsedHours
-        {
-            get
-            {
-                return UsedDays * _workHours;
-            }
-        }
-
-        
     }
-
 }

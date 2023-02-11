@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
-using System.Web;
 using UCOMProject.Models;
 
 namespace UCOMProject.Methods
@@ -17,7 +14,7 @@ namespace UCOMProject.Methods
         /// <returns></returns>
         public static List<HolidayModel> getCanUseHolidaysByEmpID(string id)
         {
-            List<HolidayModel> holidayViewModels= new List<HolidayModel>();
+            List<HolidayModel> holidayViewModels = new List<HolidayModel>();
             using (MyDBEntities db = new MyDBEntities())
             {
                 Employee emp = db.Employees.SingleOrDefault(s => s.EId == id);
@@ -26,7 +23,7 @@ namespace UCOMProject.Methods
                 List<Holiday> holidays = db.Holidays.OrderBy(o => o.Id).ToList();
                 foreach (Holiday item in holidays)
                 {
-                    HolidayModel holidayViewModel = new HolidayModel()
+                    HolidayModel holidayModel = new HolidayModel()
                     {
                         HId = item.Id,
                         Title = item.Title,
@@ -34,7 +31,7 @@ namespace UCOMProject.Methods
                         //查詢已用的請假天數
                         UsedDays = emp.HolidayDetails.Where(ld => ld.HId == item.Id && ld.BeginDate.Year == DateTime.Now.Year).Select(s => s.UsedDays).Sum(),
                     };
-                    holidayViewModels.Add(holidayViewModel);
+                    holidayViewModels.Add(holidayModel);
                 }
                 return holidayViewModels;
             }
