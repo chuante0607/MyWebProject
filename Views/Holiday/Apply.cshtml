@@ -1,8 +1,7 @@
-﻿@using UCOMProject.Models;
+﻿@model UCOMProject.Models.HolidayViewModel
 @{
     ViewBag.Title = "Apply";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    HolidayViewModel vm = Model;
 }
 
 @section Style{
@@ -75,8 +74,9 @@
         .form-control {
             height: inherit;
         }
-        .container{
-            margin-top:5%;
+
+        .container {
+            margin-top: 5%;
         }
     </style>
 
@@ -98,24 +98,24 @@
                                     <hr />
                                     <form class="user" action="~/Holiday/Apply" method="post">
                                         <div class="form-group row">
-                                            <input type="hidden" name="eid" value="@vm.employee.EId" />
+                                            <input type="hidden" name="eid" value="@Model.employee.EId" />
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-user text-center" value="@vm.employee.EId @vm.employee.Name" disabled>
+                                                <input type="text" class="form-control form-control-user text-center" value="@Model.employee.EId @Model.employee.Name" disabled>
                                             </div>
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-user text-center" value="@vm.employee.Branch  @vm.employee.Shift 班" disabled>
+                                                <input type="text" class="form-control form-control-user text-center" value="@Model.employee.Branch  @Model.employee.Shift 班" disabled>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <div class="col">
-                                                <input type="text" class="form-control form-control-user text-center text-danger" name="Hid" v-model="title" disabled required>
+                                                <input type="text"
+                                                       class="form-control form-control-user text-center text-info"
+                                                       name="Hid"
+                                                       v-model="title"
+                                                       disabled required>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <div class="col">
-                                                <input type="text" class="form-control form-control-user text-center" placeholder="請假事由" required>
-                                            </div>
-                                        </div>
+
                                         <div class="form-group row">
                                             <div class="col-md-6">
                                                 <input type="text"
@@ -134,7 +134,7 @@
                                         </div>
                                         <div class="form-group row" v-show="range">
                                             <div class="col">
-                                                <input class="form-control form-control-user text-center text-danger" :value="'休假總計：' + range + '天'" disabled>
+                                                <input class="form-control form-control-user text-center text-info" :value="'休假總計：' + range + '天'" disabled>
                                                 <input type="hidden" class="form-control form-control-user text-center text-danger" v-model="range" disabled required>
                                             </div>
                                         </div>
@@ -147,8 +147,17 @@
                                             </div>
                                             <div class="col" v-else-if="remain < 0">
                                                 <div class="form-control form-control-user text-center btn-outline-danger">
-                                                    {{title}}天數不足
+                                                    {{title}}天數不足({{remain}}天)
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" v-if="remain >= 0">
+                                            <div class="col">
+                                                <input type="text"
+                                                       class="form-control form-control-user text-center"
+                                                       placeholder="休假事由"
+                                                       v-model="remark"
+                                                       required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -163,7 +172,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!--拖放區-->
@@ -174,7 +182,7 @@
             <hr />
             <!--假別儀錶板-->
             <div class="row" id="source_container">
-                @foreach (HolidayModel holiday in vm.Holidays)
+                @foreach (var holiday in Model.Holidays)
                 {
                     string cardID = "leave" + holiday.HId;
                     <div id="@cardID" class="col-xl-6 mb-3 ad" draggable="true">
@@ -329,7 +337,6 @@
 
         });
 
-
         //Vue
         const vm = new Vue({
             el: '#app',
@@ -337,11 +344,12 @@
                 employee: {},
                 holidays: {},
                 startDate: '',
-                endDate:'',
+                endDate: '',
+                rangeDate: [],
                 title: '請拖曳假別',
-                canUseDay: '選擇"日期"與"假別"計算剩餘天數',
                 workDayOfYearByMonth: {},//日期選擇器初始資料
-                workDays: [],
+                hId:'',
+                remark:'',
             },
             mounted() {
                 let data = @Html.Raw(ViewBag.vm);
@@ -356,6 +364,7 @@
                 //計算使用天數
                 range: {
                     get() {
+                        this.rangeDate = [];
                         if (!this.startDate || !this.endDate) return
                         //計算選取範圍有幾天
                         let checkRange = (this.endDate - this.startDate) / (1000 * 60 * 60 * 24);
@@ -365,10 +374,14 @@
                             return this;
                         }
                         let holidayRange = 0;
+                        //rangeDate用來把請假期間(只有工作天)的詳細日期記錄起來
+                        this.rangeDate.push(moment(this.startDate).format('l'));
                         while (checkRange) {
                             //使用date物件的addDays方法取得休假範圍內的Date物件
                             let checkRangeDate = new Date(this.startDate).addDays(checkRange);
                             if (this.settingWorkDays(checkRangeDate)[0]) {
+                                //rangeDate紀錄其他工作天
+                                this.rangeDate.push(moment(checkRangeDate).format('l'));
                                 holidayRange++;
                             }
                             checkRange--;
@@ -387,6 +400,7 @@
                     let holidayInfo = this.holidays.filter(item => {
                         return item.title === this.title;
                     })[0];
+                    this.hId = holidayInfo.hId;
                     let remain = holidayInfo.canUseDays - this.range;
                     return remain
                 },
@@ -403,11 +417,80 @@
                     return [isWork, '', ''];
                 },
                 submit() {
-                    let payload = {
-                        Eid: this.employee.eId
+                    if(this.title === '請拖曳假別') {
+                        this.warningAlert("請選擇使用的假別")
+                        return;
                     }
-                    console.log(payload);
-                }
+                    if (!this.startDate || !this.endDate) {
+                        this.warningAlert("日期未選擇完整")
+                        return;
+                    }
+                    if (this.remain < 0) {
+                        this.warningAlert("假別天數不足，請重新確認")
+                        return;
+                    }
+                    if (!this.remark) {
+                        this.warningAlert("請填寫休假事由")
+                        return;
+                    }
+                    //post payload
+                    if (this.range && this.remain >= 0 && this.remark) {
+                        let payload = {
+                            Eid: this.employee.eId,
+                            HId: this.hId,
+                            BeginDate: moment(this.startDate).format("l"),
+                            EndDate: moment(this.endDate).format("l"),
+                            UsedDays: this.range,
+                            Remark: this.remark,
+                            RangeDate: this.rangeDate,
+                        }
+                        $.ajax({
+                            method: 'post',
+                            url:'http://localhost:51010/holiday/apply',
+                            data: payload,
+                            dataType: 'json',
+                            success: res => {
+                                if (res.error) {
+                                    this.errorAlert(res.msg);
+                                    $(Swal.getConfirmButton()).click(function () {
+                                        setTimeout(function () {
+                                          
+                                        }, 1000)
+                                    })
+                                } else {
+                                    this.successAlert(res.msg)
+                                }
+                            },
+                            error: error => {   
+                                console.log('error' , error)
+                            }
+                        })
+                    }
+                },
+                warningAlert(title) {
+                    Swal.fire({
+                        title,
+                        icon: 'warning',
+                        confirmButtonText: '確認',
+                        allowEnterKey: true,
+                    })
+                },
+                errorAlert(title) {
+                    Swal.fire({
+                        title,
+                        icon: 'error',
+                        confirmButtonText: '確認',
+                        allowEnterKey: true,
+                    })
+                },
+                successAlert(title) {
+                    Swal.fire({
+                        title,
+                        icon: 'success',
+                        confirmButtonText: '確認',
+                        allowEnterKey:true,
+                    })
+                },
             }
         })
     </script>

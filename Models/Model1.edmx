@@ -29,10 +29,10 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="HId" Type="int" Nullable="false" />
-          <Property Name="UsedHours" Type="float" Nullable="false" />
+          <Property Name="UsedHours" Type="float" />
           <Property Name="BeginDate" Type="datetime" Nullable="false" />
           <Property Name="EndDate" Type="datetime" Nullable="false" />
-          <Property Name="State" Type="bit" Nullable="false" />
+          <Property Name="Allow" Type="bit" Nullable="false" />
           <Property Name="Remark" Type="nvarchar(max)" />
           <Property Name="UsedDays" Type="float" Nullable="false" />
         </EntityType>
@@ -88,8 +88,8 @@
       <Schema Namespace="MyDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="MyDBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Employees" EntityType="MyDBModel.Employee" />
-          <EntitySet Name="HolidayDetails" EntityType="MyDBModel.HolidayDetail" />
           <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
+          <EntitySet Name="HolidayDetails" EntityType="MyDBModel.HolidayDetail" />
           <AssociationSet Name="FK_HolidayDetail_Employees" Association="MyDBModel.FK_HolidayDetail_Employees">
             <End Role="Employee" EntitySet="Employees" />
             <End Role="HolidayDetail" EntitySet="HolidayDetails" />
@@ -98,7 +98,7 @@
             <End Role="Holiday" EntitySet="Holidays" />
             <End Role="HolidayDetail" EntitySet="HolidayDetails" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="Employee">
           <Key>
             <PropertyRef Name="EId" />
@@ -117,22 +117,6 @@
           <Property Name="Shift" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetail_Employees" FromRole="Employee" ToRole="HolidayDetail" />
         </EntityType>
-        <EntityType Name="HolidayDetail">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="HId" Type="Int32" Nullable="false" />
-          <Property Name="UsedHours" Type="Double" Nullable="false" />
-          <Property Name="BeginDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="State" Type="Boolean" Nullable="false" />
-          <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="UsedDays" Type="Double" Nullable="false" />
-          <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_HolidayDetail_Employees" FromRole="HolidayDetail" ToRole="Employee" />
-          <NavigationProperty Name="Holiday" Relationship="MyDBModel.FK_LeaveDetail_Leave" FromRole="HolidayDetail" ToRole="Holiday" />
-        </EntityType>
         <EntityType Name="Holiday">
           <Key>
             <PropertyRef Name="Id" />
@@ -142,6 +126,22 @@
           <Property Name="TotalDays" Type="Double" Nullable="false" />
           <Property Name="Type" Type="Int32" Nullable="false" />
           <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_LeaveDetail_Leave" FromRole="Holiday" ToRole="HolidayDetail" />
+        </EntityType>
+        <EntityType Name="HolidayDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="HId" Type="Int32" Nullable="false" />
+          <Property Name="UsedHours" Type="Double" />
+          <Property Name="BeginDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Allow" Type="Boolean" Nullable="false" />
+          <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UsedDays" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_HolidayDetail_Employees" FromRole="HolidayDetail" ToRole="Employee" />
+          <NavigationProperty Name="Holiday" Relationship="MyDBModel.FK_LeaveDetail_Leave" FromRole="HolidayDetail" ToRole="Holiday" />
         </EntityType>
         <Association Name="FK_HolidayDetail_Employees">
           <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="1" />
@@ -191,27 +191,27 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="HolidayDetails">
-            <EntityTypeMapping TypeName="MyDBModel.HolidayDetail">
-              <MappingFragment StoreEntitySet="HolidayDetails">
-                <ScalarProperty Name="UsedDays" ColumnName="UsedDays" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
-                <ScalarProperty Name="BeginDate" ColumnName="BeginDate" />
-                <ScalarProperty Name="UsedHours" ColumnName="UsedHours" />
-                <ScalarProperty Name="HId" ColumnName="HId" />
-                <ScalarProperty Name="EId" ColumnName="EId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Holidays">
             <EntityTypeMapping TypeName="MyDBModel.Holiday">
               <MappingFragment StoreEntitySet="Holidays">
                 <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HolidayDetails">
+            <EntityTypeMapping TypeName="MyDBModel.HolidayDetail">
+              <MappingFragment StoreEntitySet="HolidayDetails">
+                <ScalarProperty Name="UsedDays" ColumnName="UsedDays" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Allow" ColumnName="Allow" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="BeginDate" ColumnName="BeginDate" />
+                <ScalarProperty Name="UsedHours" ColumnName="UsedHours" />
+                <ScalarProperty Name="HId" ColumnName="HId" />
+                <ScalarProperty Name="EId" ColumnName="EId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

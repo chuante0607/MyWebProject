@@ -19,27 +19,27 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="HolidayDetails">
-      <EntityTypeMapping TypeName="MyDBModel.HolidayDetail">
-        <MappingFragment StoreEntitySet="HolidayDetails">
-          <ScalarProperty Name="UsedDays" ColumnName="UsedDays" />
-          <ScalarProperty Name="Remark" ColumnName="Remark" />
-          <ScalarProperty Name="State" ColumnName="State" />
-          <ScalarProperty Name="EndDate" ColumnName="EndDate" />
-          <ScalarProperty Name="BeginDate" ColumnName="BeginDate" />
-          <ScalarProperty Name="UsedHours" ColumnName="UsedHours" />
-          <ScalarProperty Name="HId" ColumnName="HId" />
-          <ScalarProperty Name="EId" ColumnName="EId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="Holidays">
       <EntityTypeMapping TypeName="MyDBModel.Holiday">
         <MappingFragment StoreEntitySet="Holidays">
           <ScalarProperty Name="Type" ColumnName="Type" />
           <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
           <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="HolidayDetails">
+      <EntityTypeMapping TypeName="MyDBModel.HolidayDetail">
+        <MappingFragment StoreEntitySet="HolidayDetails">
+          <ScalarProperty Name="UsedDays" ColumnName="UsedDays" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Allow" ColumnName="Allow" />
+          <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+          <ScalarProperty Name="BeginDate" ColumnName="BeginDate" />
+          <ScalarProperty Name="UsedHours" ColumnName="UsedHours" />
+          <ScalarProperty Name="HId" ColumnName="HId" />
+          <ScalarProperty Name="EId" ColumnName="EId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
