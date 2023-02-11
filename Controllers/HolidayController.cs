@@ -33,10 +33,10 @@ namespace UCOMProject.Controllers
                 return Json(new { error = true, msg = "表單填寫有誤\r\n請重新確認", payload = payload });
 
             if (ModelState.IsValid)
-                {
+            {
                 using (MyDBEntities db = new MyDBEntities())
                 {
-                    var query = await db.HolidayDetails.Where(w => w.EId == payload.EId).OrderBy(o=>o.BeginDate).ToListAsync();
+                    var query = await db.HolidayDetails.Where(w => w.EId == payload.EId).OrderBy(o => o.BeginDate).ToListAsync();
 
                     //取得payload休假的月份
                     List<int> getMonths = payload.RangeDate.Select(s => ((DateTime)s).Month).OrderBy(o => o).Distinct().ToList();
@@ -55,10 +55,10 @@ namespace UCOMProject.Controllers
 
                                 //payload送過來的RangeDate含有員工選擇休假期間的所有日期集合,拿來判斷是否跟資料庫的日期是否重複
                                 var result = payload.RangeDate
-                               .Where(date =>
-                               (new DateTime(((DateTime)date).Year, ((DateTime)date).Month, ((DateTime)date).Day)).Ticks
-                               .Equals(new DateTime(checkDate.Year, checkDate.Month, checkDate.Day).Ticks))
-                               .FirstOrDefault();
+                                       .Where(date =>
+                                       (new DateTime(((DateTime)date).Year, ((DateTime)date).Month, ((DateTime)date).Day)).Ticks
+                                       .Equals(new DateTime(checkDate.Year, checkDate.Month, checkDate.Day).Ticks))
+                                       .FirstOrDefault();
                                 if (result != null)
                                 {
                                     string msg = $"{((DateTime)result).Date.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
@@ -83,10 +83,13 @@ namespace UCOMProject.Controllers
                     await db.SaveChangesAsync();
                 }
             }
-            return Json(new { error = false, 
+            return Json(new
+            {
+                error = false,
                 msg = $"申請已送出！\r\n" +
-                $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ "+
-                $"{((DateTime)payload.EndDate).ToShortDateString()}共計：{payload.UsedDays}天"}
+                $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
+                $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天"
+            }
             );
         }
     }

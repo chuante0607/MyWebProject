@@ -14,6 +14,8 @@ namespace UCOMProject.Models
         [Required]
         public int? HId { get; set; }
         [Required]
+        public string Title { get; set; }
+        [Required]
         [Range(0,999)]
         public double? UsedDays { get; set; }
         public double? UsedHours { get { return UsedDays * 10; } }

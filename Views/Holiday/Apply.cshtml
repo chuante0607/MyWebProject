@@ -438,6 +438,7 @@
                         let payload = {
                             Eid: this.employee.eId,
                             HId: this.hId,
+                            Title: this.title,
                             BeginDate: moment(this.startDate).format("l"),
                             EndDate: moment(this.endDate).format("l"),
                             UsedDays: this.range,
@@ -451,17 +452,19 @@
                             dataType: 'json',
                             success: res => {
                                 if (res.error) {
+                                    console.log(res.payload);
                                     this.errorAlert(res.msg);
-                                    $(Swal.getConfirmButton()).click(function () {
-                                        setTimeout(function () {
-                                          
-                                        }, 1000)
-                                    })
                                 } else {
                                     this.successAlert(res.msg)
+                                    $(Swal.getConfirmButton()).click(function () {
+                                        $('body').loading();
+                                        setTimeout(function () {
+                                            location.href = window.location.href;
+                                        }, 1500)
+                                    })
                                 }
                             },
-                            error: error => {   
+                            error: error => {
                                 console.log('error' , error)
                             }
                         })
