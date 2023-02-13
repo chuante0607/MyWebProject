@@ -26,6 +26,12 @@ namespace UCOMProject.Models
         public bool? Allow { get; set; }
         [Required]
         public string Remark { get; set; }
+
         public List<DateTime?> RangeDate { get; set; }
+
+        /// <summary>
+        /// 接收多筆檔案
+        /// </summary>
+        public IEnumerable<HttpPostedFileBase> Files { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Windows.Interop;
 using UCOMProject.Methods;
@@ -29,7 +30,6 @@ namespace UCOMProject.Controllers
         public async Task<ActionResult> Apply(HolidayDetailModel payload)
         {
             //to do 驗證休假申請
-
             bool error = true;
             string msg = string.Empty;
 
@@ -37,7 +37,7 @@ namespace UCOMProject.Controllers
             if (ModelState.Values.Where(w => w.Errors.Count > 0).Count() > 0)
             {
                 msg = "表單填寫有誤\r\n請重新確認";
-                return Json(new { error = error, msg = msg, payload = payload });
+                return Json(new { error = error, msg = msg });
             }
 
             //模型驗證
@@ -50,9 +50,9 @@ namespace UCOMProject.Controllers
             }
             else
             {
-                msg = "表單驗證異常，請重新確認";
+                msg = "表單驗證異常\r\n請重新確認";
             }
-            return Json(new { error = error, msg = msg, payload = payload });
+            return Json(new { error = error, msg = msg });
         }
     }
 }

@@ -7,10 +7,13 @@
         .title {
             flex-direction: column;
         }
+        [v-cloak] {
+            display: none;
+        }
     </style>
 }
 
-<div id="app">
+<div id="app" v-cloak>
     <!-- Page Heading -->
     <div class="title d-sm-flex align-items-center justify-content-evenly mb-4">
         <h1 class="h1">{{new Date().getFullYear()}}&nbsp;年</h1>
@@ -218,42 +221,21 @@
                 this.$set(item, 'checked', false);
                     this.$set(item, 'color', this.color[index]);;
                 });
-                //$.ajax({
-                //    type: 'get',
-                //    url: 'http://localhost:51010/source/sourcehome?Eid=' + eid,
-                //    success: res => {
-                //        this.source = res;
-                //        this.source.leavesInfos.forEach((item , index) => {
-                //            this.$set(item, 'checked', false);
-                //            this.$set(item, 'leaveColor', this.leaveColor[index]);;
-                //        });
-                //    },
-                //    error: error => { console.log('ResponseError:' , error) },
-                //});
+                
             },
-            //computed: {
-            //    cahrtsData() {
-            //        let sourceChart = vm.source.chartDict[this.chartYear];
-            //        for (let key in sourceChart) {
-            //            this.chartData.push(sourceChart[key].days);
-            //        }
-            //        console.log('改變了')
-            //        return this.chartData;
-            //    }
-            //},
-                methods: {
-                  handleCanUse() {
-                      this.canUse = !this.canUse;
-                  },
-                changeYear() {
-                    if (this.changeYear == 2023) {
-                        this.changeYear = 2022;
-                    } else {
-                        this.changeYear = 2023;
-                    }
+            methods: {
+                handleCanUse() {
+                    this.canUse = !this.canUse;
                 },
+            changeYear() {
+                if (this.changeYear == 2023) {
+                    this.changeYear = 2022;
+                } else {
+                    this.changeYear = 2023;
+                }
             },
-        });
+        },
+    });
 
 
 

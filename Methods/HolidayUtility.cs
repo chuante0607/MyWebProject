@@ -114,28 +114,36 @@ namespace UCOMProject.Methods
             }
             return workDayByMonth;
         }
-
+        /// <summary>
+        /// 休假申請
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns>是否成功?異常訊息?</returns>
         public static async Task<(bool, string)> validApplyResult(HolidayDetailModel payload)
         {
             string applyMsg = string.Empty;
             using (MyDBEntities db = new MyDBEntities())
             {
-                var query = await db.HolidayDetails.Where(w => w.EId == payload.EId).OrderBy(o => o.BeginDate).ToListAsync();
+                var query = await db.HolidayDetails
+                    .Where(w => w.EId == payload.EId)
+                    .OrderBy(o => o.BeginDate)
+                    .Select(s => new { BeginDate = s.BeginDate, EndDate = s.EndDate })
+                    .ToListAsync();
 
-                //取得payload休假的月份
-                List<int> getMonths = payload.RangeDate.Select(s => ((DateTime)s).Month).OrderBy(o => o).Distinct().ToList();
+                //取得payloadMonths裡的休假月份 , 用來快速索引query的休假月份是否相符
+                List<int> payloadMonths = payload.RangeDate.Select(s => ((DateTime)s).Month).OrderBy(o => o).Distinct().ToList();
 
                 foreach (var item in query)
                 {
-                    //判斷該員工休假detail之中有沒有與申請休假的月份相同 ,Any查到即返回true
-                    if (getMonths.Any(o => o == item.BeginDate.Month || o == item.EndDate.Month))
+                    //判斷該員工休假detail之中有沒有與申請休假的月份相同 ,Any查到相符返回true , 進一步查詢是否有相符的日期
+                    if (payloadMonths.Any(month => month == item.BeginDate.Month || month == item.EndDate.Month))
                     {
-                        //usedDays計算該員工detail的結束日期-開始日期的總天數
-                        int checkDay = item.EndDate.Subtract(item.BeginDate).Days;
-                        while (checkDay >= 0)
+                        //checkDays計算detail結束日期-開始日期的總天數
+                        int checkDays = item.EndDate.Subtract(item.BeginDate).Days;
+                        while (checkDays >= 0)
                         {
-                            //請假範圍 >= 0天(包括當天) 就從開始的日期+天數那天開始判斷
-                            DateTime checkDate = item.EndDate.AddDays(checkDay * -1);
+                            //請假範圍 >= 0天(包括當天) 就從結束的日期 - 要判斷的總天數開始判斷
+                            DateTime checkDate = item.EndDate.AddDays(checkDays * -1);
 
                             //payload送過來的RangeDate含有員工選擇休假期間的所有日期集合,拿來判斷是否跟資料庫的日期是否重複
                             var result = payload.RangeDate
@@ -143,18 +151,27 @@ namespace UCOMProject.Methods
                                    (new DateTime(((DateTime)date).Year, ((DateTime)date).Month, ((DateTime)date).Day)).Ticks
                                    .Equals(new DateTime(checkDate.Year, checkDate.Month, checkDate.Day).Ticks))
                                    .FirstOrDefault();
-                            //如果有休假紀錄就回傳fals並儲存錯誤資訊
+                            //如果申請的日期已有休假紀錄 , 就回傳false並儲存錯誤資訊
                             if (result != null)
                             {
-                                applyMsg = $"{((DateTime)result).Date.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
+                                if (checkDays == 0)
+                                {
+                                    //休假紀錄只有一天,就返回該日期
+                                    applyMsg = $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
+                                }
+                                else
+                                {
+                                    //休假紀錄超過一天,就返回開始日期~結束日期
+                                    applyMsg = $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
+                                }
                                 return (false, applyMsg);
                             }
-                            checkDay--;
+                            checkDays--;
                         }
                     }
                 }
 
-                //判斷結束後，準備將資料新增到資料庫
+                //判斷結束無休假紀錄，準備將資料新增到資料庫
                 HolidayDetail holidayDetail = new HolidayDetail()
                 {
                     EId = payload.EId,
@@ -182,7 +199,7 @@ namespace UCOMProject.Methods
         /// <returns></returns>
         //public static List<HolidayDetailViewModel> getHolidayDetailsByEmpID(string id)
         //{
-        //    List<HolidayDetailViewModel> holidayDetailViewModels = new List<HolidayDetailViewModel>();
+        //    List<HolidayDetailViewModel>    = new List<HolidayDetailViewModel>();
         //    using (MyDBEntities db = new MyDBEntities())
         //    {
         //        List<HolidayDetail> holidayDetails = db.HolidayDetails.Where(w => w.EId == id).ToList();
