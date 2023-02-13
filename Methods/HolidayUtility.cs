@@ -119,16 +119,15 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="payload"></param>
         /// <returns>是否成功?異常訊息?</returns>
-        public static async Task<(bool, string)> validApplyResult(HolidayDetailModel payload)
+        public static bool validApplyResult (HolidayDetailModel payload , out string applyMsg)
         {
-            string applyMsg = string.Empty;
             using (MyDBEntities db = new MyDBEntities())
             {
-                var query = await db.HolidayDetails
+                var query = db.HolidayDetails
                     .Where(w => w.EId == payload.EId)
                     .OrderBy(o => o.BeginDate)
                     .Select(s => new { BeginDate = s.BeginDate, EndDate = s.EndDate })
-                    .ToListAsync();
+                    .ToList();
 
                 //取得payloadMonths裡的休假月份 , 用來快速索引query的休假月份是否相符
                 List<int> payloadMonths = payload.RangeDate.Select(s => ((DateTime)s).Month).OrderBy(o => o).Distinct().ToList();
@@ -164,7 +163,7 @@ namespace UCOMProject.Methods
                                     //休假紀錄超過一天,就返回開始日期~結束日期
                                     applyMsg = $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
                                 }
-                                return (false, applyMsg);
+                                return false;
                             }
                             checkDays--;
                         }
@@ -183,12 +182,12 @@ namespace UCOMProject.Methods
                     Remark = payload.Remark,
                 };
                 db.HolidayDetails.Add(holidayDetail);
-                await db.SaveChangesAsync();
+                db.SaveChangesAsync();
 
                 applyMsg = $"申請已送出！\r\n" +
                            $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
                            $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
-                return (true, applyMsg);
+                return true;
             }
         }
 

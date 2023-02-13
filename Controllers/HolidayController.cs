@@ -27,7 +27,7 @@ namespace UCOMProject.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Apply(HolidayDetailModel payload)
+        public ActionResult Apply(HolidayDetailModel payload)
         {
             //to do 驗證休假申請
             bool error = true;
@@ -44,9 +44,8 @@ namespace UCOMProject.Controllers
             if (ModelState.IsValid)
             {
                 //是否申請成功(true成功 , false失敗)
-                var isApplyOK = await HolidayUtility.validApplyResult(payload);
-                error = !isApplyOK.Item1;
-                msg = isApplyOK.Item2;
+                var isApplyOK = HolidayUtility.validApplyResult(payload , out msg);
+                error = !isApplyOK;
             }
             else
             {
