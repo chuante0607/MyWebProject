@@ -24,10 +24,10 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="HId" Type="int" Nullable="false" />
-    <Property Name="UsedHours" Type="float" Nullable="false" />
+    <Property Name="UsedHours" Type="float" />
     <Property Name="BeginDate" Type="datetime" Nullable="false" />
     <Property Name="EndDate" Type="datetime" Nullable="false" />
-    <Property Name="State" Type="bit" Nullable="false" />
+    <Property Name="Allow" Type="bit" Nullable="false" />
     <Property Name="Remark" Type="nvarchar(max)" />
     <Property Name="UsedDays" Type="float" Nullable="false" />
   </EntityType>

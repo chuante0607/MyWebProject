@@ -12,8 +12,8 @@ namespace UCOMProject.Controllers
     public class AccountController : Controller
     {
         /// <summary>
-        /// 登入 (我是更新) (製造衝突)
-        /// </summary>
+        /// 登入 (我是更新)
+        /// </summary> (TEST)
         /// <param name="logout"></param>
         /// <param name="msg"></param>
         /// <returns></returns>

@@ -7,7 +7,6 @@ namespace UCOMProject.Models
 {
     public class EmployeeModel 
     {
-
         public string EId { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
@@ -20,7 +19,5 @@ namespace UCOMProject.Models
         public string EnglishName { get; set; }
         public string Password { get; set; }
         public string Shift { get; set; }
-
-
     }
 }

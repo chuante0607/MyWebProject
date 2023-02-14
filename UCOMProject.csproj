@@ -118,6 +118,7 @@
       <Private>True</Private>
       <HintPath>packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -191,6 +192,7 @@
   <ItemGroup>
     <Content Include="Content\admin\css\sb-admin-2.css" />
     <Content Include="Content\admin\css\sb-admin-2.min.css" />
+    <Content Include="Content\loading.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\Login.css" />
@@ -246,6 +248,7 @@
     <Content Include="Scripts\demo\chart-bar-demo.js" />
     <Content Include="Scripts\demo\chart-pie-demo.js" />
     <Content Include="Scripts\demo\datatables-demo.js" />
+    <Content Include="Scripts\Jqueryloading.js" />
     <Content Include="Scripts\jquery-3.6.3.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <EntityDeploy Include="Models\Model1.edmx">
@@ -285,6 +288,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\loading.js" />
     <Content Include="Scripts\Login.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment\moment-with-locales.js" />
@@ -2126,6 +2130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Upload\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
