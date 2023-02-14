@@ -475,7 +475,15 @@
                         formData.append('UsedDays', this.range);
                         formData.append('Remark', this.remark);
                         formData.append('RangeDate', this.rangeDate);
-                        console.log(this.rangeDate);
+
+
+                        if (this.rangeDate) {
+                            for (let i = 0; i < this.rangeDate.length; i++) {
+                                formData.append(`RangeDateString[${i}]`, this.rangeDate[i]);
+                            }
+                        }
+
+
                         if (this.files) {
                             for (let i = 0; i < this.files.length; i++) {
                                 formData.append('Files', this.files[i]);
