@@ -19,7 +19,7 @@ namespace UCOMProject.Models
 
         [Required]
         public string Title { get; set; }
-
+        public HolidayType TitleType { get; set; }
         [Required]
         [Range(0, 999)]
         public int? UsedDays { get; set; }
@@ -51,7 +51,7 @@ namespace UCOMProject.Models
                 return r;
             }
         }
-
+        [Required]
         public List<string> RangeDateString { get; set; } = new List<string>();
 
         /// <summary>

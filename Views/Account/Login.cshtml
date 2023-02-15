@@ -45,16 +45,9 @@
                 id: '',
                 pwd: '',
             },
-            mounted() {
-                let status = @Html.Raw(ViewBag.status);
-                if (status.logout)
-                    this.alertLogout(status.msg);
-                else if (status.msg)
-                    this.alertError(status.msg);
-
-            },
             methods: {
                 demo() {
+                    console.log(1);
                     this.id = 'E001';
                     this.pwd = 'A123456789';
                 },

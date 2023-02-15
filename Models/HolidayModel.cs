@@ -19,13 +19,17 @@ namespace UCOMProject.Models
         {
             get
             {
-                if (seniority < 1) return _totalDays;
-                if (seniority < 2) return _totalDays + 3;
-                if (seniority < 3) return _totalDays + 7;
-                if (seniority < 5) return _totalDays + 11;
-                if (seniority < 10) return _totalDays + 12;
-                if (seniority >= 24) return _totalDays + 27;
-                return _totalDays + 13 + seniority - 10;
+                if (TitleType == HolidayType.特休)
+                {
+                    if (seniority < 1) return _totalDays;
+                    if (seniority < 2) return _totalDays + 3;
+                    if (seniority < 3) return _totalDays + 7;
+                    if (seniority < 5) return _totalDays + 11;
+                    if (seniority < 10) return _totalDays + 12;
+                    if (seniority >= 24) return _totalDays + 27;
+                    return _totalDays + 13 + seniority - 10;
+                }
+                return _totalDays;
             }
             set
             {

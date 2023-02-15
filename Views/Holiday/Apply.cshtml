@@ -348,11 +348,21 @@
                     if (this.files.length > 1) {
                         this.fileName = `已選擇${this.files.length}筆檔案`;
                     }
+                    let size = 0;
+                    for (let i = 0; i < this.files.length; i++) {
+                        size += this.files[i].size;
+                    }
+                    if (size / (1024 * 1024) >= 4) {
+                        this.files = null;
+                        this.fileName = '上傳證明';
+                        e.target.value = '';
+                        wAlert(`檔案大小${Math.round(size / (1024 * 1024))}MB，已超過4MB<br/>請重新選擇`);
+                    }
                 },
                 submit() {
                     //表單驗證
-                    if (this.validNG().result) {
-                        wAlert(this.validNG().msg);
+                    if (this.valid().NG) {
+                        wAlert(this.valid().msg);
                         return;
                     }
                     //上傳檔案必須要使用FormData post方式
@@ -383,11 +393,11 @@
                             processData: false,  // formData 不將數據轉換為字符串
                             contentType: false,  // formData 不設置Content-Type請求頭
                             success: res => {
-                                if (res.error) {
+                                if (res.Error) {
                                     console.log(res.payload);
-                                    eAlert(res.msg);
+                                    eAlert(res.Msg);
                                 } else {
-                                    sAlert(res.msg)
+                                    sAlert(res.Msg)
                                     $(Swal.getConfirmButton()).click(function () {
                                         $('body').loading();
                                         setTimeout(function () {
@@ -402,31 +412,30 @@
                         })
                     }
                 },
-                validNG() {
+                valid() {
                     if (this.title === '請拖曳假別') {
-                        return { result:true ,msg: "請選擇使用的假別"};
+                        return { NG:true ,msg: "請選擇使用的假別"};
                     }
                     if (!this.startDate || !this.endDate) {
                         wAlert("日期未選擇完整")
-                        return { result: true, msg: "日期未選擇完整" };
+                        return { NG: true, msg: "日期未選擇完整" };
                     }
                     if (this.remain < 0) {
                         wAlert("假別天數不足，請重新確認")
-                        return { result: true, msg: "假別天數不足，請重新確認" };
+                        return { NG: true, msg: "假別天數不足，請重新確認" };
                     }
                     if (!this.remark.trim()) {
                         wAlert("請填寫休假事由")
-                        return { result: true, msg: "請填寫休假事由" };
+                        return { NG: true, msg: "請填寫休假事由" };
                     }
                     if (this.title === '病假') {
-                        if (!this.files) {
-                            wAlert("請附加休假證明")
-                            return { result: true, msg: "請附加休假證明" };
-                        }
-                    } else {
+                        if (this.files) return { NG: false }
+                        else return { NG: true, msg: '請附加休假證明' };
+                    }
+                    else {
                         this.files = null;
                         this.fileName = '上傳證明';
-                        return { error: false };
+                        return { NG: false};
                     }
                 }
             }
