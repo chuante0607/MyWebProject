@@ -16,12 +16,12 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<HolidayModel> getCanUseHolidaysByEmpID(string id)
+        public static List<HolidayModel> getCanUseHolidays(string eid)
         {
             List<HolidayModel> holidayViewModels = new List<HolidayModel>();
             using (MyDBEntities db = new MyDBEntities())
             {
-                Employee emp = db.Employees.SingleOrDefault(s => s.EId == id);
+                Employee emp = db.Employees.Find(eid);
                 //統計今年度已用及未用假別天數
                 List<Holiday> holidays = db.Holidays.OrderBy(o => o.Id).ToList();
                 if (emp.Sex == "男")
@@ -35,8 +35,8 @@ namespace UCOMProject.Methods
                         Id = item.Id,
                         TitleType = item.Title.xTranEnum(),
                         TotalDays = item.TotalDays,
-                        //查詢已用的請假天數
-                        UsedDays = emp.HolidayDetails.Where(ld => ld.HId == item.Id && ld.BeginDate.Year == DateTime.Now.Year).Select(s => s.UsedDays).Sum(),
+                        UsedDays = emp.HolidayDetails.Where(w => w.HId == item.Id && w.BeginDate.Year == DateTime.Now.Year)
+                        .Select(s => s.UsedDays).Sum(),
                     };
                     holidayViewModels.Add(holidayModel);
                 }
@@ -231,7 +231,7 @@ namespace UCOMProject.Methods
                                 applyMsg = item.EndDate.Subtract(item.BeginDate).Days == 0 ?
                                     $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請" :
                                     $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
-                                return new Apply {Error = true, Msg = applyMsg };
+                                return new Apply { Error = true, Msg = applyMsg };
                             }
                             checkDays--;
                         }
@@ -271,37 +271,35 @@ namespace UCOMProject.Methods
             }
         }
 
-
         /// <summary>
         /// 查詢休假歷史紀錄
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        //public static List<HolidayDetailViewModel> getHolidayDetailsByEmpID(string id)
-        //{
-        //    List<HolidayDetailViewModel>    = new List<HolidayDetailViewModel>();
-        //    using (MyDBEntities db = new MyDBEntities())
-        //    {
-        //        List<HolidayDetail> holidayDetails = db.HolidayDetails.Where(w => w.EId == id).ToList();
-        //        foreach (HolidayDetail detail in holidayDetails)
-        //        {
-        //            holidayDetailViewModels.Add(new HolidayDetailViewModel()
-        //            {
-        //                Id = detail.Id,
-        //                EId = detail.EId,
-        //                Name = detail.Employee.Name,
-        //                eEnName = detail.Employee.englishName,
-        //                beginDate = detail.beginDate,
-        //                endDate = detail.endDate,
-        //                state = detail.state,
-        //                holidayTitle = detail.Holiday.title,
-        //                usedDays = detail.usedDays,
-        //                usedHours = detail.usedHours,
-        //                remark = detail.remark
-        //            });
-        //        }
-        //    }
-        //    return holidayDetailViewModels;
-        //}
+        public static List<HolidayDetailModel> getHolidayDetailList(string eid)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                List<HolidayDetailModel> holidayDetailModels = new List<HolidayDetailModel>();
+                var query = db.HolidayDetails.Where(w => w.EId == eid);
+                foreach (var item in query)
+                {
+                    HolidayDetailModel model = new HolidayDetailModel();
+                    model.Id = item.Id;
+                    model.Title = item.Holiday.Title;
+                    model.UsedDays = item.UsedDays;
+                    model.BeginDate = item.BeginDate;
+                    model.EndDate = item.EndDate;
+                    model.Allow = item.Allow;
+                    model.Remark = item.Remark;
+                    if (item.Prove != null)
+                    {
+                        model.Prove = item.Prove.Split(',').ToList();
+                    }
+                    holidayDetailModels.Add(model);
+                }
+                return holidayDetailModels;
+            }
+        }
     }
 }

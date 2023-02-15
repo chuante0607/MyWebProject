@@ -1,11 +1,83 @@
-﻿
+﻿@model UCOMProject.Models.HolidayViewModel
+
 @{
-    ViewBag.Title = "休假申請";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@section Style{
+    ViewBag.Title = "休假紀錄";
 }
 
-<h2>休假申請</h2>
-@section Script{http://localhost:51010/Leave#
+<h2>休假紀錄</h2>
+<h4>@Model.employee.EId<span>@Model.employee.Name</span></h4>
+<select>
+    @foreach (var item in Model.HolidayDetails.Select(s => s.Title).Distinct())
+    {
+        <option>@item</option>
+    }
+</select>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                假別
+            </th>
+            <th>
+                開始日期
+            </th>
+            <th>
+                結束日期
+            </th>
+            <th>
+                證明
+            </th>
+            <th>
+                審核狀態
+            </th>
+            <th>
+                請假原因
+            </th>
+            <th>
+                功能
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model.HolidayDetails)
+        {
+            <tr>
+                <td>@Model.employee.EId</td>
+                <td>@Model.employee.Name</td>
+                <td>@item.Title</td>
+                <td>@item.BeginDate</td>
+                <td>@item.EndDate</td>
+                @if (item.Prove == null)
+                {
+                    <td>
+                        無證明
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @foreach (var img in item.Prove)
+                        {
+                            <img width="100" height="=100" src="~/Uploads/@img" alt="Alternate Text" />
+                        }
+                    </td>
+                }
+                <td><input type="checkbox" name="name" value="@item.Allow" /></td>
+                <td>@item.Remark</td>
+                <td><button>修改</button></td>
+                <td><button>刪除</button></td>
+            </tr>
+        }
+
+    </tbody>
+
+
+
+</table>
+
+@section Script{
+    <script>
+
+    </script>
 }

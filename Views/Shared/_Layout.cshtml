@@ -24,7 +24,7 @@
     <link href="~/Content/admin/css/sb-admin-2.css" rel="stylesheet">
     <!--site-->
     <link href="~/Content/Site.css" rel="stylesheet" />
-    @RenderSection("Style")
+    @RenderSection("Style" , false)
 </head>
 
 <body id="page-top">
@@ -71,7 +71,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">@employee.EnglishName 's Leave System</h6>
                         <a class="collapse-item" href="@Url.Action("apply","holiday")">申請</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">查詢</a>
                     </div>
                 </div>
             </div>
@@ -429,6 +429,6 @@
     <script src="~/Scripts/admin/js/sb-admin-2.min.js"></script>
     <script src="~/Scripts/site.js"></script>
 
-    @RenderSection("Script")
+    @RenderSection("Script" , false)
 </body>
 </html>

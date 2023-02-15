@@ -9,6 +9,7 @@ namespace UCOMProject.Models
     {
         public EmployeeModel employee { get; set; }
         public List<HolidayModel> Holidays { get; set; }
+        public List<HolidayDetailModel> HolidayDetails { get; set; }
         public List<List<ShiftWorkModel>> WorkDayOfYearByMonth { get; set; }
 
         public class Chart

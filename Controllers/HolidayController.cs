@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Windows.Interop;
+using UCOMProject.Extension;
 using UCOMProject.Methods;
 using UCOMProject.Models;
 
@@ -17,14 +18,14 @@ namespace UCOMProject.Controllers
     [AuthorizationFilter]
     public class HolidayController : Controller
     {
-        HolidayViewModel vmHoliday = new HolidayViewModel();
+        HolidayViewModel vm = new HolidayViewModel();
         public ActionResult Apply()
         {
-            vmHoliday.employee = SessionEmp.CurrentEmp;
-            vmHoliday.Holidays = HolidayUtility.getCanUseHolidaysByEmpID(vmHoliday.employee.EId);
-            vmHoliday.WorkDayOfYearByMonth = HolidayUtility.getWorkDayOfYearByMonth(DateTime.Now.Year);
-            ViewBag.vm = JsonConvert.SerializeObject(vmHoliday, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-            return View(vmHoliday);
+            vm.employee = SessionEmp.CurrentEmp;
+            vm.Holidays = HolidayUtility.getCanUseHolidays(vm.employee.EId);
+            vm.WorkDayOfYearByMonth = HolidayUtility.getWorkDayOfYearByMonth(DateTime.Now.Year);
+            ViewBag.vm = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return View(vm);
         }
 
         [HttpPost]
@@ -35,7 +36,7 @@ namespace UCOMProject.Controllers
             if (ModelState.IsValid)
             {
                 //病假以外不需提供證明
-                if (payload.Title != HolidayType.病假.ToString())
+                if (payload.Title.xTranEnum() != HolidayType.病假)
                 {
                     //是否申請成功(true成功 , false失敗)
                     Apply result = HolidayUtility.saveApply(payload);
@@ -72,10 +73,12 @@ namespace UCOMProject.Controllers
             }
         }
 
+
         public ActionResult Index(string eid)
         {
-
-            return View();
+            vm.employee = SessionEmp.CurrentEmp;
+            vm.HolidayDetails = HolidayUtility.getHolidayDetailList(eid);
+            return View(vm);
         }
     }
 }

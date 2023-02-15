@@ -19,5 +19,6 @@ namespace UCOMProject.Models
         public string EnglishName { get; set; }
         public string Password { get; set; }
         public string Shift { get; set; }
+        public DateTime StartDate { get; set; }
     }
 }

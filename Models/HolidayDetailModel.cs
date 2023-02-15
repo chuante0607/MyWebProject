@@ -58,5 +58,7 @@ namespace UCOMProject.Models
         /// 接收多筆檔案
         /// </summary>
         public IEnumerable<HttpPostedFileBase> Files { get; set; }
+
+        public List<string> Prove { get; set; }
     }
 }
