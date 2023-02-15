@@ -27,7 +27,7 @@ namespace UCOMProject.Controllers
     
         public ActionResult Index()
         {
-            ViewBag.Source = JsonConvert.SerializeObject(_vm , new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            ViewBag.Source = JsonConvert.SerializeObject(_vm , new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver()} );
             return View();
         }
     }

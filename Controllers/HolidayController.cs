@@ -30,28 +30,17 @@ namespace UCOMProject.Controllers
         public ActionResult Apply(HolidayDetailModel payload)
         {
             //to do 驗證休假申請
-            bool error = true;
-            string msg = string.Empty;
-
-            //模型驗證
-            if (ModelState.Values.Where(w => w.Errors.Count > 0).Count() > 0)
-            {
-                msg = "表單填寫有誤\r\n請重新確認";
-                return Json(new { error = error, msg = msg });
-            }
-
             //模型驗證
             if (ModelState.IsValid)
             {
                 //是否申請成功(true成功 , false失敗)
-                var isApplyOK = HolidayUtility.validApplyResult(payload , out msg);
-                error = !isApplyOK;
+                var isApplyOK = HolidayUtility.checkApply(payload, out string msg);
+                return Json(new { error = !isApplyOK, msg = msg });
             }
             else
             {
-                msg = "表單驗證異常\r\n請重新確認";
+                return Json(new { error = true, msg = "表單驗證異常\r\n請重新確認" });
             }
-            return Json(new { error = error, msg = msg });
         }
     }
 }

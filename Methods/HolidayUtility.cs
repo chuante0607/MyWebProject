@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using UCOMProject.Extension;
 using UCOMProject.Models;
 
 namespace UCOMProject.Methods
@@ -20,15 +21,18 @@ namespace UCOMProject.Methods
             using (MyDBEntities db = new MyDBEntities())
             {
                 Employee emp = db.Employees.SingleOrDefault(s => s.EId == id);
-                //員工休假資料
                 //統計今年度已用及未用假別天數
                 List<Holiday> holidays = db.Holidays.OrderBy(o => o.Id).ToList();
+                if (emp.Sex == "男")
+                {
+                    holidays.Remove(holidays.Find(f => f.Title.xTranEnum() == HolidayType.生理假));
+                }
                 foreach (Holiday item in holidays)
                 {
-                    HolidayModel holidayModel = new HolidayModel()
+                    HolidayModel holidayModel = new HolidayModel(emp.StartDate)
                     {
-                        HId = item.Id,
-                        Title = item.Title,
+                        Id = item.Id,
+                        TitleType = item.Title.xTranEnum(),
                         TotalDays = item.TotalDays,
                         //查詢已用的請假天數
                         UsedDays = emp.HolidayDetails.Where(ld => ld.HId == item.Id && ld.BeginDate.Year == DateTime.Now.Year).Select(s => s.UsedDays).Sum(),
@@ -44,15 +48,15 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Dictionary<int, List<HolidayModel.Chart>> getchartDictByEmpID(string id)
+        public static Dictionary<int, List<HolidayViewModel.Chart>> getchartDictByEmpID(string id)
         {
-            Dictionary<int, List<HolidayModel.Chart>> chartsDict = new Dictionary<int, List<HolidayModel.Chart>>();
+            Dictionary<int, List<HolidayViewModel.Chart>> chartsDict = new Dictionary<int, List<HolidayViewModel.Chart>>();
             using (MyDBEntities db = new MyDBEntities())
             {
                 Employee emp = db.Employees.SingleOrDefault(s => s.EId == id);
                 //查詢指定年度的每月休假天數總計
-                List<HolidayModel.Chart> chartGroup = emp.HolidayDetails.GroupBy(g => (g.BeginDate.Year, g.BeginDate.Month), g => g.UsedDays)
-                .Select(s => new HolidayModel.Chart
+                List<HolidayViewModel.Chart> chartGroup = emp.HolidayDetails.GroupBy(g => (g.BeginDate.Year, g.BeginDate.Month), g => g.UsedDays)
+                .Select(s => new HolidayViewModel.Chart
                 {
                     Year = s.Key.Year,
                     Month = s.Key.Month,
@@ -62,13 +66,13 @@ namespace UCOMProject.Methods
                 //整合charts所需要的資訊
                 foreach (int year in chartGroup.Select(s => s.Year).Distinct())
                 {
-                    List<HolidayModel.Chart> chartList = new List<HolidayModel.Chart>();
+                    List<HolidayViewModel.Chart> chartList = new List<HolidayViewModel.Chart>();
                     for (int month = 1; month <= 12; month++)
                     {
-                        HolidayModel.Chart chartInfo = chartGroup.Find(x => x.Year == year && x.Month == month);
+                        HolidayViewModel.Chart chartInfo = chartGroup.Find(x => x.Year == year && x.Month == month);
                         if (chartInfo == null)
                         {
-                            chartList.Add(new HolidayModel.Chart() { Year = year, Month = month, Days = 0 });
+                            chartList.Add(new HolidayViewModel.Chart() { Year = year, Month = month, Days = 0 });
                         }
                         else
                         {
@@ -119,15 +123,14 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="payload"></param>
         /// <returns>是否成功?異常訊息?</returns>
-        public static bool validApplyResult (HolidayDetailModel payload , out string applyMsg)
+        public static bool checkApply(HolidayDetailModel payload, out string applyMsg)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
                 var query = db.HolidayDetails
                     .Where(w => w.EId == payload.EId)
                     .OrderBy(o => o.BeginDate)
-                    .Select(s => new { BeginDate = s.BeginDate, EndDate = s.EndDate })
-                    .ToList();
+                    .Select(s => new { BeginDate = s.BeginDate, EndDate = s.EndDate });
 
                 //取得payloadMonths裡的休假月份 , 用來快速索引query的休假月份是否相符
                 List<int> payloadMonths = payload.RangeDate.Select(s => ((DateTime)s).Month).OrderBy(o => o).Distinct().ToList();
@@ -146,12 +149,11 @@ namespace UCOMProject.Methods
 
                             //payload送過來的RangeDate含有員工選擇休假期間的所有日期集合,拿來判斷是否跟資料庫的日期是否重複
                             var result = payload.RangeDate
-                                   .Where(date =>
-                                   (new DateTime(((DateTime)date).Year, ((DateTime)date).Month, ((DateTime)date).Day)).Ticks
-                                   .Equals(new DateTime(checkDate.Year, checkDate.Month, checkDate.Day).Ticks))
-                                   .FirstOrDefault();
+                                   .Any(date =>
+                                   (new DateTime(date.Year, date.Month, date.Day)).Ticks
+                                   .Equals(new DateTime(checkDate.Year, checkDate.Month, checkDate.Day).Ticks));
                             //如果申請的日期已有休假紀錄 , 就回傳false並儲存錯誤資訊
-                            if (result != null)
+                            if (result)
                             {
                                 if (checkDays == 0)
                                 {
@@ -177,7 +179,7 @@ namespace UCOMProject.Methods
                     HId = (int)(payload.HId),
                     BeginDate = (DateTime)payload.BeginDate,
                     EndDate = (DateTime)payload.EndDate,
-                    UsedDays = (double)payload.UsedDays,
+                    UsedDays = (int)payload.UsedDays,
                     Allow = false,
                     Remark = payload.Remark,
                 };

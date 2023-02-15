@@ -22,7 +22,7 @@ namespace UCOMProject.Models
 
         [Required]
         [Range(0, 999)]
-        public double? UsedDays { get; set; }
+        public int? UsedDays { get; set; }
 
         public double? UsedHours
         { get { return UsedDays * 10; } }

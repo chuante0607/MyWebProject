@@ -9,6 +9,6 @@ namespace UCOMProject.Models
     {
         public EmployeeModel Employee { get; set; }
         public List<HolidayModel> Holidays { get; set; }
-        public Dictionary<int, List<HolidayModel.Chart>> ChartDict { get; set; }
+        public Dictionary<int, List<HolidayViewModel.Chart>> ChartDict { get; set; }
     }
 }

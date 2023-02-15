@@ -22,8 +22,8 @@ namespace UCOMProject.Models
     
         public int Id { get; set; }
         public string Title { get; set; }
-        public double TotalDays { get; set; }
-        public int Type { get; set; }
+        public int TotalDays { get; set; }
+        public bool ProveType { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<HolidayDetail> HolidayDetails { get; set; }

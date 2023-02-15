@@ -15,7 +15,8 @@
     <Property Name="Phone" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="EnglishName" Type="nvarchar" MaxLength="50" />
     <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
-    <Property Name="Shift" Type="nvarchar" MaxLength="50" />
+    <Property Name="Shift" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="StartDate" Type="date" Nullable="false" />
   </EntityType>
   <EntityType Name="HolidayDetails">
     <Key>
@@ -24,12 +25,12 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="HId" Type="int" Nullable="false" />
-    <Property Name="UsedHours" Type="float" />
-    <Property Name="BeginDate" Type="datetime" Nullable="false" />
-    <Property Name="EndDate" Type="datetime" Nullable="false" />
+    <Property Name="BeginDate" Type="date" Nullable="false" />
+    <Property Name="EndDate" Type="date" Nullable="false" />
     <Property Name="Allow" Type="bit" Nullable="false" />
     <Property Name="Remark" Type="nvarchar(max)" />
-    <Property Name="UsedDays" Type="float" Nullable="false" />
+    <Property Name="Prove" Type="nvarchar(max)" />
+    <Property Name="UsedDays" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Holidays">
     <Key>
@@ -37,10 +38,10 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
-    <Property Name="TotalDays" Type="float" Nullable="false" />
-    <Property Name="Type" Type="int" Nullable="false" />
+    <Property Name="TotalDays" Type="int" Nullable="false" />
+    <Property Name="ProveType" Type="bit" Nullable="false" />
   </EntityType>
-  <Association Name="FK_HolidayDetail_Employees">
+  <Association Name="FK_HolidayDetails_Employees">
     <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
     <End Role="HolidayDetails" Type="Self.HolidayDetails" Multiplicity="*" />
     <ReferentialConstraint>
@@ -52,7 +53,7 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_LeaveDetail_Leave">
+  <Association Name="FK_HolidayDetails_Holidays">
     <End Role="Holidays" Type="Self.Holidays" Multiplicity="1" />
     <End Role="HolidayDetails" Type="Self.HolidayDetails" Multiplicity="*" />
     <ReferentialConstraint>
@@ -68,11 +69,11 @@
     <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="HolidayDetails" EntityType="Self.HolidayDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
-    <AssociationSet Name="FK_HolidayDetail_Employees" Association="Self.FK_HolidayDetail_Employees">
+    <AssociationSet Name="FK_HolidayDetails_Employees" Association="Self.FK_HolidayDetails_Employees">
       <End Role="Employees" EntitySet="Employees" />
       <End Role="HolidayDetails" EntitySet="HolidayDetails" />
     </AssociationSet>
-    <AssociationSet Name="FK_LeaveDetail_Leave" Association="Self.FK_LeaveDetail_Leave">
+    <AssociationSet Name="FK_HolidayDetails_Holidays" Association="Self.FK_HolidayDetails_Holidays">
       <End Role="Holidays" EntitySet="Holidays" />
       <End Role="HolidayDetails" EntitySet="HolidayDetails" />
     </AssociationSet>
