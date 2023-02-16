@@ -13,18 +13,18 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>@ViewBag.Title</title>
-    <link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <!--main-->
+    <link href="~/Content/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
     <!--jqueryloading-->
     <link href="~/Content/loading.css" rel="stylesheet" />
     <!--admin-->
-    <link href="~/Scripts/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/admin/vendor/fontawesome-free/css/all.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
-    <link href="~/Content/admin/css/sb-admin-2.css" rel="stylesheet">
+    <link href="~/Content/admin/css/sb-admin-2.css" rel="stylesheet" />
     <!--site-->
     <link href="~/Content/Site.css" rel="stylesheet" />
-    @RenderSection("Style" , false)
+    @RenderSection("Style", false)
 </head>
 
 <body id="page-top">
@@ -69,7 +69,7 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">@employee.EnglishName 's Leave System</h6>
+                        <h6 class="collapse-header">Holiday System</h6>
                         <a class="collapse-item" href="@Url.Action("apply","holiday")">申請</a>
                         <a class="collapse-item" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">查詢</a>
                     </div>
@@ -411,24 +411,24 @@
         </div>
     </div>
 
+    <!--main-->
     <script src="~/Scripts/vue.js"></script>
     <script src="~/Scripts/jquery-3.6.3.js"></script>
-    <script src="~/Scripts/jquery-ui.js"></script>
     <!--moment-->
     <script src="~/Scripts/moment/moment.js"></script>
     <script src="~/Scripts/moment/moment-with-locales.js"></script>
     <!--sweetalert-->
     <script src="~/Scripts/alert/sweetalert.js"></script>
-    <!--full calendar-->
-    <script src="~/Scripts/calendar/index.global.js"></script>
+   
     <!--jqueryloading-->
     <script src="~/Scripts/Jqueryloading.js"></script>
     <!--admin-->
-    <script src="~/Scripts/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/Scripts/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="~/Scripts/admin/js/sb-admin-2.min.js"></script>
+    <script src="~/Content/admin/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="~/Content/admin/vendor/jquery-easing/jquery.easing.js"></script>
+    <script src="~/Content/admin/js/sb-admin-2.js"></script>
+    <!--site-->>
     <script src="~/Scripts/site.js"></script>
 
-    @RenderSection("Script" , false)
+    @RenderSection("Script", false)
 </body>
 </html>

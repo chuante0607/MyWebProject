@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "bootstrap@4.6.2",
+      "destination": "Content/lib/bootstrap/"
+    }
+  ]
+}

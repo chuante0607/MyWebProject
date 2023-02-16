@@ -29,7 +29,7 @@
                                     <div class="form-group row">
                                         <div class="col">
                                             <input type="text"
-                                                   class="form-control form-control-user text-center text-info"
+                                                   class="form-control form-control-user text-center text-info font-weight-bold"
                                                    v-model="title"
                                                    disabled required>
                                         </div>
@@ -53,19 +53,19 @@
                                     </div>
                                     <div class="form-group row" v-show="range">
                                         <div class="col">
-                                            <input class="form-control form-control-user text-center text-info" :value="'休假總計：' + range + '天'" disabled>
+                                            <input class="form-control form-control-user text-center text-danger" :value="'休假總計：' + range + '天'" disabled>
                                             <input type="hidden" class="form-control form-control-user text-center text-danger" v-model="range" disabled required>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col" v-if="remain >= 0">
-                                            <div class="form-control form-control-user text-center text-bg-success">
+                                            <div class="form-control form-control-user text-center bg-success text-white">
                                                 {{title}}剩餘：{{remain}}天
                                             </div>
                                         </div>
                                         <div class="col" v-else-if="remain < 0">
-                                            <div class="form-control form-control-user text-center text-bg-danger">
+                                            <div class="form-control form-control-user text-center bg-danger text-white">
                                                 {{title}}天數不足({{remain}}天)
                                             </div>
                                         </div>
@@ -132,14 +132,9 @@
 </div>
 
 @section Script{
+    <script src="~/Scripts/jquery-ui.js"></script>
     <script>
-        moment.locale("zh-tw");
-        moment().format("LT"); // 11:33
-        moment().format("LTS"); // 11:33:14
-        moment().format("L"); // 2023/01/28
-
         var selectYear = `${new Date().getFullYear()} : ${new Date().getFullYear()}`;
-
         $(function () {
             //拖曳設定
             let dragSources = document.querySelectorAll('[draggable="true"]');
@@ -444,6 +439,7 @@
 
 
 @section Style{
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
     <style>
         .card:hover {
             border-color: yellow;
