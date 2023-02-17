@@ -24,8 +24,8 @@ namespace UCOMProject.Models
         public string Name { get; set; }
         public string Image { get; set; }
         public string Branch { get; set; }
-        public string Title { get; set; }
-        public int Rank { get; set; }
+        public string JobTitle { get; set; }
+        public int JobRank { get; set; }
         public string Sex { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }

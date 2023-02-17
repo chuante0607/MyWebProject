@@ -23,7 +23,7 @@ namespace UCOMProject.Methods
             {
                 Employee emp = db.Employees.Find(eid);
                 //統計今年度已用及未用假別天數
-                List<Holiday> holidays = db.Holidays.OrderBy(o => o.Id).ToList();
+                List<Holiday> holidays = db.Holidays.OrderBy(o => o.HId).ToList();
                 if (emp.Sex == "男")
                 {
                     holidays.Remove(holidays.Find(f => f.Title.xTranEnum() == HolidayType.生理假));
@@ -32,10 +32,10 @@ namespace UCOMProject.Methods
                 {
                     HolidayModel holidayModel = new HolidayModel(emp.StartDate)
                     {
-                        Id = item.Id,
+                        Id = item.HId,
                         TitleType = item.Title.xTranEnum(),
                         TotalDays = item.TotalDays,
-                        UsedDays = emp.HolidayDetails.Where(w => w.HId == item.Id && w.BeginDate.Year == DateTime.Now.Year)
+                        UsedDays = emp.HolidayDetails.Where(w => w.HId == item.HId && w.BeginDate.Year == DateTime.Now.Year)
                         .Select(s => s.UsedDays).Sum(),
                     };
                     holidayViewModels.Add(holidayModel);

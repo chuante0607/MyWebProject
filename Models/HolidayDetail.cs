@@ -23,6 +23,7 @@ namespace UCOMProject.Models
         public string Remark { get; set; }
         public string Prove { get; set; }
         public int UsedDays { get; set; }
+        public int BelongYear { get; set; }
     
         public virtual Employee Employee { get; set; }
         public virtual Holiday Holiday { get; set; }

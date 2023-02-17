@@ -20,7 +20,7 @@ namespace UCOMProject.Models
             this.HolidayDetails = new HashSet<HolidayDetail>();
         }
     
-        public int Id { get; set; }
+        public int HId { get; set; }
         public string Title { get; set; }
         public int TotalDays { get; set; }
         public bool ProveType { get; set; }
