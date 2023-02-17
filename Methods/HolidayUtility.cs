@@ -56,7 +56,6 @@ namespace UCOMProject.Methods
                 //依照休假年份群組化
                 var query = await db.HolidayDetails.Where(s => s.EId == eid).GroupBy(g => g.BelongYear, g => new { g.BeginDate, g.UsedDays }).ToListAsync();
                 List<ChartViewModel> chartViewModels = new List<ChartViewModel>();
-
                 foreach (var item in query)
                 {
                     ChartViewModel chartViewModel = new ChartViewModel();
@@ -78,6 +77,16 @@ namespace UCOMProject.Methods
                             chartViewModel.Days.Add(0);
                         }
                     }
+                    chartViewModels.Add(chartViewModel);
+                }
+                if (query.Count() < 1)
+                {
+                    ChartViewModel chartViewModel = new ChartViewModel();
+                    chartViewModel.Year = DateTime.Now.Year;
+                    chartViewModel.Days = new List<int>();
+                    //1月索引0開始 
+                    for (int month = 1; month <= 12; month++)
+                        chartViewModel.Days.Add(0);
                     chartViewModels.Add(chartViewModel);
                 }
                 return chartViewModels.OrderByDescending(o => o.Year).ToList();

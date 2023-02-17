@@ -2292,6 +2292,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Holiday\Apply.cshtml" />
+    <Content Include="Views\Shared\_LayoutSuper.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

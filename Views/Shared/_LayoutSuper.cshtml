@@ -3,6 +3,7 @@
 @{
     Employee employee = SessionEmp.CurrentEmp;
 }
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,7 +28,7 @@
     <style>
         .bg-gradient-light {
             background-color: #f8f9fc;
-            background-image: linear-gradient(180deg, #0719aa 50%, #c2cbe5 100%);
+            background-image: linear-gradient(180deg, #316aba 50%, #c2cbe5 100%);
             background-size: cover;
         }
 
@@ -46,7 +47,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
-        <div class="navbar-nav bg-gradient-light sidebar sidebar-dark accordion" id="accordionSidebar">
+        <div class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion" id="accordionSidebar">
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("index","home")">
                 <div class="sidebar-brand-icon rotate-n-15">
@@ -57,12 +58,22 @@
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            @*<li class="nav-item active">
+                    <a class="nav-link" href="@Url.Action("Index","Home")"
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>員工系統</span>
+                    </a>
+                </li>*@
+
             <!-- Divider -->
             <hr class="sidebar-divider">
             <!-- Heading -->
             <div class="sidebar-heading text-center">
                 休假系統
             </div>
+
             <!-- Nav Item - Pages Collapse Menu -->
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"

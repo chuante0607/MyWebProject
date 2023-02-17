@@ -1,3 +1,11 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@using UCOMProject.Methods
+@{
+    if (SessionEmp.CurrentEmp != null && SessionEmp.CurrentEmp.JobRank == 1)
+    {
+        Layout = "~/Views/Shared/_LayoutSuper.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
 }

@@ -8,16 +8,16 @@
     <div class="row title d-sm-flex align-items-center justify-content-evenly mb-4">
         <h1 class="h1">{{new Date().getFullYear()}}&nbsp;年</h1>
         <div @@click="handleCanUse">
-            <div v-if="canUse">
-                <a href="#" class="d-none d-sm-inline-block btn btn-sm  shadow-sm" :class="'btn-' + color[1]">
+            <template v-if="canUse">
+                <a href="#" class="d-none d-sm-inline-block btn btn-sm  shadow-sm" v-bind:class="'btn-' + color[1]">
                     <i class="fas fa-download fa-sm text-white-50"></i> 可用
                 </a>
-            </div>
-            <div v-else="canUse">
-                <a href="#" class="d-none d-sm-inline-block btn btn-sm  shadow-sm" :class="'btn-' + color[3]">
+            </template>
+            <template v-else="canUse">
+                <a href="#" class="d-none d-sm-inline-block btn btn-sm  shadow-sm" v-bind:class="'btn-' + color[3]">
                     <i class="fas fa-upload fa-sm text-white-50"></i> 已使用
                 </a>
-            </div>
+            </template>
         </div>
     </div>
     <!--假別儀表板-->
@@ -46,9 +46,6 @@
     <div class="row">
         <!--Used -->
         <div class="col">
-
-
-
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-center">{{watchYear}}年 - <span class="text-danger">已用</span>休假統計(每月) </h6>
@@ -239,6 +236,7 @@
                             }
                         }
                     });
+
                 }
             },
         });
