@@ -5,7 +5,7 @@ using System.Web;
 
 namespace UCOMProject.Models
 {
-    public class Apply
+    public class ApplyViewModel
     {
         public bool Error { get; set; }
         public string Msg { get; set; }

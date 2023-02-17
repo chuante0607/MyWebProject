@@ -157,19 +157,18 @@
     <Compile Include="Methods\AuthorizationFilter.cs" />
     <Compile Include="Methods\SessionEmp.cs" />
     <Compile Include="Methods\ShiftUtility.cs" />
-    <Compile Include="Models\Apply.cs" />
+    <Compile Include="ViewModel\ApplyViewModel.cs" />
+    <Compile Include="ViewModel\ChartViewModel.cs" />
     <Compile Include="Models\Employee.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\EmployeeModel.cs" />
     <Compile Include="Models\Holiday.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\HolidayDetail.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\HolidayDetailModel.cs" />
-    <Compile Include="Models\HolidayModel.cs" />
+    <Compile Include="ViewModel\HolidayDetailViewModel.cs" />
     <Compile Include="Models\HolidayType.cs" />
     <Compile Include="Models\Model1.Context.cs">
       <AutoGen>True</AutoGen>
@@ -187,13 +186,13 @@
       <DependentUpon>Model1.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ShiftType.cs" />
-    <Compile Include="Models\ShiftWorkModel.cs" />
+    <Compile Include="Models\ShiftWork.cs" />
     <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\HolidayViewModel.cs" />
-    <Compile Include="ViewModel\HomeViewModel.cs" />
+    <Compile Include="ViewModel\SummaryViewModel.cs" />
     <Compile Include="ViewModel\ShiftViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

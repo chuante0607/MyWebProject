@@ -9,6 +9,7 @@
 
 namespace UCOMProject.Models
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -24,8 +25,9 @@ namespace UCOMProject.Models
         public string Prove { get; set; }
         public int UsedDays { get; set; }
         public int BelongYear { get; set; }
-    
+        [JsonIgnore]
         public virtual Employee Employee { get; set; }
+        [JsonIgnore]
         public virtual Holiday Holiday { get; set; }
     }
 }

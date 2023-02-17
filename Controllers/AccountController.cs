@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using UCOMProject.Methods;
@@ -23,10 +24,11 @@ namespace UCOMProject.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(string id, string pwd)
+        public async Task<ActionResult> Login(string id, string pwd)
         {
-            EmployeeModel employee = EmployeeUtility.getEmp(id, pwd);
+            Employee employee = await EmployeeUtility.GetEmp(id, pwd);
             if (employee == null)
             {
                 ViewBag.status = JsonConvert.SerializeObject(new { logout = false, msg = "帳號密碼錯誤!" });
@@ -36,6 +38,7 @@ namespace UCOMProject.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [AuthorizationFilter]
         public ActionResult Logout()
         {
             HttpContext.Session["emp"] = null;

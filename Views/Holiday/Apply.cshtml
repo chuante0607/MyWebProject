@@ -1,4 +1,6 @@
-﻿@model UCOMProject.Models.HolidayViewModel
+﻿@model UCOMProject.Models.HolidayDetailViewModel
+
+
 @{
     ViewBag.Title = "申請";
 }
@@ -18,12 +20,12 @@
                                 <hr />
                                 <form class="user" action="~/Holiday/Apply" method="post">
                                     <div class="form-group row">
-                                        <input type="hidden" name="eid" value="@Model.employee.EId" />
+                                        <input type="hidden" name="eid" value="@Model.Employee.EId" />
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control form-control-user text-center" value="@Model.employee.EId @Model.employee.Name" disabled>
+                                            <input type="text" class="form-control form-control-user text-center" value="@Model.Employee.EId @Model.Employee.Name" disabled>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control form-control-user text-center" value="@Model.employee.Branch  @Model.employee.Shift 班" disabled>
+                                            <input type="text" class="form-control form-control-user text-center" value="@Model.Employee.Branch  @Model.Employee.Shift 班" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">

@@ -12,30 +12,30 @@ namespace UCOMProject.Methods
     public static class HolidayUtility
     {
         /// <summary>
-        /// 查詢員工可用休假的天數
+        /// 員工今年度休假天數總覽
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<HolidayModel> getCanUseHolidays(string eid)
+        public static async Task<List<HolidayViewModel>> GetHolidayInfos(string eid)
         {
-            List<HolidayModel> holidayViewModels = new List<HolidayModel>();
+            List<HolidayViewModel> holidayViewModels = new List<HolidayViewModel>();
             using (MyDBEntities db = new MyDBEntities())
             {
                 Employee emp = db.Employees.Find(eid);
-                //統計今年度已用及未用假別天數
-                List<Holiday> holidays = db.Holidays.OrderBy(o => o.HId).ToList();
+                List<Holiday> holidays = await db.Holidays.OrderBy(o => o.HId).ToListAsync();
                 if (emp.Sex == "男")
                 {
                     holidays.Remove(holidays.Find(f => f.Title.xTranEnum() == HolidayType.生理假));
                 }
                 foreach (Holiday item in holidays)
                 {
-                    HolidayModel holidayModel = new HolidayModel(emp.StartDate)
+                    HolidayViewModel holidayModel = new HolidayViewModel(emp.StartDate)
                     {
-                        Id = item.HId,
-                        TitleType = item.Title.xTranEnum(),
+                        HId = item.HId,
+                        Title = item.Title,
                         TotalDays = item.TotalDays,
-                        UsedDays = emp.HolidayDetails.Where(w => w.HId == item.HId && w.BeginDate.Year == DateTime.Now.Year)
+                        UsedDays = emp.HolidayDetails
+                        .Where(w => w.HId == item.HId && w.BelongYear == DateTime.Now.Year)
                         .Select(s => s.UsedDays).Sum(),
                     };
                     holidayViewModels.Add(holidayModel);
@@ -49,54 +49,52 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Dictionary<int, List<HolidayViewModel.Chart>> getchartDictByEmpID(string id)
+        public static async Task<List<ChartViewModel>> GetchartInfos(string eid)
         {
-            Dictionary<int, List<HolidayViewModel.Chart>> chartsDict = new Dictionary<int, List<HolidayViewModel.Chart>>();
             using (MyDBEntities db = new MyDBEntities())
             {
-                Employee emp = db.Employees.SingleOrDefault(s => s.EId == id);
-                //查詢指定年度的每月休假天數總計
-                List<HolidayViewModel.Chart> chartGroup = emp.HolidayDetails.GroupBy(g => (g.BeginDate.Year, g.BeginDate.Month), g => g.UsedDays)
-                .Select(s => new HolidayViewModel.Chart
-                {
-                    Year = s.Key.Year,
-                    Month = s.Key.Month,
-                    Days = s.Sum()
-                }).OrderBy(o => o.Year).ThenBy(t => t.Month).ToList();
+                //依照休假年份群組化
+                var query = await db.HolidayDetails.Where(s => s.EId == eid).GroupBy(g => g.BelongYear, g => new { g.BeginDate, g.UsedDays }).ToListAsync();
+                List<ChartViewModel> chartViewModels = new List<ChartViewModel>();
 
-                //整合charts所需要的資訊
-                foreach (int year in chartGroup.Select(s => s.Year).Distinct())
+                foreach (var item in query)
                 {
-                    List<HolidayViewModel.Chart> chartList = new List<HolidayViewModel.Chart>();
+                    ChartViewModel chartViewModel = new ChartViewModel();
+                    chartViewModel.Year = item.Key;
+                    chartViewModel.Days = new List<int>();
+                    //1月索引0開始 
                     for (int month = 1; month <= 12; month++)
                     {
-                        HolidayViewModel.Chart chartInfo = chartGroup.Find(x => x.Year == year && x.Month == month);
-                        if (chartInfo == null)
+                        //遍歷每個月找開始請假的月份是否有符合
+                        bool hasUsedDays = item.Any(w => w.BeginDate.Month == month);
+                        if (hasUsedDays)
                         {
-                            chartList.Add(new HolidayViewModel.Chart() { Year = year, Month = month, Days = 0 });
+                            //有休假則統計天數
+                            chartViewModel.Days.Add(item.Where(w => w.BeginDate.Month == month).Select(s => s.UsedDays).Sum());
                         }
                         else
                         {
-                            chartList.Add(chartInfo);
+                            //無休假則0天
+                            chartViewModel.Days.Add(0);
                         }
                     }
-                    chartsDict.Add(year, chartList);
+                    chartViewModels.Add(chartViewModel);
                 }
+                return chartViewModels.OrderByDescending(o => o.Year).ToList();
             }
-            return chartsDict;
         }
 
         /// <summary>
         /// 取得A.B班的當年度的工作天(做2休2)
         /// </summary>
-        public static List<List<ShiftWorkModel>> getWorkDayOfYearByMonth(int year)
+        public static List<List<ShiftWork>> getWorkDayOfYearByMonth(int year)
         {
             //to do:計算做2休2的週期
             const int workCycle = 4;
-            List<List<ShiftWorkModel>> workDayByMonth = new List<List<ShiftWorkModel>>();
+            List<List<ShiftWork>> workDayByMonth = new List<List<ShiftWork>>();
             for (int month = 1; month <= 12; month++)
             {
-                List<ShiftWorkModel> workDays = new List<ShiftWorkModel>();
+                List<ShiftWork> workDays = new List<ShiftWork>();
                 //當年度的每個月有幾天
                 int daysInMonth = DateTime.DaysInMonth(year, month);
                 int day = 1;
@@ -112,7 +110,7 @@ namespace UCOMProject.Methods
                     //round
                     if (round > (workCycle / 2))
                         type = ShiftType.B;
-                    workDays.Add(new ShiftWorkModel(type, currentDate));
+                    workDays.Add(new ShiftWork(type, currentDate));
                     day++;
                 }
                 workDayByMonth.Add(workDays);
@@ -125,7 +123,7 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
-        public static Apply saveApply(HolidayDetailModel payload)
+        public static ApplyViewModel saveApply(HolidayDetailViewModel payload)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -162,7 +160,7 @@ namespace UCOMProject.Methods
                                 applyMsg = item.EndDate.Subtract(item.BeginDate).Days == 0 ?
                                    $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請" :
                                    $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
-                                return new Apply { Error = true, Msg = applyMsg };
+                                return new ApplyViewModel { Error = true, Msg = applyMsg };
                             }
                             checkDays--;
                         }
@@ -185,7 +183,7 @@ namespace UCOMProject.Methods
                 applyMsg = $"申請已送出！\r\n" +
                            $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
                            $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
-                return new Apply { Error = false, Msg = applyMsg };
+                return new ApplyViewModel { Error = false, Msg = applyMsg };
             }
         }
 
@@ -194,7 +192,7 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
-        public static Apply saveApplyWithFiles(HolidayDetailModel payload)
+        public static ApplyViewModel saveApplyWithFiles(HolidayDetailViewModel payload)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -231,7 +229,7 @@ namespace UCOMProject.Methods
                                 applyMsg = item.EndDate.Subtract(item.BeginDate).Days == 0 ?
                                     $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請" :
                                     $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
-                                return new Apply { Error = true, Msg = applyMsg };
+                                return new ApplyViewModel { Error = true, Msg = applyMsg };
                             }
                             checkDays--;
                         }
@@ -267,7 +265,7 @@ namespace UCOMProject.Methods
                 applyMsg = $"申請已送出！\r\n" +
                            $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
                            $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
-                return new Apply { Error = false, Msg = applyMsg, FilesName = fileNames };
+                return new ApplyViewModel { Error = false, Msg = applyMsg, FilesName = fileNames };
             }
         }
 
@@ -276,15 +274,15 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<HolidayDetailModel> getHolidayDetailList(string eid)
+        public static List<HolidayDetailViewModel> getHolidayDetailList(string eid)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                List<HolidayDetailModel> holidayDetailModels = new List<HolidayDetailModel>();
+                List<HolidayDetailViewModel> holidayDetailModels = new List<HolidayDetailViewModel>();
                 var query = db.HolidayDetails.Where(w => w.EId == eid);
                 foreach (var item in query)
                 {
-                    HolidayDetailModel model = new HolidayDetailModel();
+                    HolidayDetailViewModel model = new HolidayDetailViewModel();
                     model.Id = item.Id;
                     model.Title = item.Holiday.Title;
                     model.UsedDays = item.UsedDays;

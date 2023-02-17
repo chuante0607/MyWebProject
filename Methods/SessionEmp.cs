@@ -8,11 +8,11 @@ namespace UCOMProject.Methods
 {
     public class SessionEmp
     {
-        public static EmployeeModel CurrentEmp
+        public static Employee CurrentEmp
         {
             get
             {
-                return HttpContext.Current.Session["emp"] as EmployeeModel;
+                return HttpContext.Current.Session["emp"] as Employee;
             }
         }
     }

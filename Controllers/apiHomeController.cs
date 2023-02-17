@@ -15,16 +15,16 @@ namespace UCOMProject.Controllers
     [AuthorizationFilter]
     public class apiHomeController : ApiController
     {
-        HomeViewModel vm = new HomeViewModel();
+        SummaryViewModel vm = new SummaryViewModel();
 
         // GET: api/apiHome
-        public HomeViewModel Get()
+        public SummaryViewModel Get()
         {
             return null;
         }
 
         // GET: api/apiHome/5
-        public HomeViewModel Get(string Eid)
+        public SummaryViewModel Get(string Eid)
         {
           
             return vm;
