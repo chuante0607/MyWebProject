@@ -7,9 +7,9 @@
       <Diagram DiagramId="34e7d7c345f04e1ebf666f844bee3f0a" Name="Diagram1">
         <EntityTypeShape EntityType="MyDBModel.Employee" Width="1.5" PointX="0.75" PointY="1" />
         <EntityTypeShape EntityType="MyDBModel.HolidayDetail" Width="1.5" PointX="3" PointY="1.25" />
-        <EntityTypeShape EntityType="MyDBModel.Holiday" Width="1.5" PointX="0.75" PointY="5.875" />
         <EntityTypeShape EntityType="MyDBModel.sysdiagram" Width="1.5" PointX="5.75" PointY="0.75" />
         <AssociationConnector Association="MyDBModel.FK_HolidayDetails_Employees" />
+        <EntityTypeShape EntityType="MyDBModel.Holiday" Width="1.5" PointX="0.75" PointY="5.875" />
         <AssociationConnector Association="MyDBModel.FK_HolidayDetails_Holidays1" />
       </Diagram>
     </edmx:Diagrams>

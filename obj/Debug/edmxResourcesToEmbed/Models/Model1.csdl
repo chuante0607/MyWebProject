@@ -3,12 +3,12 @@
   <EntityContainer Name="MyDBEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="Employees" EntityType="MyDBModel.Employee" />
     <EntitySet Name="HolidayDetails" EntityType="MyDBModel.HolidayDetail" />
-    <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
     <EntitySet Name="sysdiagrams" EntityType="MyDBModel.sysdiagram" />
     <AssociationSet Name="FK_HolidayDetails_Employees" Association="MyDBModel.FK_HolidayDetails_Employees">
       <End Role="Employee" EntitySet="Employees" />
       <End Role="HolidayDetail" EntitySet="HolidayDetails" />
     </AssociationSet>
+    <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
     <AssociationSet Name="FK_HolidayDetails_Holidays1" Association="MyDBModel.FK_HolidayDetails_Holidays1">
       <End Role="Holiday" EntitySet="Holidays" />
       <End Role="HolidayDetail" EntitySet="HolidayDetails" />
@@ -50,16 +50,6 @@
     <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="HolidayDetail" ToRole="Employee" />
     <NavigationProperty Name="Holiday" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="HolidayDetail" ToRole="Holiday" />
   </EntityType>
-  <EntityType Name="Holiday">
-    <Key>
-      <PropertyRef Name="HId" />
-    </Key>
-    <Property Name="HId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="TotalDays" Type="Int32" Nullable="false" />
-    <Property Name="ProveType" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="Holiday" ToRole="HolidayDetail" />
-  </EntityType>
   <EntityType Name="sysdiagram">
     <Key>
       <PropertyRef Name="diagram_id" />
@@ -82,6 +72,17 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="Holiday">
+    <Key>
+      <PropertyRef Name="HId" />
+    </Key>
+    <Property Name="HId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="TotalDays" Type="Int32" Nullable="false" />
+    <Property Name="ProveType" Type="Boolean" Nullable="false" />
+    <Property Name="AnyOne" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="Holiday" ToRole="HolidayDetail" />
+  </EntityType>
   <Association Name="FK_HolidayDetails_Holidays1">
     <End Type="MyDBModel.Holiday" Role="Holiday" Multiplicity="1" />
     <End Type="MyDBModel.HolidayDetail" Role="HolidayDetail" Multiplicity="*" />

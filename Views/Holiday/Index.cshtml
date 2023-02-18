@@ -1,83 +1,114 @@
-﻿@model UCOMProject.Models.HolidayViewModel
+﻿@model IEnumerable<UCOMProject.Models.HolidayDetailViewModel>
 
 @{
     ViewBag.Title = "休假紀錄";
+    var emp = Model.Select(s => new { s.EId, s.Name, s.Sex }).ToList();
 }
 
-<h2>休假紀錄</h2>
-<h4>@Model.employee.EId<span>@Model.employee.Name</span></h4>
-<select>
-    @foreach (var item in Model.HolidayDetails.Select(s => s.Title).Distinct())
-    {
-        <option>@item</option>
-    }
-</select>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                假別
-            </th>
-            <th>
-                開始日期
-            </th>
-            <th>
-                結束日期
-            </th>
-            <th>
-                證明
-            </th>
-            <th>
-                審核狀態
-            </th>
-            <th>
-                請假原因
-            </th>
-            <th>
-                功能
-            </th>
-        </tr>
-    </thead>
-    <tbody>
+<div id="app" class="mt-5" v-cloak>
 
-        @foreach (var item in Model.HolidayDetails)
-        {
+    <div class="form-inline d-flex justify-content-center md-form form-sm mt-0">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="搜尋 @emp[0].Name 休假紀錄"
+               aria-label="Search">
+    </div>
+
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>@Model.employee.EId</td>
-                <td>@Model.employee.Name</td>
-                <td>@item.Title</td>
-                <td>@item.BeginDate</td>
-                <td>@item.EndDate</td>
-                @if (item.Prove == null)
-                {
-                    <td>
-                        無證明
-                    </td>
-                }
-                else
-                {
-                    <td>
-                        @foreach (var img in item.Prove)
-                        {
-                            <img width="100" height="=100" src="~/Uploads/@img" alt="Alternate Text" />
-                        }
-                    </td>
-                }
-                <td><input type="checkbox" name="name" value="@item.Allow" /></td>
-                <td>@item.Remark</td>
-                <td><button>修改</button></td>
-                <td><button>刪除</button></td>
+                <th>
+                    <a class="btn btn-primary mr-4" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">班別</a>
+                </th>
+                <th>
+                    <a class="btn btn-danger dropdown-toggle mr-4" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">假別</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#" v-for="data in source" :key="data.hId">{{data.title}}</a>
+                    </div>
+                </th>
+                <th>
+                    開始日期
+                </th>
+                <th>
+                    結束日期
+                </th>
+                <th>
+                    請假天數
+                </th>
+                <th>
+                    是否提供證明
+                </th>
+                <th>
+                    請假原因
+                </th>
+                <th>
+                    審核狀態
+                </th>
+                <th>
+                    功能
+                </th>
+
             </tr>
-        }
+        </thead>
+        <tbody>
+            <tr v-for="data in source" :key="data.id">
+                <td>{{data.shift}}</td>
+                <td>{{data.title}}</td>
+                <td>{{formatMyDate(data.beginDate)}}</td>
+                <td>{{formatMyDate(data.endDate)}}</td>
+                <td>{{data.usedDays}}天</td>
+                <td>
+                    <template v-if="data.proveImg">
+                        <a href="#">是</a>
+                        @*<img :src="'/Uploads/' + path" alt="Alternate Text" v-for="path in data.proveImg" :key="data.id"/>*@
+                    </template>
+                    <template v-else>
+                        <a>否</a>
+                    </template>
+                </td>
+                <td>{{data.remark}}</td>
+                <td>
+                    <template v-if="data.allow">
+                        <div class="btn btn-success">已審核</div>
+                    </template>
+                    <template v-else="!data.allow">
+                        <div class="btn btn-outline-danger">待審核</div>
+                    </template>
 
-    </tbody>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-
-
-</table>
+</div>
 
 @section Script{
     <script>
-
+        new Vue({
+            el: '#app',
+            data: {
+                source: {},
+                selectHoliday:'',
+            },
+            mounted() {
+                this.source = @Html.Raw(ViewBag.Source);
+            },
+            methods: {
+                formatMyDate(date) {
+                    moment.locale('zh-tw');
+                    return moment(date).format('l');
+                }
+            }
+        })
     </script>
+}
+
+@section Style{
+    <style>
+        img {
+            width: 50px;
+        }
+    </style>
 }

@@ -10,58 +10,29 @@ namespace UCOMProject.Models
 {
     public class HolidayDetailViewModel
     {
-        public Employee Employee { get; set; }
-        public List<HolidayViewModel> Holidays { get; set; }
-        public List<List<ShiftWork>> WorkDayOfYearByMonth { get; set; }
         public int Id { get; set; }
-
-        [Required]
         public string EId { get; set; }
-
-        [Required]
-        public int? HId { get; set; }
-
-        [Required]
+        public string Name { get; set; }
+        public string Sex { get; set; }
+        public string Shift { get; set; }
+        public int HId { get; set; }
         public string Title { get; set; }
         public HolidayType TitleType { get; set; }
-
-        [Required]
-        [Range(0, 999)]
-        public int? UsedDays { get; set; }
-
-        [Required]
-        public DateTime? BeginDate { get; set; }
-
-        [Required]
-        public DateTime? EndDate { get; set; }
-
-        [BindNever]
-        public bool? Allow { get; set; }
-
-        [Required]
+        public DateTime BeginDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public bool Allow { get; set; }
         public string Remark { get; set; }
-
-        public List<DateTime> RangeDate
+        public int UsedDays { get; set; }
+        public string Prove { get; set; }
+        public List<string> ProveImg
         {
             get
             {
-                List<DateTime> r = new List<DateTime>();
-                if (this.RangeDateString.Count() > 0)
-                {
-                    r = this.RangeDateString.Select(s => s.ToDatetime()).ToList();
-                }
-
-                return r;
+                if (Prove != null)
+                    return Prove.Split(',').ToList();
+                else
+                    return null;
             }
         }
-        [Required]
-        public List<string> RangeDateString { get; set; } = new List<string>();
-
-        /// <summary>
-        /// 接收多筆檔案
-        /// </summary>
-        public IEnumerable<HttpPostedFileBase> Files { get; set; }
-
-        public List<string> Prove { get; set; }
     }
 }

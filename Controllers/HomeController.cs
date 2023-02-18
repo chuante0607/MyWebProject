@@ -21,7 +21,14 @@ namespace UCOMProject.Controllers
             vm.Employee = SessionEmp.CurrentEmp;
             vm.Holidays = await HolidayUtility.GetHolidayInfos(vm.Employee.EId);
             vm.ChartInfos = await HolidayUtility.GetchartInfos(vm.Employee.EId);
+            try
+            {
             ViewBag.Source = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
+            }catch(ObjectDisposedException ex)
+            {
+               string msg =  ex.Message;
+            }
             return View();
         }
     }

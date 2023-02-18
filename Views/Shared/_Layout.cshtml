@@ -14,7 +14,10 @@
     <meta name="author" content="">
     <title>@ViewBag.Title</title>
     <!--main-->
-    <link href="~/Content/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    @*<link href="~/Content/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />*@
+    <link href="~/Content/MDB-Free_4.20.0/css/mdb.css" rel="stylesheet" />
+    @*<link href="~/Content/MDB-Free_4.20.0/css/bootstrap.css" rel="stylesheet" />*@
+
     <!--jqueryloading-->
     <link href="~/Content/loading.css" rel="stylesheet" />
     <!--admin-->
@@ -24,6 +27,8 @@
     <link href="~/Content/admin/css/sb-admin-2.css" rel="stylesheet" />
     <!--site-->
     <link href="~/Content/Site.css" rel="stylesheet" />
+
+
     <style>
         .bg-gradient-light {
             background-color: #f8f9fc;
@@ -36,7 +41,6 @@
             background-image: linear-gradient(180deg, #123456 50%, #373840 100%);
             background-size: cover;
         }
-
     </style>
     @RenderSection("Style", false)
 </head>
@@ -172,7 +176,7 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    @*<div class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                    aria-label="Search" aria-describedby="basic-addon2">
@@ -182,7 +186,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div>*@
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -417,12 +421,14 @@
     <!--main-->
     <script src="~/Scripts/vue.js"></script>
     <script src="~/Scripts/jquery-3.6.3.js"></script>
+    <script src="~/Content/MDB-Free_4.20.0/js/mdb.js"></script>
+    <script src="~/Content/MDB-Free_4.20.0/js/popper.js"></script>
     <!--moment-->
     <script src="~/Scripts/moment/moment.js"></script>
     <script src="~/Scripts/moment/moment-with-locales.js"></script>
     <!--sweetalert-->
     <script src="~/Scripts/alert/sweetalert.js"></script>
-   
+
     <!--jqueryloading-->
     <script src="~/Scripts/Jqueryloading.js"></script>
     <!--admin-->

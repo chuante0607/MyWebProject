@@ -1,5 +1,4 @@
-﻿@model UCOMProject.Models.HolidayDetailViewModel
-
+﻿@model UCOMProject.Models.ApplyViewModel
 
 @{
     ViewBag.Title = "申請";
@@ -81,7 +80,7 @@
                                                    required>
                                         </div>
                                     </div>
-                                    <div class="form-group row" v-show="title === '病假'">
+                                    <div class="form-group row" v-show="proveType">
                                         <div class="col">
                                             <div class="custom-file">
                                                 <input type="file" class="custom-file-input" id="customFile" @@change="handleFile" multiple>
@@ -110,8 +109,9 @@
             <hr />
             <!--假別儀錶板-->
             <div class="row" id="source_container">
-                <div :id="'h' + holiday.id" class="col-xl-6 mb-3 ad" draggable="true" v-for="holiday in holidays" :key="holiday.id">
-                    <div class="card shadow h-100 py-2" :class="'border-left-' + holiday.color">
+                <div :id="'h' + holiday.hId" class="col-xl-6 mb-3 ad" draggable="true" v-for="holiday in holidays" :key="holiday.id">
+                    <input type="hidden" :value="holiday.proveType" />
+                    <div class="card shadow h-100 py-2" v-bind:class="'border-left-' + holiday.color">
                         <div class="card-body border-2">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
@@ -208,7 +208,17 @@
                 activeObj.classList.remove('mb-3');
                 e.target.appendChild(document.querySelector(`#${id}`));
                 let title = document.querySelector(`#${id} h4`).innerText;
+                let proveType = document.querySelector(`#${id} input`).value;
                 vm.title = title;
+                switch (proveType) {
+                    case 'true':
+                        vm.proveType = true;
+                        break
+                    case 'false':
+                        vm.proveType = false;
+                        break
+                    default:
+                }
             }
             // 元素預設行為是不能被放置拖曳物的，因此在拖曳對象出現在放置目標上時，取消預設行為，讓放置目標可以被放置
             function mycancelDefault(e) {
@@ -269,6 +279,7 @@
                 workDayOfYearByMonth: {},//日期選擇器初始資料
                 hId:'',
                 remark: '',
+                proveType:'',
                 files: null,
                 fileName: '上傳證明',
                 color,
@@ -322,7 +333,7 @@
                     let holidayInfo = this.holidays.filter(item => {
                         return item.title === this.title;
                     })[0];
-                    this.hId = holidayInfo.id;
+                    this.hId = holidayInfo.hId;
                     return holidayInfo.canUseDays - this.range;
                 },
             },
@@ -371,6 +382,8 @@
                         formData.append('EndDate', moment(this.endDate).format("l"));
                         formData.append('UsedDays', this.range);
                         formData.append('Remark', this.remark);
+                        formData.append('ProveType', this.proveType);
+
                         if (this.rangeDate) {
                             for (let i = 0; i < this.rangeDate.length; i++) {
                                 formData.append(`RangeDateString[${i}]`, this.rangeDate[i]);
@@ -424,7 +437,7 @@
                         wAlert("請填寫休假事由")
                         return { NG: true, msg: "請填寫休假事由" };
                     }
-                    if (this.title === '病假') {
+                    if (this.proveType === true) {
                         if (this.files) return { NG: false }
                         else return { NG: true, msg: '請附加休假證明' };
                     }

@@ -22,23 +22,25 @@ namespace UCOMProject.Methods
             using (MyDBEntities db = new MyDBEntities())
             {
                 Employee emp = db.Employees.Find(eid);
-                List<Holiday> holidays = await db.Holidays.OrderBy(o => o.HId).ToListAsync();
+                List<Holiday> holidays = null;
+
                 if (emp.Sex == "男")
-                {
-                    holidays.Remove(holidays.Find(f => f.Title.xTranEnum() == HolidayType.生理假));
-                }
+                    holidays = await db.Holidays.Where(w => w.AnyOne).OrderBy(o => o.HId).ToListAsync();
+                else
+                    holidays = await db.Holidays.OrderBy(o => o.HId).ToListAsync();
                 foreach (Holiday item in holidays)
                 {
-                    HolidayViewModel holidayModel = new HolidayViewModel(emp.StartDate)
+                    HolidayViewModel holiday = new HolidayViewModel(emp.StartDate)
                     {
                         HId = item.HId,
                         Title = item.Title,
+                        ProveType = item.ProveType,
                         TotalDays = item.TotalDays,
                         UsedDays = emp.HolidayDetails
                         .Where(w => w.HId == item.HId && w.BelongYear == DateTime.Now.Year)
                         .Select(s => s.UsedDays).Sum(),
                     };
-                    holidayViewModels.Add(holidayModel);
+                    holidayViewModels.Add(holiday);
                 }
                 return holidayViewModels;
             }
@@ -128,11 +130,11 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
-        /// 無休假證明申請
+        /// 休假申請
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
-        public static ApplyViewModel saveApply(HolidayDetailViewModel payload)
+        public static ApplyResult saveApply(ApplyViewModel payload)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -169,104 +171,38 @@ namespace UCOMProject.Methods
                                 applyMsg = item.EndDate.Subtract(item.BeginDate).Days == 0 ?
                                    $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請" :
                                    $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
-                                return new ApplyViewModel { Error = true, Msg = applyMsg };
-                            }
-                            checkDays--;
-                        }
-                    }
-                }
-                //判斷結束無休假紀錄，準備將資料新增到資料庫
-                HolidayDetail holidayDetail = new HolidayDetail()
-                {
-                    EId = payload.EId,
-                    HId = (int)(payload.HId),
-                    BeginDate = (DateTime)payload.BeginDate,
-                    EndDate = (DateTime)payload.EndDate,
-                    UsedDays = (int)payload.UsedDays,
-                    Allow = false,
-                    Remark = payload.Remark,
-                };
-                db.HolidayDetails.Add(holidayDetail);
-                db.SaveChanges();
-
-                applyMsg = $"申請已送出！\r\n" +
-                           $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
-                           $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
-                return new ApplyViewModel { Error = false, Msg = applyMsg };
-            }
-        }
-
-        /// <summary>
-        /// 有休假證明申請
-        /// </summary>
-        /// <param name="payload"></param>
-        /// <returns></returns>
-        public static ApplyViewModel saveApplyWithFiles(HolidayDetailViewModel payload)
-        {
-            using (MyDBEntities db = new MyDBEntities())
-            {
-                string applyMsg = string.Empty;
-                var query = db.HolidayDetails
-                    .Where(w => w.EId == payload.EId)
-                    .OrderBy(o => o.BeginDate)
-                    .Select(s => new { BeginDate = s.BeginDate, EndDate = s.EndDate });
-
-                //取得payloadMonths裡的休假月份 , 用來快速索引query的休假月份是否相符
-                List<int> payloadMonths = payload.RangeDate.Select(s => s.Month).OrderBy(o => o).Distinct().ToList();
-
-                foreach (var item in query)
-                {
-                    //判斷該員工休假detail之中有沒有與申請休假的月份相同 ,Any查到相符返回true , 進一步查詢是否有相符的日期
-                    if (payloadMonths.Any(month => month == item.BeginDate.Month || month == item.EndDate.Month))
-                    {
-                        //checkDays計算detail結束日期-開始日期的總天數
-                        int checkDays = item.EndDate.Subtract(item.BeginDate).Days;
-                        while (checkDays >= 0)
-                        {
-                            //請假範圍 >= 0天(包括當天) 就從結束的日期 - 要判斷的總天數開始判斷
-                            DateTime checkDate = item.EndDate.AddDays(checkDays * -1);
-
-                            //payload送過來的RangeDate含有員工選擇休假期間的所有日期集合,拿來判斷是否跟資料庫的日期是否重複
-                            var result = payload.RangeDate
-                                   .Any(date =>
-                                   (new DateTime(date.Year, date.Month, date.Day)).Ticks
-                                   .Equals(new DateTime(checkDate.Year, checkDate.Month, checkDate.Day).Ticks));
-
-                            if (result)  //如果申請的日期已有休假紀錄 
-                            {
-                                //休假紀錄只有一天,就返回該日期 , 超過一天,就返回開始日期~結束日期
-                                applyMsg = item.EndDate.Subtract(item.BeginDate).Days == 0 ?
-                                    $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請" :
-                                    $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
-                                return new ApplyViewModel { Error = true, Msg = applyMsg };
+                                return new ApplyResult { Error = true, Msg = applyMsg };
                             }
                             checkDays--;
                         }
                     }
                 }
                 //設定檔案檔名
-                string fileStr = "";
-                var file = payload.Files.Select(s => s.FileName);
                 List<string> fileNames = new List<string>();
-                foreach (var item in file.Select((value, index) => new { value, index }))
+                if (payload.Files != null)
                 {
-                    string format = $"{DateTime.Now.Ticks}{item.value}";
-                    fileNames.Add(format);
-                    fileStr += format;
-                    if (item.index < file.Count() - 1)
-                        fileStr += ",";
+                    string fileStr = "";
+                    var file = payload.Files.Select(s => s.FileName);
+                    foreach (var item in file.Select((value, index) => new { value, index }))
+                    {
+                        string format = $"{DateTime.Now.Ticks}{item.value}";
+                        fileNames.Add(format);
+                        fileStr += format;
+                        if (item.index < file.Count() - 1)
+                            fileStr += ",";
+                    }
                 }
                 //判斷結束無休假紀錄，準備將資料新增到資料庫
                 HolidayDetail holidayDetail = new HolidayDetail()
                 {
                     EId = payload.EId,
-                    HId = (int)(payload.HId),
-                    BeginDate = (DateTime)payload.BeginDate,
-                    EndDate = (DateTime)payload.EndDate,
-                    UsedDays = (int)payload.UsedDays,
+                    HId = payload.HId,
+                    BeginDate = payload.BeginDate,
+                    EndDate = payload.EndDate,
+                    BelongYear = payload.BeginDate.Year,
+                    UsedDays = payload.UsedDays,
                     Allow = false,
                     Remark = payload.Remark,
-                    Prove = fileStr,
                 };
                 db.HolidayDetails.Add(holidayDetail);
                 db.SaveChanges();
@@ -274,7 +210,7 @@ namespace UCOMProject.Methods
                 applyMsg = $"申請已送出！\r\n" +
                            $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
                            $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
-                return new ApplyViewModel { Error = false, Msg = applyMsg, FilesName = fileNames };
+                return new ApplyResult { Error = false, Msg = applyMsg, FilesName = fileNames };
             }
         }
 
@@ -283,29 +219,32 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<HolidayDetailViewModel> getHolidayDetailList(string eid)
+        public static async Task<List<HolidayDetailViewModel>> getHolidayDetailList(string eid)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                List<HolidayDetailViewModel> holidayDetailModels = new List<HolidayDetailViewModel>();
-                var query = db.HolidayDetails.Where(w => w.EId == eid);
+                List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
+                var query = await db.HolidayDetails.Where(w => w.EId == eid).OrderBy(o => o.BeginDate).ToListAsync();
+                var emp = await db.Employees.FindAsync(eid);
                 foreach (var item in query)
                 {
-                    HolidayDetailViewModel model = new HolidayDetailViewModel();
-                    model.Id = item.Id;
-                    model.Title = item.Holiday.Title;
-                    model.UsedDays = item.UsedDays;
-                    model.BeginDate = item.BeginDate;
-                    model.EndDate = item.EndDate;
-                    model.Allow = item.Allow;
-                    model.Remark = item.Remark;
-                    if (item.Prove != null)
-                    {
-                        model.Prove = item.Prove.Split(',').ToList();
-                    }
-                    holidayDetailModels.Add(model);
+                    HolidayDetailViewModel vm = new HolidayDetailViewModel();
+                    vm.EId = emp.EId;
+                    vm.Name = emp.Name;
+                    vm.Sex = emp.Sex;
+                    vm.Shift = emp.Shift;
+                    vm.Id = item.Id;
+                    vm.HId = item.HId;
+                    vm.Title = item.Holiday.Title;
+                    vm.UsedDays = item.UsedDays;
+                    vm.BeginDate = item.BeginDate;
+                    vm.EndDate = item.EndDate;
+                    vm.Allow = item.Allow;
+                    vm.Remark = item.Remark;
+                    vm.Prove = item.Prove;
+                    vmList.Add(vm);
                 }
-                return holidayDetailModels;
+                return vmList;
             }
         }
     }

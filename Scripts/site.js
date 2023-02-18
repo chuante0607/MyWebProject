@@ -1,4 +1,4 @@
-﻿var color = ['primary', 'success', 'warning', 'danger', 'info', 'secondary'];
+﻿var color = ['primary', 'success', 'warning', 'danger', 'info', 'secondary', 'primary', 'success', 'warning', 'danger', 'info', 'secondary'];
 
 function wAlert(title) {
     Swal.fire({

@@ -41,6 +41,7 @@
     <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="TotalDays" Type="int" Nullable="false" />
     <Property Name="ProveType" Type="bit" Nullable="false" />
+    <Property Name="AnyOne" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="sysdiagrams">
     <Key>
