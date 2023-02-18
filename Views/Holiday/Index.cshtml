@@ -2,113 +2,209 @@
 
 @{
     ViewBag.Title = "休假紀錄";
-    var emp = Model.Select(s => new { s.EId, s.Name, s.Sex }).ToList();
+    var emp = Model.Select(s => new { s.EId, s.Name, s.Sex, s.Shift }).ToList();
 }
 
 <div id="app" class="mt-5" v-cloak>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <div class="row form-inline d-flex justify-content-center md-form form-sm mt-0">
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="搜尋休假紀錄"
+                   aria-label="Search">
+        </div>
+        <ul class="nav nav-pills mt-5 mb-2" id="pills-tab" role="tablist" style="justify-content:center">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active"
+                        id="pills-home-tab"
+                        data-toggle="pill"
+                        data-target="#pills-home"
+                        type="button"
+                        role="tab"
+                        aria-controls="pills-home"
+                        aria-selected="true">
+                    <span class="badge badge-danger badge-counter">{{waitAllowCount}}+</span>
+                    待審核
+                </button>
+            </li>
 
-    <div class="form-inline d-flex justify-content-center md-form form-sm mt-0">
-        <i class="fas fa-search" aria-hidden="true"></i>
-        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="搜尋 @emp[0].Name 休假紀錄"
-               aria-label="Search">
-    </div>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        id="pills-profile-tab"
+                        data-toggle="pill"
+                        data-target="#pills-profile"
+                        type="button" role="tab"
+                        aria-controls="pills-profile"
+                        aria-selected="false">
+                    已審核
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
+            </li>
+        </ul>
 
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    <a class="btn btn-primary mr-4" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false">班別</a>
-                </th>
-                <th>
-                    <a class="btn btn-danger dropdown-toggle mr-4" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false">假別</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#" v-for="data in source" :key="data.hId">{{data.title}}</a>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" style="position:relative">
+                <div class="funBtn">
+                    <div class="btn btn-sm btn-danger" v-show="!checkedAll">刪除</div>
+                    <div class="btn btn-sm btn-danger" v-show="checkedAll">全部刪除</div>
+                </div>
+                <!-- DataTales Example -->
+                <div class="row card shadow">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="dataTable1" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="custom-control custom-checkbox text-center">
+                                                <input type="checkbox" class="custom-control-input" id="checkAllTop" v-model="checkedAll">
+                                                <label class="custom-control-label" for="checkAllTop">全選</label>
+                                            </div>
+                                        </th>
+                                        <th>班別</th>
+                                        <th>假別</th>
+                                        <th>開始日期</th>
+                                        <th>結束日期</th>
+                                        <th>使用天數</th>
+                                        <th>事由</th>
+                                        <th>證明</th>
+                                        <th>編輯</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="data in source" :key="data.id" v-if="!data.allow" :class="{'checkedColor':data.checked}">
+                                        <td>
+                                            <div class="custom-control custom-checkbox text-center">
+                                                <input type="checkbox" class="custom-control-input" :id="'defaultUnchecked' + data.id" v-model="data.checked">
+                                                <label class="custom-control-label" :for="'defaultUnchecked' + data.id"></label>
+                                            </div>
+                                        </td>
+                                        <td>@emp[0].Shift</td>
+                                        <td>{{data.title}}</td>
+                                        <td>{{formatMyDate(data.beginDate)}}</td>
+                                        <td>{{formatMyDate(data.endDate)}}</td>
+                                        <td>{{data.usedDays}}天</td>
+                                        <td>{{data.remark}}</td>
+                                        <td v-if="data.prove"><a href="#">證明</a></td>
+                                        <td v-else>無需證明</td>
+                                        <td><div class="btn btn-sm btn-outline-primary">編輯</div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </th>
-                <th>
-                    開始日期
-                </th>
-                <th>
-                    結束日期
-                </th>
-                <th>
-                    請假天數
-                </th>
-                <th>
-                    是否提供證明
-                </th>
-                <th>
-                    請假原因
-                </th>
-                <th>
-                    審核狀態
-                </th>
-                <th>
-                    功能
-                </th>
+                </div>
+            </div>
+            <div class="tab-pane fade " id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <!-- DataTales Example -->
+                <div class="row card shadow">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>班別</th>
+                                        <th>假別</th>
+                                        <th>開始日期</th>
+                                        <th>結束日期</th>
+                                        <th>使用天數</th>
+                                        <th>事由</th>
+                                        <th>證明</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="data in source" :key="data.id" v-if="data.allow">
+                                        <td>@emp[0].Shift</td>
+                                        <td>{{data.title}}</td>
+                                        <td>{{formatMyDate(data.beginDate)}}</td>
+                                        <td>{{formatMyDate(data.endDate)}}</td>
+                                        <td>{{data.usedDays}}天</td>
+                                        <td>{{data.remark}}</td>
+                                        <td v-if="data.prove"><a href="#">證明</a></td>
+                                        <td v-else>無需證明</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
 
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="data in source" :key="data.id">
-                <td>{{data.shift}}</td>
-                <td>{{data.title}}</td>
-                <td>{{formatMyDate(data.beginDate)}}</td>
-                <td>{{formatMyDate(data.endDate)}}</td>
-                <td>{{data.usedDays}}天</td>
-                <td>
-                    <template v-if="data.proveImg">
-                        <a href="#">是</a>
-                        @*<img :src="'/Uploads/' + path" alt="Alternate Text" v-for="path in data.proveImg" :key="data.id"/>*@
-                    </template>
-                    <template v-else>
-                        <a>否</a>
-                    </template>
-                </td>
-                <td>{{data.remark}}</td>
-                <td>
-                    <template v-if="data.allow">
-                        <div class="btn btn-success">已審核</div>
-                    </template>
-                    <template v-else="!data.allow">
-                        <div class="btn btn-outline-danger">待審核</div>
-                    </template>
 
-                </td>
-            </tr>
-        </tbody>
-    </table>
 
 </div>
 
 @section Script{
+    <!-- Page level plugins -->
+    <script src="~/Content/admin/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="~/Content/admin/vendor/datatables/dataTables.bootstrap4.js"></script>
+
     <script>
+        $(() => {
+            // Call the dataTables jQuery plugin
+            $(document).ready(function () {
+                $('#dataTable1').DataTable({
+                    "searching": false,
+                });
+                $('#dataTable2').DataTable({
+                    "searching": false,
+                });
+            });
+        })
+
         new Vue({
             el: '#app',
             data: {
                 source: {},
-                selectHoliday:'',
+                checkedAll: false,
+                waitAllowCount:0,
             },
             mounted() {
                 this.source = @Html.Raw(ViewBag.Source);
+                this.source.forEach(item => {
+                    this.$set(item, 'checked', false);
+                    if (!item.allow) this.waitAllowCount++;
+                })
             },
             methods: {
                 formatMyDate(date) {
                     moment.locale('zh-tw');
                     return moment(date).format('l');
-                }
+                },
+            },
+            watch: {
+                checkedAll(value) {
+                    this.source.forEach(item => {
+                        item.checked = value;
+                    })
+                },
             }
         })
     </script>
 }
 
 @section Style{
+    <link href="~/Content/admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" />
     <style>
         img {
             width: 50px;
+        }
+
+        .checkedColor {
+            background-color: rgba(100, 255, 50, 0.1);
+        }
+
+        .funBtn {
+            position: absolute;
+            left: 200px;
+            top: 5%;
+            z-index: 10;
         }
     </style>
 }

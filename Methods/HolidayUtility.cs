@@ -224,7 +224,7 @@ namespace UCOMProject.Methods
             using (MyDBEntities db = new MyDBEntities())
             {
                 List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
-                var query = await db.HolidayDetails.Where(w => w.EId == eid).OrderBy(o => o.BeginDate).ToListAsync();
+                var query = await db.HolidayDetails.Where(w => w.EId == eid).OrderByDescending(o => o.BeginDate).ToListAsync();
                 var emp = await db.Employees.FindAsync(eid);
                 foreach (var item in query)
                 {
