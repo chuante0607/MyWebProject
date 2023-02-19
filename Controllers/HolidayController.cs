@@ -82,6 +82,7 @@ namespace UCOMProject.Controllers
             ViewBag.Source = JsonConvert.SerializeObject(table, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(table);
         }
+
         [HttpPost]
         public ActionResult Delete(List<int> id, string eid)
         {
