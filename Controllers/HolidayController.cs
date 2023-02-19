@@ -23,7 +23,7 @@ namespace UCOMProject.Controllers
             ApplyViewModel vm = new ApplyViewModel();
             vm.Employee = SessionEmp.CurrentEmp;
             vm.Holidays = await HolidayUtility.GetHolidayInfos(vm.Employee.EId);
-            vm.WorkDayOfYearByMonth = HolidayUtility.getWorkDayOfYearByMonth(DateTime.Now.Year);
+            vm.WorkDayOfYearByMonth = HolidayUtility.GetWorkDayOfYearByMonth(DateTime.Now.Year);
             ViewBag.vm = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(vm);
         }
@@ -46,7 +46,7 @@ namespace UCOMProject.Controllers
                     if (size > 4)
                         return Json(new ApplyResult { Error = true, Msg = "檔案大小不能超過4MB" });
                     //是否申請成功(true成功 , false失敗)
-                    ApplyResult result = HolidayUtility.saveApply(payload);
+                    ApplyResult result = HolidayUtility.SaveApply(payload);
                     if (!result.Error)
                     {
                         //將檔案儲存
@@ -59,7 +59,7 @@ namespace UCOMProject.Controllers
                     return Json(result);
                 }
                 //不需要證明
-                ApplyResult result1 = HolidayUtility.saveApply(payload);
+                ApplyResult result1 = HolidayUtility.SaveApply(payload);
                 return Json(result1);
             }
             else
@@ -69,11 +69,27 @@ namespace UCOMProject.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<ActionResult> Index(string eid)
         {
-            List<HolidayDetailViewModel> vm = await HolidayUtility.getHolidayDetailList(eid);
-            ViewBag.Source = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-            return View(vm);
+            HolidayDetailTableViewModel table = new HolidayDetailTableViewModel();
+            table.Employee = await EmployeeUtility.GetEmp(eid);
+            table.Details = await HolidayUtility.GetHolidayDetailList(eid);
+            if (SessionEmp.CurrentEmp.JobRank == 1)
+            {
+                table.OtherEmps = await EmployeeUtility.GetEmpsByShift(SessionEmp.CurrentEmp.Shift.xShiftTranEnum());
+            }
+            ViewBag.Source = JsonConvert.SerializeObject(table, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return View(table);
+        }
+        [HttpPost]
+        public ActionResult Delete(List<int> id, string eid)
+        {
+            foreach (int item in id)
+            {
+                HolidayUtility.DelHolidayDetail(item, eid);
+            }
+            return View();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace UCOMProject.Models
         }
         public int HId { get; set; }
         public string Title { get; set; }
-        public HolidayType TitleType { get { return Title.xTranEnum(); } }
+        public HolidayType TitleType { get { return Title.xHolidayTranEnum(); } }
         public bool ProveType { get; set; }
         public int UsedDays { get; set; }
         public int TotalDays

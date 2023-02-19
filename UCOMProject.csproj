@@ -157,8 +157,8 @@
     <Compile Include="Methods\AuthorizationFilter.cs" />
     <Compile Include="Methods\SessionEmp.cs" />
     <Compile Include="Methods\ShiftUtility.cs" />
-    <Compile Include="ViewModel\ApplyViewModel.cs" />
-    <Compile Include="ViewModel\ChartViewModel.cs" />
+    <Compile Include="ViewModels\ApplyViewModel.cs" />
+    <Compile Include="ViewModels\ChartViewModel.cs" />
     <Compile Include="Models\Employee.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -168,7 +168,9 @@
     <Compile Include="Models\HolidayDetail.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\HolidayDetailViewModel.cs" />
+    <Compile Include="ViewModels\EmployeeViewModel.cs" />
+    <Compile Include="ViewModels\HolidayDetailTableViewModel.cs" />
+    <Compile Include="ViewModels\HolidayDetailViewModel.cs" />
     <Compile Include="Models\HolidayType.cs" />
     <Compile Include="Models\Model1.Context.cs">
       <AutoGen>True</AutoGen>
@@ -191,9 +193,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModel\HolidayViewModel.cs" />
-    <Compile Include="ViewModel\SummaryViewModel.cs" />
-    <Compile Include="ViewModel\ShiftViewModel.cs" />
+    <Compile Include="ViewModels\HolidayViewModel.cs" />
+    <Compile Include="ViewModels\SummaryViewModel.cs" />
+    <Compile Include="ViewModels\ShiftViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\admin\css\sb-admin-2.css" />
@@ -2010,6 +2012,7 @@
     <Content Include="images\ui-icons_ffffff_256x240.png" />
     <Content Include="img\123.jpg" />
     <Content Include="img\321.png" />
+    <Content Include="img\lin.jpg" />
     <Content Include="img\office.jpg" />
     <Content Include="img\undraw_posting_photo.svg" />
     <Content Include="img\undraw_profile.svg" />
@@ -2423,6 +2426,22 @@
     <Content Include="Scripts\moment\moment.js" />
     <Content Include="Scripts\site.js" />
     <Content Include="Scripts\vue.js" />
+    <Content Include="Uploads\638121578106107930000001_1582099684.jpg" />
+    <Content Include="Uploads\638121578106107930000001_1668416625.jpg" />
+    <Content Include="Uploads\638123183467909339螢幕擷取畫面_20230119_104519.png" />
+    <Content Include="Uploads\638123183467919393螢幕擷取畫面_20230119_104525.png" />
+    <Content Include="Uploads\638123190689479027螢幕擷取畫面_20230119_104519.png" />
+    <Content Include="Uploads\638123190702602632螢幕擷取畫面_20230119_104525.png" />
+    <Content Include="Uploads\638124300398157612螢幕擷取畫面_20230205_091411.png" />
+    <Content Include="Uploads\638124301368563552螢幕擷取畫面_20230101_082016.png" />
+    <Content Include="Uploads\638124302119753789螢幕擷取畫面_20230119_104525.png" />
+    <Content Include="Uploads\638124302119753789螢幕擷取畫面_20230201_030000.png" />
+    <Content Include="Uploads\638124302119753789螢幕擷取畫面_20230201_030028.png" />
+    <Content Include="Uploads\638124303518348656螢幕擷取畫面_20230201_030000.png" />
+    <Content Include="Uploads\638124303574192234螢幕擷取畫面_20230201_030028.png" />
+    <Content Include="Uploads\638124305431602908lin.jpg" />
+    <Content Include="Uploads\638124306306974857螢幕擷取畫面 2023-02-13 234405.png" />
+    <Content Include="Uploads\638124310870082074螢幕擷取畫面_20230201_030028.png" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -2439,10 +2458,10 @@
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Holiday\Apply.cshtml" />
     <Content Include="Views\Shared\_LayoutSuper.cshtml" />
+    <Content Include="Views\Holiday\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

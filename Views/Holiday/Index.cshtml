@@ -1,11 +1,11 @@
-﻿@model IEnumerable<UCOMProject.Models.HolidayDetailViewModel>
+﻿@model UCOMProject.Models.HolidayDetailTableViewModel
 
 @{
     ViewBag.Title = "休假紀錄";
-    var emp = Model.Select(s => new { s.EId, s.Name, s.Sex, s.Shift }).ToList();
 }
 
 <div id="app" class="mt-5" v-cloak>
+
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <div class="row form-inline d-flex justify-content-center md-form form-sm mt-0">
@@ -13,8 +13,19 @@
             <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="搜尋休假紀錄"
                    aria-label="Search">
         </div>
+        @if (Model.Employee.JobRank == 1)
+        {
+            <form action="@Url.Action("index")" method="get">
+                <select name="eid" onchange="submit()">
+                    @foreach (var emp in Model.OtherEmps)
+                    {
+                        <option value="@emp.EId">@emp.Name</option>
+                    }
+                </select>
+            </form>
+        }
         <ul class="nav nav-pills mt-5 mb-2" id="pills-tab" role="tablist" style="justify-content:center">
-            <li class="nav-item" role="presentation">
+            <li class="nav-item border-bottom-warning funPos" role="presentation">
                 <button class="nav-link active"
                         id="pills-home-tab"
                         data-toggle="pill"
@@ -23,32 +34,46 @@
                         role="tab"
                         aria-controls="pills-home"
                         aria-selected="true">
-                    <span class="badge badge-danger badge-counter">{{waitAllowCount}}+</span>
                     待審核
                 </button>
+                <span class="badge badge-warning badge-counter fun funWait" v-show="allowWait.length">{{allowWait.length}}</span>
             </li>
-
-            <li class="nav-item" role="presentation">
+            <li class="nav-item border-bottom-success" role="presentation">
                 <button class="nav-link"
                         id="pills-profile-tab"
                         data-toggle="pill"
                         data-target="#pills-profile"
-                        type="button" role="tab"
+                        type="button"
+                        role="tab"
                         aria-controls="pills-profile"
                         aria-selected="false">
                     已審核
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
+            <li class="nav-item border-bottom-danger funPos" role="presentation">
+                <button class="nav-link"
+                        id="pills-contact-tab"
+                        data-toggle="pill"
+                        data-target="#pills-contact"
+                        type="button"
+                        role="tab"
+                        aria-controls="pills-contact"
+                        aria-selected="false">
+                    退回
+                </button>
+                <span class="badge badge-danger badge-counter fun funBack">5</span>
             </li>
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" style="position:relative">
                 <div class="funBtn">
-                    <div class="btn btn-sm btn-danger" v-show="!checkedAll">刪除</div>
-                    <div class="btn btn-sm btn-danger" v-show="checkedAll">全部刪除</div>
+                    <template v-if="isAll">
+                        <div class="btn btn-sm btn-danger" v-show="isAll" @@click="delChecked">全部刪除</div>
+                    </template>
+                    <template v-else>
+                        <div class="btn btn-sm btn-danger" v-show="isChecked" @@click="delChecked">已選擇({{isChecked}}筆)刪除</div>
+                    </template>
                 </div>
                 <!-- DataTales Example -->
                 <div class="row card shadow">
@@ -57,12 +82,13 @@
                             <table class="table table-bordered table-hover" id="dataTable1" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>
+                                        <th v-show="allowWait.length">
                                             <div class="custom-control custom-checkbox text-center">
-                                                <input type="checkbox" class="custom-control-input" id="checkAllTop" v-model="checkedAll">
+                                                <input type="checkbox" class="custom-control-input" id="checkAllTop" v-model="isAll">
                                                 <label class="custom-control-label" for="checkAllTop">全選</label>
                                             </div>
                                         </th>
+                                        <th>休假單號</th>
                                         <th>班別</th>
                                         <th>假別</th>
                                         <th>開始日期</th>
@@ -74,17 +100,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="data in source" :key="data.id" v-if="!data.allow" :class="{'checkedColor':data.checked}">
-                                        <td>
+                                    <tr v-for="data in allowWait" :key="data.id" :class="{'checkedColor':data.checked}">
+                                        <td v-show="allowWait.length">
                                             <div class="custom-control custom-checkbox text-center">
                                                 <input type="checkbox" class="custom-control-input" :id="'defaultUnchecked' + data.id" v-model="data.checked">
                                                 <label class="custom-control-label" :for="'defaultUnchecked' + data.id"></label>
                                             </div>
                                         </td>
-                                        <td>@emp[0].Shift</td>
+                                        <td>{{data.id}}</td>
+                                        <td>{{data.shift}}</td>
                                         <td>{{data.title}}</td>
-                                        <td>{{formatMyDate(data.beginDate)}}</td>
-                                        <td>{{formatMyDate(data.endDate)}}</td>
+                                        <td>{{formatDate(data.beginDate)}}</td>
+                                        <td>{{formatDate(data.endDate)}}</td>
                                         <td>{{data.usedDays}}天</td>
                                         <td>{{data.remark}}</td>
                                         <td v-if="data.prove"><a href="#">證明</a></td>
@@ -105,6 +132,7 @@
                             <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
+                                        <th>休假單號</th>
                                         <th>班別</th>
                                         <th>假別</th>
                                         <th>開始日期</th>
@@ -115,11 +143,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="data in source" :key="data.id" v-if="data.allow">
-                                        <td>@emp[0].Shift</td>
+                                    <tr v-for="data in allow" :key="data.id">
+                                        <td>{{data.id}}</td>
+                                        <td>{{data.shift}}</td>
                                         <td>{{data.title}}</td>
-                                        <td>{{formatMyDate(data.beginDate)}}</td>
-                                        <td>{{formatMyDate(data.endDate)}}</td>
+                                        <td>{{formatDate(data.beginDate)}}</td>
+                                        <td>{{formatDate(data.endDate)}}</td>
                                         <td>{{data.usedDays}}天</td>
                                         <td>{{data.remark}}</td>
                                         <td v-if="data.prove"><a href="#">證明</a></td>
@@ -151,39 +180,105 @@
             $(document).ready(function () {
                 $('#dataTable1').DataTable({
                     "searching": false,
+                    "language": {
+                        "emptyTable": "目前暫無待審核項目..",
+                    }
+
                 });
                 $('#dataTable2').DataTable({
                     "searching": false,
+                    "language": {
+                        "emptyTable": "暫無休假資訊..",
+                    }
                 });
             });
         })
 
-        new Vue({
+        const vm =  new Vue({
             el: '#app',
             data: {
                 source: {},
-                checkedAll: false,
-                waitAllowCount:0,
+                allow:[],
+                allowWait: [],
+                employee: {},
             },
             mounted() {
                 this.source = @Html.Raw(ViewBag.Source);
-                this.source.forEach(item => {
+                this.employee = this.source.employee;
+                this.source.details.forEach(item => {
                     this.$set(item, 'checked', false);
-                    if (!item.allow) this.waitAllowCount++;
+                    if (item.allow) {
+                        this.allow.push(item)
+                    } else {
+                        this.allowWait.push(item)
+                    }
                 })
             },
+            computed: {
+                isChecked() {
+                    return this.allowWait.reduce((acc, current) => {
+                        return acc + (current.checked ? 1 : 0 );
+                    }, 0)
+                },
+                isAll: {
+                    get() {
+                        if (!this.allowWait.length) return false;
+                        return this.isChecked === this.allowWait.length;
+                    },
+                    set(value) {
+                        this.allowWait.forEach(item => {
+                            item.checked = value;
+                        })
+                    }
+                }
+            },
             methods: {
-                formatMyDate(date) {
+                formatDate(date) {
                     moment.locale('zh-tw');
                     return moment(date).format('l');
                 },
-            },
-            watch: {
-                checkedAll(value) {
-                    this.source.forEach(item => {
-                        item.checked = value;
+                delChecked() {
+                    let data = [];
+                    this.allowWait.forEach(item => {
+                        if (item.checked) {
+                            data.push(item.id);
+                        }
+                    });
+                    if (!data.length) return;
+                    Swal.fire({
+                        title: `確定刪除${data.length}筆資料？`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: '刪除',
+                        cancelButtonText:'取消',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.delData(data);
+                        } else {
+                            return;
+                        }
                     })
                 },
+                delData(data) {
+                     $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("delete" , new { eid = Model.Employee.EId})',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                     }).done(data => {
+                             sAlert('成功刪除')
+                             $(Swal.getConfirmButton()).click(function () {
+                                 $('body').loading();
+                                 setTimeout(function () {
+                                     window.location.href = '@Url.Action("index", "holiday", new { eid = Model.Employee.EId })';
+                                 }, 1500)
+                             })
+                        }).fail(error => {
+                            console.log('error', error);
+                        })
+                }
             }
         })
     </script>
@@ -198,6 +293,26 @@
 
         .checkedColor {
             background-color: rgba(100, 255, 50, 0.1);
+        }
+
+        .funPos {
+            position: relative;
+        }
+
+        .fun {
+            position: absolute;
+        }
+
+        .funWait {
+            left: -10px;
+            bottom: -4px;
+            z-index: 10;
+        }
+
+        .funBack {
+            right: -10px;
+            bottom: -4px;
+            z-index: 10;
         }
 
         .funBtn {

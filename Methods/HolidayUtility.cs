@@ -98,7 +98,7 @@ namespace UCOMProject.Methods
         /// <summary>
         /// 取得A.B班的當年度的工作天(做2休2)
         /// </summary>
-        public static List<List<ShiftWork>> getWorkDayOfYearByMonth(int year)
+        public static List<List<ShiftWork>> GetWorkDayOfYearByMonth(int year)
         {
             //to do:計算做2休2的週期
             const int workCycle = 4;
@@ -134,7 +134,7 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
-        public static ApplyResult saveApply(ApplyViewModel payload)
+        public static ApplyResult SaveApply(ApplyViewModel payload)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -179,9 +179,9 @@ namespace UCOMProject.Methods
                 }
                 //設定檔案檔名
                 List<string> fileNames = new List<string>();
+                string fileStr = null;
                 if (payload.Files != null)
                 {
-                    string fileStr = "";
                     var file = payload.Files.Select(s => s.FileName);
                     foreach (var item in file.Select((value, index) => new { value, index }))
                     {
@@ -203,6 +203,7 @@ namespace UCOMProject.Methods
                     UsedDays = payload.UsedDays,
                     Allow = false,
                     Remark = payload.Remark,
+                    Prove = fileStr,
                 };
                 db.HolidayDetails.Add(holidayDetail);
                 db.SaveChanges();
@@ -219,7 +220,7 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<HolidayDetailViewModel>> getHolidayDetailList(string eid)
+        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetailList(string eid)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -245,6 +246,23 @@ namespace UCOMProject.Methods
                     vmList.Add(vm);
                 }
                 return vmList;
+            }
+        }
+
+        /// <summary>
+        /// 刪除休假歷史紀錄
+        /// </summary>
+        /// <param name="id"></param>
+        public static void DelHolidayDetail(int id, string eid)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var result = db.HolidayDetails.FirstOrDefault(f => f.Id == id && f.EId == eid);
+                if (result != null)
+                {
+                    db.HolidayDetails.Remove(result);
+                    db.SaveChanges();
+                }
             }
         }
     }
