@@ -55,7 +55,12 @@
                 </div>
                 <div class="sidebar-brand-text mx-3">Employee<sup>sys</sup></div>
             </a>
-
+            <span class="badge badge-info">
+                @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name
+                <span class="badge badge-warning">
+                    @SessionEmp.CurrentEmp.JobTitle
+                </span>
+            </span>
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
             <!-- Divider -->
@@ -64,12 +69,7 @@
             @*<div class="sidebar-heading text-center">
                     @employee.EId - @employee.Name (@employee.JobTitle)
                 </div>*@
-            <span class="badge badge-info">
-                @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name (@SessionEmp.CurrentEmp.EnglishName)
-                <span class="badge badge-warning">
-                    @SessionEmp.CurrentEmp.JobTitle
-                </span>
-            </span>
+
             <div class="sidebar-heading">
                 holiday system
             </div>
@@ -353,7 +353,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">@employee.EId - @employee.Name</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">@employee.EnglishName</span>
                                 <img class="img-profile rounded-circle" src="~/img/@employee.Image">
                             </a>
                             <!-- Dropdown - User Information -->
