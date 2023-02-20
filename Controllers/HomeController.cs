@@ -16,18 +16,19 @@ namespace UCOMProject.Controllers
     {
         public SummaryViewModel vm = new SummaryViewModel();
 
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int? year)
         {
+            year = year == null ? DateTime.Now.Year : year;
             vm.Employee = SessionEmp.CurrentEmp;
             vm.Holidays = await HolidayUtility.GetHolidayInfos(vm.Employee.EId);
-            vm.ChartInfos = await HolidayUtility.GetchartInfos(vm.Employee.EId);
+            vm.ChartInfos = await HolidayUtility.GetchartInfos(vm.Employee.EId, (int)year);
             try
             {
-            ViewBag.Source = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-
-            }catch(ObjectDisposedException ex)
+                ViewBag.Source = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            }
+            catch (ObjectDisposedException ex)
             {
-               string msg =  ex.Message;
+                string msg = ex.Message;
             }
             return View();
         }

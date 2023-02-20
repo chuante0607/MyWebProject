@@ -51,18 +51,19 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<ChartViewModel>> GetchartInfos(string eid)
+        public static async Task<List<ChartViewModel>> GetchartInfos(string eid , int year)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
                 //依照休假年份群組化
                 var query = await db.HolidayDetails.Where(s => s.EId == eid).GroupBy(g => g.BelongYear, g => new { g.BeginDate, g.UsedDays }).ToListAsync();
-                List<ChartViewModel> chartViewModels = new List<ChartViewModel>();
+                List<ChartViewModel> vmList = new List<ChartViewModel>();
                 foreach (var item in query)
                 {
-                    ChartViewModel chartViewModel = new ChartViewModel();
-                    chartViewModel.Year = item.Key;
-                    chartViewModel.Days = new List<int>();
+                    ChartViewModel vm = new ChartViewModel();
+                    vm.Year = item.Key;
+                    vm.Days = new List<int>();
+                    vm.Active = year == item.Key;
                     //1月索引0開始 
                     for (int month = 1; month <= 12; month++)
                     {
@@ -71,27 +72,28 @@ namespace UCOMProject.Methods
                         if (hasUsedDays)
                         {
                             //有休假則統計天數
-                            chartViewModel.Days.Add(item.Where(w => w.BeginDate.Month == month).Select(s => s.UsedDays).Sum());
+                            vm.Days.Add(item.Where(w => w.BeginDate.Month == month).Select(s => s.UsedDays).Sum());
                         }
                         else
                         {
                             //無休假則0天
-                            chartViewModel.Days.Add(0);
+                            vm.Days.Add(0);
                         }
                     }
-                    chartViewModels.Add(chartViewModel);
+                    vmList.Add(vm);
                 }
                 if (query.Count() < 1)
                 {
                     ChartViewModel chartViewModel = new ChartViewModel();
                     chartViewModel.Year = DateTime.Now.Year;
                     chartViewModel.Days = new List<int>();
+                    chartViewModel.Active = true;
                     //1月索引0開始 
                     for (int month = 1; month <= 12; month++)
                         chartViewModel.Days.Add(0);
-                    chartViewModels.Add(chartViewModel);
+                    vmList.Add(chartViewModel);
                 }
-                return chartViewModels.OrderByDescending(o => o.Year).ToList();
+                return vmList.OrderByDescending(o => o.Year).ToList();
             }
         }
 

@@ -3,7 +3,7 @@
 }
 
 <!-- Summary -->
-<div id="app"  class="mt-5" v-cloak>
+<div id="app" class="mt-5" v-cloak>
     <!-- Title -->
     <div class="row title d-sm-flex align-items-center justify-content-evenly mb-4">
         <h1 class="h1">{{new Date().getFullYear()}}&nbsp;年</h1>
@@ -37,11 +37,11 @@
                                 </template>
                             </div>
                             @*<div v-if="canUse">
-                                <div class="h3 mb-0 font-weight-bold text-gray-800 text-center"><span class="badge badge-success">{{holiday.canUseDays}}&nbsp;天</span></div>
-                            </div>
-                            <div v-else="canUse">
-                                <div class="h3 mb-0 font-weight-bold text-center"><span class="badge badge-danger badge-secondary">{{holiday.usedDays}}&nbsp;天</span></div>
-                            </div>*@
+                                    <div class="h3 mb-0 font-weight-bold text-gray-800 text-center"><span class="badge badge-success">{{holiday.canUseDays}}&nbsp;天</span></div>
+                                </div>
+                                <div v-else="canUse">
+                                    <div class="h3 mb-0 font-weight-bold text-center"><span class="badge badge-danger badge-secondary">{{holiday.usedDays}}&nbsp;天</span></div>
+                                </div>*@
                         </div>
                     </div>
                 </div>
@@ -108,26 +108,21 @@
                     this.$set(item, 'color', this.color[index]);;
                 });
                 this.chartInfos = this.source.chartInfos;
-                this.chartInfos.forEach(item => {
-                    if (new Date().getFullYear() === item.year) {
-                        this.$set(item, 'active', true);
-                        this.watchYear = item.year;
-                        this.handleChart(item.days);
-                    } else {
-                        this.$set(item, 'active', false);
-                    }
-                })
+                this.chartInfos.sort((a, b) => b.active - a.active);
+                let data = this.chartInfos.filter(item => item.active)[0];
+                this.watchYear = data.year;
+                this.handleChart(data.days);
             },
             methods: {
                 handleCanUse() {
                     this.canUse = !this.canUse;
                 },
                 changeChart(year) {
-                    console.log(year);
+                    window.location.href = '@Url.Action("index")?year=' + year;
                 },
                 handleChart(data) {
                     // Set new default font family and font color to mimic Bootstrap's default styling
-                    Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+                    Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinUrlMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
                     Chart.defaults.global.defaultFontColor = '#858796';
                     function number_format(number, decimals, dec_point, thousands_sep) {
                         // *     example: number_format(1234.56, 2, ',', ' ');
@@ -254,6 +249,7 @@
         .title {
             flex-direction: column;
         }
+
         .holidayCard {
             display: flex;
             flex-direction: row;

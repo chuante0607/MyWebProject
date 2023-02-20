@@ -7,8 +7,10 @@ namespace UCOMProject.Models
 {
     public class ChartViewModel
     {
-      
+        public bool Active { get; set; }
+
         public int Year { get; set; }
+
         public List<int> Days { get; set; }
     }
 }
