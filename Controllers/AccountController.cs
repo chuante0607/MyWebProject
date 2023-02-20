@@ -20,6 +20,7 @@ namespace UCOMProject.Controllers
         /// <returns></returns>
         public ActionResult Login()
         {
+            ViewBag.login = 0;
             return View();
         }
 
@@ -28,10 +29,16 @@ namespace UCOMProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(string id, string pwd)
         {
+            if (id.ToLower() == "admin")
+            {
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "此為管理員權限限定帳號" });
+                return View();
+            }
+
             Employee employee = await EmployeeUtility.GetEmp(id, pwd);
             if (employee == null)
             {
-                ViewBag.status = JsonConvert.SerializeObject(new { logout = false, msg = "帳號密碼錯誤!" });
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼錯誤!" });
                 return View();
             }
             Session["emp"] = employee;

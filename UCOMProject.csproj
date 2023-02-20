@@ -143,6 +143,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\apiHomeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
@@ -212,6 +213,7 @@
     <Content Include="Content\admin\js\demo\datatables-demo.js" />
     <Content Include="Content\admin\js\sb-admin-2.js" />
     <Content Include="Content\admin\js\sb-admin-2.min.js" />
+    <Content Include="Content\admin\login.css" />
     <Content Include="Content\admin\vendor\bootstrap\js\bootstrap.bundle.js" />
     <Content Include="Content\admin\vendor\bootstrap\js\bootstrap.bundle.min.js" />
     <Content Include="Content\admin\vendor\bootstrap\js\bootstrap.js" />
@@ -2468,6 +2470,9 @@
     <Content Include="Views\Shared\_LayoutSuper.cshtml" />
     <Content Include="Views\Holiday\Delete.cshtml" />
     <Content Include="Views\Holiday\Allow.cshtml" />
+    <Content Include="Views\Admin\Login.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

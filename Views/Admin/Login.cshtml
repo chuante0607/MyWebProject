@@ -1,0 +1,35 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/Content/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <form class="text-center border border-light p-5" action="@Url.Action("login")" method="post">
+            <p class="h4 mb-4">系統管理員登入</p>
+            <input type="text" id="defaultSubscriptionFormPassword" class="form-control mb-4" placeholder="Name" name="id">
+            <input type="password" id="defaultSubscriptionFormEmail" class="form-control mb-4" placeholder="E-mail" name="pwd">
+            <button class="btn btn-info btn-block" type="submit">Sign in</button>
+            @Html.ActionLink("返回", "login", "account", null, new { @class = "btn btn-outline-danger btn-block" })
+        </form>
+    </div>
+    <!-- Default form subscription -->
+    <script src="~/Scripts/jquery-3.6.3.js"></script>
+    <script src="~/Content/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/Scripts/alert/sweetalert.js"></script>
+    <script src="~/Scripts/site.js"></script>
+    <script type="text/javascript">
+        let login = JSON.parse('@Html.Raw(ViewBag.login)');
+        if (login.error) {
+            eAlert(login.msg);
+        }
+    </script>
+</body>
+</html>

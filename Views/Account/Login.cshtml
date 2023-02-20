@@ -19,63 +19,52 @@
         @Html.AntiForgeryToken()
         <div class="field email">
             <div class="icon"></div>
-            <input class="input" id="email" type="text" placeholder="ID" autocomplete="off" name="id" v-model="id" />
+            <input class="input" id="email" type="text" placeholder="ID" autocomplete="off" name="id" />
         </div>
         <div class="field password">
             <div class="icon"></div>
-            <input class="input" id="password" type="password" placeholder="Password" name="pwd" v-model="pwd" />
+            <input class="input" id="password" type="password" placeholder="Password" name="pwd" />
         </div>
-        <input class="button" @@click="demo" value="員工">
-        <input class="button" @@click="demo1" value="管理職">
-        <div class="side-top-bottom"></div>
-        <div class="side-left-right"></div>
-        <button class="button" id="submit" @@click="submit">
-            LOGIN
-            <div class="side-top-bottom"></div>
-            <div class="side-left-right"></div>
-        </button>
+        <div class="field">
+            <div class="icon"></div>
+            <input class="button" type="submit" value="LOGIN" />
+            @*<div class="side-top-bottom"></div>
+            <div class="side-left-right"></div>*@
+        </div>
+
+        <div class="field">
+            <div class="icon"></div>
+            <input class="button" type="button" value="作業員" onclick="handleOp()" />
+        </div>
+
+        <div class="field">
+            <div class="icon"></div>
+            <input class="button" type="button" value="組長" onclick="handleLeader()" />
+        </div>
+        <div class="field">
+            <div class="icon"></div>
+            @Html.ActionLink("管理員", "login", "admin", null, new { @class = "button" })
+            @*<a class="button" href="#">管理員</a>*@
+        </div>
+
     </form>
 
-    <script src="~/Scripts/vue.js"></script>
     <script src="~/Scripts/Login.js"></script>
-    <script type="text/javascript">
-        new Vue({
-            el: '#form',
-            data: {
-                id: '',
-                pwd: '',
-            },
-            methods: {
-                demo() {
-                    console.log(1);
-                    this.id = 'E001';
-                    this.pwd = 'A123456789';
-                },
-                demo1() {
-                    this.id = 'E004';
-                    this.pwd = 'O123456789';
-                },
-                submit() {
-                    $('#submit').submit();
-                },
-                alertError(msg) {
-                    Swal.fire({
-                        title: msg,
-                        icon: 'error',
-                        confirmButtonText: '確認',
-                        
-                    })
-                },
-                alertLogout(msg) {
-                    Swal.fire({
-                        title: msg,
-                        icon: 'success',
-                        confirmButtonText: '確認'
-                    })
-                },
-            }
-        })
+    <script src="~/Scripts/site.js"></script>
 
+    <script type="text/javascript">
+        function handleOp() {
+            $('[name="id"]').val('E001');
+            $('[name="pwd"]').val('A123456789');
+        }
+
+        function handleLeader() {
+            $('[name="id"]').val('E004');
+            $('[name="pwd"]').val('O123456789');
+        }
+        let login = JSON.parse('@Html.Raw(ViewBag.login)');
+        if (login)
+            eAlert(login.msg);
     </script>
 </body>
 </html>
