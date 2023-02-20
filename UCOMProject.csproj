@@ -2442,6 +2442,14 @@
     <Content Include="Uploads\638124305431602908lin.jpg" />
     <Content Include="Uploads\638124306306974857螢幕擷取畫面 2023-02-13 234405.png" />
     <Content Include="Uploads\638124310870082074螢幕擷取畫面_20230201_030028.png" />
+    <Content Include="Uploads\638124352734463346螢幕擷取畫面_20230205_090116.png" />
+    <Content Include="Uploads\638124352734463346螢幕擷取畫面_20230205_091411.png" />
+    <Content Include="Uploads\638124695145360600螢幕擷取畫面_20230201_030028.png" />
+    <Content Include="Uploads\638124695145360600螢幕擷取畫面_20230205_090116.png" />
+    <Content Include="Uploads\638124695906159644螢幕擷取畫面_20230205_091411.png" />
+    <Content Include="Uploads\638124695906159644螢幕擷取畫面_20230205_093822.png" />
+    <Content Include="Uploads\638124696111622848lin.jpg" />
+    <Content Include="Uploads\63812494138537852451ba6e11bcff779c746e92233f35afef.jpeg" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

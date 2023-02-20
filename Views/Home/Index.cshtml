@@ -54,14 +54,11 @@
         <div class="col">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-center">{{watchYear}}年 - <span class="text-danger">已用</span>休假統計(每月) </h6>
-                    <div class="dropdown no-arrow">
-                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                             aria-labelledby="dropdownMenuLink">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="badge">{{watchYear}}年  <span class="badge badge-danger">已用天數統計</span></span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                             <div class="dropdown-header">查看其他年份</div>
                             <div v-for="item in chartInfos" :key="item.year">
                                 <template v-if="item.active">
@@ -72,6 +69,19 @@
                                     <a class="dropdown-item" v-bind:class="{active:item.active}" href="#" v-on:click="changeChart(item.year)">{{item.year}}</a>
                                 </template>
                             </div>
+                        </div>
+                    </div>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                         aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">查看其他年份</div>
+                        <div v-for="item in chartInfos" :key="item.year">
+                            <template v-if="item.active">
+                                <div class="dropdown-item" v-bind:class="{active:item.active}">{{item.year}}</div>
+                                <div class="dropdown-divider"></div>
+                            </template>
+                            <template v-else>
+                                <a class="dropdown-item" v-bind:class="{active:item.active}" href="#" v-on:click="changeChart(item.year)">{{item.year}}</a>
+                            </template>
                         </div>
                     </div>
                 </div>

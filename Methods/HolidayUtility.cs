@@ -51,7 +51,7 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<ChartViewModel>> GetchartInfos(string eid , int year)
+        public static async Task<List<ChartViewModel>> GetchartInfos(string eid, int year)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -227,7 +227,7 @@ namespace UCOMProject.Methods
             using (MyDBEntities db = new MyDBEntities())
             {
                 List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
-                var query = await db.HolidayDetails.Where(w => w.EId == eid).OrderByDescending(o => o.BeginDate).ToListAsync();
+                var query = await db.HolidayDetails.Where(w => w.EId == eid).OrderByDescending(o => o.Id).ToListAsync();
                 var emp = await db.Employees.FindAsync(eid);
                 foreach (var item in query)
                 {
