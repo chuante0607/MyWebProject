@@ -70,10 +70,20 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
             <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                休假系統
-            </div>
+            @*<div class="sidebar-heading text-center">
+                    @employee.EId - @employee.Name (@employee.JobTitle)
+                </div>*@
+            <!-- Heading -->
+            <span class="badge badge-info">
+                @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name (@SessionEmp.CurrentEmp.EnglishName)
+                <span class="badge badge-danger">
+                    @SessionEmp.CurrentEmp.JobTitle
+                </span>
+            </span>
+            <div class="sidebar-heading">
+                holiday system
 
+            </div>
             <!-- Nav Item - Pages Collapse Menu -->
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -83,51 +93,51 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Holiday System</h6>
+                        @*<h6 class="collapse-header">Holiday System</h6>*@
                         <a class="collapse-item" href="@Url.Action("apply","holiday")">申請</a>
-                        <a class="collapse-item" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">查詢</a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">審核進度</a>
+                        <a class="collapse-item" href="@Url.Action("allow","holiday" ,new { Eid = employee.EId})">歷史紀錄</a>
+                        <a class="collapse-item border-bottom-success" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">批次審核</a>
                     </div>
                 </div>
             </div>
 
             <!-- Nav Item - Utilities Collapse Menu -->
-            <div class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                   aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
+            @*<div class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                       aria-expanded="true" aria-controls="collapseUtilities">
+                        <i class="fas fa-fw fa-wrench"></i>
+                        <span>Utilities</span>
+                    </a>
+                    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                         data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Custom Utilities:</h6>
+                            <a class="collapse-item" href="utilities-color.html">Colors</a>
+                            <a class="collapse-item" href="utilities-border.html">Borders</a>
+                            <a class="collapse-item" href="utilities-animation.html">Animations</a>
+                            <a class="collapse-item" href="utilities-other.html">Other</a>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>*@
 
             <!-- Divider -->
             <hr class="sidebar-divider">
-
             <!-- Heading -->
             <div class="sidebar-heading">
-                Addons
+                account system
             </div>
-
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                    aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
+                    <span>員工管理</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
+                        @*<h6 class="collapse-header">Login Screens:</h6>*@
+                        <a class="collapse-item" href="login.html">帳號註冊</a>
                         <a class="collapse-item" href="register.html">Register</a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                         <div class="collapse-divider"></div>
@@ -139,20 +149,20 @@
             </li>
 
             <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Charts</span>
-                </a>
-            </li>
+            @*<li class="nav-item">
+                    <a class="nav-link" href="charts.html">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>Charts</span>
+                    </a>
+                </li>*@
 
             <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span>
-                </a>
-            </li>
+            @*<li class="nav-item">
+                    <a class="nav-link" href="tables.html">
+                        <i class="fas fa-fw fa-table"></i>
+                        <span>Tables</span>
+                    </a>
+                </li>*@
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

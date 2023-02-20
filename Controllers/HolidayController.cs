@@ -74,14 +74,27 @@ namespace UCOMProject.Controllers
         {
             HolidayDetailTableViewModel table = new HolidayDetailTableViewModel();
             table.Employee = await EmployeeUtility.GetEmp(eid);
-            table.Details = await HolidayUtility.GetHolidayDetailList(eid);
-            if (SessionEmp.CurrentEmp.JobRank == 1)
-            {
-                table.OtherEmps = await EmployeeUtility.GetEmpsByShift(SessionEmp.CurrentEmp.Shift.xShiftTranEnum());
-            }
+            var query = await HolidayUtility.GetHolidayDetailList(eid);
+            table.Details = query.Where(w => !w.Allow).ToList();
+            //if (SessionEmp.CurrentEmp.JobRank == 1)
+            //{
+            //    table.OtherEmps = await EmployeeUtility.GetEmpsByShift(SessionEmp.CurrentEmp.Shift.xShiftTranEnum());
+            //}
             ViewBag.Source = JsonConvert.SerializeObject(table, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(table);
         }
+
+        [HttpGet]
+        public async Task<ActionResult> Allow(string eid)
+        {
+            HolidayDetailTableViewModel table = new HolidayDetailTableViewModel();
+            table.Employee = await EmployeeUtility.GetEmp(eid);
+            var query = await HolidayUtility.GetHolidayDetailList(eid);
+            table.Details = query.Where(w => w.Allow).ToList();
+            ViewBag.Source = JsonConvert.SerializeObject(table, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return View(table);
+        }
+
 
         [HttpPost]
         public ActionResult Delete(List<int> id, string eid)

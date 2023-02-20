@@ -218,7 +218,7 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
-        /// 查詢休假歷史紀錄
+        /// 查詢休假紀錄
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -228,6 +228,42 @@ namespace UCOMProject.Methods
             {
                 List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
                 var query = await db.HolidayDetails.Where(w => w.EId == eid).OrderByDescending(o => o.Id).ToListAsync();
+                var emp = await db.Employees.FindAsync(eid);
+                foreach (var item in query)
+                {
+                    HolidayDetailViewModel vm = new HolidayDetailViewModel();
+                    vm.EId = emp.EId;
+                    vm.Name = emp.Name;
+                    vm.Sex = emp.Sex;
+                    vm.Shift = emp.Shift;
+                    vm.Id = item.Id;
+                    vm.HId = item.HId;
+                    vm.Title = item.Holiday.Title;
+                    vm.UsedDays = item.UsedDays;
+                    vm.BeginDate = item.BeginDate;
+                    vm.EndDate = item.EndDate;
+                    vm.Allow = item.Allow;
+                    vm.Remark = item.Remark;
+                    vm.Prove = item.Prove;
+                    vmList.Add(vm);
+                }
+                return vmList;
+            }
+        }
+
+        /// <summary>
+        /// 依班別員工查詢休假紀錄
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetailList(string eid, ShiftType shift)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
+                var query = await db.HolidayDetails
+                    .Where(w => w.Employee.Shift.xShiftTranEnum() == shift)
+                    .OrderByDescending(o => o.Id).ToListAsync();
                 var emp = await db.Employees.FindAsync(eid);
                 foreach (var item in query)
                 {
