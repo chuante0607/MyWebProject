@@ -1998,6 +1998,9 @@
     <Content Include="Content\MDB-Free_4.20.0\src\js\vendor\free\jquery.easing.js" />
     <Content Include="Content\MDB-Free_4.20.0\src\js\vendor\free\velocity.js" />
     <Content Include="Content\MDB-Free_4.20.0\src\js\vendor\free\waves.js" />
+    <Content Include="Content\Multi-Column-Select\Multi-Column-Select.css" />
+    <Content Include="Content\Multi-Column-Select\Multi-Column-Select.js" />
+    <Content Include="Content\Multi-Column-Select\Multi-Column-Select.min.js" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\toggle\css\bootstrap-toggle.css" />
     <Content Include="Content\toggle\css\bootstrap-toggle.min.css" />

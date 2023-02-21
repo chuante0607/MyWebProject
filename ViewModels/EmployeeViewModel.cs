@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.ModelBinding;
 
 namespace UCOMProject.Models
 {
@@ -39,8 +40,16 @@ namespace UCOMProject.Models
 
         [Required]
         [Display(Name = "性別")]
-        public bool Sex { get; set; }
-        public string SexType { get { return Sex ? "男" : "女"; } }
+        public bool SexSelect { get; set; }
+        [BindNever]
+        public string Sex { get { return SexSelect ? "男" : "女"; } }
+
+
+        [Required]
+        [Display(Name = "班別")]
+        public bool ShiftSelect { get; set; }
+        [BindNever]
+        public ShiftType Shift { get { return ShiftSelect ? ShiftType.A : ShiftType.B; }  }
 
         [Display(Name = "信箱")]
         [EmailAddress(ErrorMessage = "請輸入有效電子郵件")]
@@ -56,14 +65,12 @@ namespace UCOMProject.Models
         //[RegularExpression("/^[A-Za-z][A-Za-z0-9]*$/", ErrorMessage = "請輸入英文字母")]
         public string EnglishName { get; set; }
 
-        [Required]
-        [Display(Name = "班別")]
-        public ShiftType Shift { get; set; }
 
         [Required]
         [Display(Name = "到職日")]
         public DateTime StartDate { get; set; }
 
+        [BindNever]
         public bool Allow { get; set; }
     }
 }

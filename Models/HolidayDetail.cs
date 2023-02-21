@@ -18,17 +18,17 @@ namespace UCOMProject.Models
         public int Id { get; set; }
         public string EId { get; set; }
         public int HId { get; set; }
-        public System.DateTime ApplyDate { get; set; }
         public System.DateTime BeginDate { get; set; }
         public System.DateTime EndDate { get; set; }
+        public int State { get; set; }
         public string Remark { get; set; }
         public string Prove { get; set; }
         public int UsedDays { get; set; }
         public int BelongYear { get; set; }
-        public int State { get; set; }
-        [JsonIgnore]
-        public virtual Holiday Holiday { get; set; }
+        public System.DateTime ApplyDate { get; set; }
         [JsonIgnore]
         public virtual Employee Employee { get; set; }
+        [JsonIgnore]
+        public virtual Holiday Holiday { get; set; }
     }
 }
