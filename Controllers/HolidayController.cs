@@ -18,6 +18,8 @@ namespace UCOMProject.Controllers
     [AuthorizationFilter]
     public class HolidayController : Controller
     {
+        HolidayDetailTableViewModel vmTable = new HolidayDetailTableViewModel();
+
         public async Task<ActionResult> Apply()
         {
             ApplyViewModel vm = new ApplyViewModel();
@@ -72,27 +74,21 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(string eid)
         {
-            HolidayDetailTableViewModel table = new HolidayDetailTableViewModel();
-            table.Employee = await EmployeeUtility.GetEmp(eid);
+            vmTable.Employee = await EmployeeUtility.GetEmp(eid);
             var query = await HolidayUtility.GetHolidayDetailList(eid);
-            table.Details = query.Where(w => !w.Allow).ToList();
-            //if (SessionEmp.CurrentEmp.JobRank == 1)
-            //{
-            //    table.OtherEmps = await EmployeeUtility.GetEmpsByShift(SessionEmp.CurrentEmp.Shift.xShiftTranEnum());
-            //}
-            ViewBag.Source = JsonConvert.SerializeObject(table, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-            return View(table);
+            vmTable.Details = query.Where(w => w.State == 2).ToList();
+            ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return View(vmTable);
         }
 
         [HttpGet]
         public async Task<ActionResult> Allow(string eid)
         {
-            HolidayDetailTableViewModel table = new HolidayDetailTableViewModel();
-            table.Employee = await EmployeeUtility.GetEmp(eid);
+            vmTable.Employee = await EmployeeUtility.GetEmp(eid);
             var query = await HolidayUtility.GetHolidayDetailList(eid);
-            table.Details = query.Where(w => w.Allow).ToList();
-            ViewBag.Source = JsonConvert.SerializeObject(table, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-            return View(table);
+            vmTable.Details = query.Where(w => w.State == 1).ToList();
+            ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return View(vmTable);
         }
 
 

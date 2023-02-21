@@ -84,5 +84,35 @@ namespace UCOMProject.Methods
                 return vm;
             }
         }
+
+        public static bool CreateEmpInfo(EmployeeViewModel vm)
+        {
+            bool isCreate = false;
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var result = db.Employees.Find(vm.EId);
+                if (result != null) return isCreate;
+                result = new Employee
+                {
+                    EId = vm.EId,
+                    Name = vm.Name,
+                    EnglishName = vm.Email,
+                    Sex = vm.Sex.ToString(),
+                    Branch = vm.Branch.ToString(),
+                    JobTitle = vm.JobTitle.ToString(),
+                    JobRank = (int)vm.JobTitle,
+                    Email = vm.Email,
+                    Phone = vm.Phone,
+                    Shift = vm.Shift.ToString(),
+                    StartDate = vm.StartDate,
+                    Allow = false
+
+
+                };
+
+                return false;
+            }
+        }
+
     }
 }

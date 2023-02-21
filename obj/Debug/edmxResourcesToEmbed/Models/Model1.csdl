@@ -1,19 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="MyDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityContainer Name="MyDBEntities" annotation:LazyLoadingEnabled="true">
-    <EntitySet Name="Employees" EntityType="MyDBModel.Employee" />
     <EntitySet Name="HolidayDetails" EntityType="MyDBModel.HolidayDetail" />
+    <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
     <EntitySet Name="sysdiagrams" EntityType="MyDBModel.sysdiagram" />
+    <AssociationSet Name="FK_HolidayDetails_Holidays" Association="MyDBModel.FK_HolidayDetails_Holidays">
+      <End Role="Holiday" EntitySet="Holidays" />
+      <End Role="HolidayDetail" EntitySet="HolidayDetails" />
+    </AssociationSet>
+    <EntitySet Name="Employees" EntityType="MyDBModel.Employee" />
     <AssociationSet Name="FK_HolidayDetails_Employees" Association="MyDBModel.FK_HolidayDetails_Employees">
       <End Role="Employee" EntitySet="Employees" />
       <End Role="HolidayDetail" EntitySet="HolidayDetails" />
     </AssociationSet>
-    <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
-    <AssociationSet Name="FK_HolidayDetails_Holidays1" Association="MyDBModel.FK_HolidayDetails_Holidays1">
-      <End Role="Holiday" EntitySet="Holidays" />
-      <End Role="HolidayDetail" EntitySet="HolidayDetails" />
-    </AssociationSet>
   </EntityContainer>
+  <EntityType Name="HolidayDetail">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="HId" Type="Int32" Nullable="false" />
+    <Property Name="ApplyDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="BeginDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Prove" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UsedDays" Type="Int32" Nullable="false" />
+    <Property Name="BelongYear" Type="Int32" Nullable="false" />
+    <Property Name="State" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Holiday" Relationship="MyDBModel.FK_HolidayDetails_Holidays" FromRole="HolidayDetail" ToRole="Holiday" />
+    <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="HolidayDetail" ToRole="Employee" />
+  </EntityType>
+  <EntityType Name="Holiday">
+    <Key>
+      <PropertyRef Name="HId" />
+    </Key>
+    <Property Name="HId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="TotalDays" Type="Int32" Nullable="false" />
+    <Property Name="ProveType" Type="Boolean" Nullable="false" />
+    <Property Name="AnyOne" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Holidays" FromRole="Holiday" ToRole="HolidayDetail" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_HolidayDetails_Holidays">
+    <End Type="MyDBModel.Holiday" Role="Holiday" Multiplicity="1" />
+    <End Type="MyDBModel.HolidayDetail" Role="HolidayDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Holiday">
+        <PropertyRef Name="HId" />
+      </Principal>
+      <Dependent Role="HolidayDetail">
+        <PropertyRef Name="HId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityType Name="Employee">
     <Key>
       <PropertyRef Name="EId" />
@@ -31,34 +82,8 @@
     <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="Shift" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
-    <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="Employee" ToRole="HolidayDetail" />
-  </EntityType>
-  <EntityType Name="HolidayDetail">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="HId" Type="Int32" Nullable="false" />
-    <Property Name="BeginDate" Type="DateTime" Nullable="false" Precision="0" />
-    <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
     <Property Name="Allow" Type="Boolean" Nullable="false" />
-    <Property Name="Remark" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="Prove" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="UsedDays" Type="Int32" Nullable="false" />
-    <Property Name="BelongYear" Type="Int32" Nullable="false" />
-    <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="HolidayDetail" ToRole="Employee" />
-    <NavigationProperty Name="Holiday" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="HolidayDetail" ToRole="Holiday" />
-  </EntityType>
-  <EntityType Name="sysdiagram">
-    <Key>
-      <PropertyRef Name="diagram_id" />
-    </Key>
-    <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-    <Property Name="principal_id" Type="Int32" Nullable="false" />
-    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="version" Type="Int32" />
-    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="Employee" ToRole="HolidayDetail" />
   </EntityType>
   <Association Name="FK_HolidayDetails_Employees">
     <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="1" />
@@ -69,29 +94,6 @@
       </Principal>
       <Dependent Role="HolidayDetail">
         <PropertyRef Name="EId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <EntityType Name="Holiday">
-    <Key>
-      <PropertyRef Name="HId" />
-    </Key>
-    <Property Name="HId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="TotalDays" Type="Int32" Nullable="false" />
-    <Property Name="ProveType" Type="Boolean" Nullable="false" />
-    <Property Name="AnyOne" Type="Boolean" Nullable="false" />
-    <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="Holiday" ToRole="HolidayDetail" />
-  </EntityType>
-  <Association Name="FK_HolidayDetails_Holidays1">
-    <End Type="MyDBModel.Holiday" Role="Holiday" Multiplicity="1" />
-    <End Type="MyDBModel.HolidayDetail" Role="HolidayDetail" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Holiday">
-        <PropertyRef Name="HId" />
-      </Principal>
-      <Dependent Role="HolidayDetail">
-        <PropertyRef Name="HId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

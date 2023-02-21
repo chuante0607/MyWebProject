@@ -199,13 +199,14 @@ namespace UCOMProject.Methods
                 {
                     EId = payload.EId,
                     HId = payload.HId,
+                    ApplyDate = DateTime.Now,
                     BeginDate = payload.BeginDate,
                     EndDate = payload.EndDate,
                     BelongYear = payload.BeginDate.Year,
                     UsedDays = payload.UsedDays,
-                    Allow = false,
                     Remark = payload.Remark,
                     Prove = fileStr,
+                    State = 1,
                 };
                 db.HolidayDetails.Add(holidayDetail);
                 db.SaveChanges();
@@ -242,7 +243,7 @@ namespace UCOMProject.Methods
                     vm.UsedDays = item.UsedDays;
                     vm.BeginDate = item.BeginDate;
                     vm.EndDate = item.EndDate;
-                    vm.Allow = item.Allow;
+                    vm.State = item.State;
                     vm.Remark = item.Remark;
                     vm.Prove = item.Prove;
                     vmList.Add(vm);
@@ -278,7 +279,7 @@ namespace UCOMProject.Methods
                     vm.UsedDays = item.UsedDays;
                     vm.BeginDate = item.BeginDate;
                     vm.EndDate = item.EndDate;
-                    vm.Allow = item.Allow;
+                    vm.State = item.State;
                     vm.Remark = item.Remark;
                     vm.Prove = item.Prove;
                     vmList.Add(vm);

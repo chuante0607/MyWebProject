@@ -1,38 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="MyDBModelStoreContainer" CdmEntityContainer="MyDBEntities">
-    <EntitySetMapping Name="Employees">
-      <EntityTypeMapping TypeName="MyDBModel.Employee">
-        <MappingFragment StoreEntitySet="Employees">
-          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-          <ScalarProperty Name="Shift" ColumnName="Shift" />
-          <ScalarProperty Name="Password" ColumnName="Password" />
-          <ScalarProperty Name="EnglishName" ColumnName="EnglishName" />
-          <ScalarProperty Name="Phone" ColumnName="Phone" />
-          <ScalarProperty Name="Email" ColumnName="Email" />
-          <ScalarProperty Name="Sex" ColumnName="Sex" />
-          <ScalarProperty Name="JobRank" ColumnName="JobRank" />
-          <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
-          <ScalarProperty Name="Branch" ColumnName="Branch" />
-          <ScalarProperty Name="Image" ColumnName="Image" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="EId" ColumnName="EId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="HolidayDetails">
       <EntityTypeMapping TypeName="MyDBModel.HolidayDetail">
         <MappingFragment StoreEntitySet="HolidayDetails">
+          <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="BelongYear" ColumnName="BelongYear" />
           <ScalarProperty Name="UsedDays" ColumnName="UsedDays" />
           <ScalarProperty Name="Prove" ColumnName="Prove" />
           <ScalarProperty Name="Remark" ColumnName="Remark" />
-          <ScalarProperty Name="Allow" ColumnName="Allow" />
           <ScalarProperty Name="EndDate" ColumnName="EndDate" />
           <ScalarProperty Name="BeginDate" ColumnName="BeginDate" />
+          <ScalarProperty Name="ApplyDate" ColumnName="ApplyDate" />
           <ScalarProperty Name="HId" ColumnName="HId" />
           <ScalarProperty Name="EId" ColumnName="EId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Holidays">
+      <EntityTypeMapping TypeName="MyDBModel.Holiday">
+        <MappingFragment StoreEntitySet="Holidays">
+          <ScalarProperty Name="AnyOne" ColumnName="AnyOne" />
+          <ScalarProperty Name="ProveType" ColumnName="ProveType" />
+          <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="HId" ColumnName="HId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -47,14 +40,23 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Holidays">
-      <EntityTypeMapping TypeName="MyDBModel.Holiday">
-        <MappingFragment StoreEntitySet="Holidays">
-          <ScalarProperty Name="AnyOne" ColumnName="AnyOne" />
-          <ScalarProperty Name="ProveType" ColumnName="ProveType" />
-          <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
-          <ScalarProperty Name="Title" ColumnName="Title" />
-          <ScalarProperty Name="HId" ColumnName="HId" />
+    <EntitySetMapping Name="Employees">
+      <EntityTypeMapping TypeName="MyDBModel.Employee">
+        <MappingFragment StoreEntitySet="Employees">
+          <ScalarProperty Name="Allow" ColumnName="Allow" />
+          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+          <ScalarProperty Name="Shift" ColumnName="Shift" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="EnglishName" ColumnName="EnglishName" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Sex" ColumnName="Sex" />
+          <ScalarProperty Name="JobRank" ColumnName="JobRank" />
+          <ScalarProperty Name="JobTitle" ColumnName="JobTitle" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="EId" ColumnName="EId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

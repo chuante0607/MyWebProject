@@ -145,6 +145,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\apiHomeController.cs" />
+    <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
     <Compile Include="Extension\DateExtension.cs" />
@@ -158,12 +159,14 @@
     <Compile Include="Methods\AuthorizationFilter.cs" />
     <Compile Include="Methods\SessionEmp.cs" />
     <Compile Include="Methods\ShiftUtility.cs" />
+    <Compile Include="Models\BranchType.cs" />
+    <Compile Include="Models\Holiday.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\JobTitleType.cs" />
     <Compile Include="ViewModels\ApplyViewModel.cs" />
     <Compile Include="ViewModels\ChartViewModel.cs" />
     <Compile Include="Models\Employee.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Holiday.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\HolidayDetail.cs">
@@ -1996,6 +1999,14 @@
     <Content Include="Content\MDB-Free_4.20.0\src\js\vendor\free\velocity.js" />
     <Content Include="Content\MDB-Free_4.20.0\src\js\vendor\free\waves.js" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\toggle\css\bootstrap-toggle.css" />
+    <Content Include="Content\toggle\css\bootstrap-toggle.min.css" />
+    <Content Include="Content\toggle\css\bootstrap2-toggle.css" />
+    <Content Include="Content\toggle\css\bootstrap2-toggle.min.css" />
+    <Content Include="Content\toggle\js\bootstrap-toggle.js" />
+    <Content Include="Content\toggle\js\bootstrap-toggle.min.js" />
+    <Content Include="Content\toggle\js\bootstrap2-toggle.js" />
+    <Content Include="Content\toggle\js\bootstrap2-toggle.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -2014,6 +2025,7 @@
     <Content Include="images\ui-icons_ffffff_256x240.png" />
     <Content Include="img\123.jpg" />
     <Content Include="img\321.png" />
+    <Content Include="img\admin.png" />
     <Content Include="img\lin.jpg" />
     <Content Include="img\office.jpg" />
     <Content Include="img\undraw_posting_photo.svg" />
@@ -2416,6 +2428,8 @@
     <Content Include="Content\MDB-Free_4.20.0\scss\_custom-styles.scss" />
     <Content Include="Content\MDB-Free_4.20.0\scss\_custom-variables.scss" />
     <Content Include="Content\MDB-Free_4.20.0\Useful_Resources.pdf" />
+    <Content Include="Content\toggle\js\bootstrap-toggle.min.js.map" />
+    <Content Include="Content\toggle\js\bootstrap2-toggle.min.js.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -2473,6 +2487,7 @@
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Employee\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

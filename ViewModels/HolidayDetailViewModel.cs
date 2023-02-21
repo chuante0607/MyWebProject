@@ -18,9 +18,10 @@ namespace UCOMProject.Models
         public int HId { get; set; }
         public string Title { get; set; }
         public HolidayType TitleType { get; set; }
+        public DateTime ApplyDate { get; set; }
         public DateTime BeginDate { get; set; }
         public DateTime EndDate { get; set; }
-        public bool Allow { get; set; }
+        public int State { get; set; }
         public string Remark { get; set; }
         public int UsedDays { get; set; }
         public string Prove { get; set; }

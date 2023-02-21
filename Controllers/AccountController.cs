@@ -12,6 +12,8 @@ namespace UCOMProject.Controllers
 {
     public class AccountController : Controller
     {
+
+        [AllowAnonymous]
         /// <summary>
         /// 登入
         /// </summary>
@@ -31,7 +33,7 @@ namespace UCOMProject.Controllers
         {
             if (id.ToLower() == "admin")
             {
-                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "此為管理員權限限定帳號" });
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "此為管理員限定帳號" });
                 return View();
             }
 
@@ -49,7 +51,7 @@ namespace UCOMProject.Controllers
         public ActionResult Logout()
         {
             HttpContext.Session["emp"] = null;
-            return RedirectToAction("Login", new { logout = true, msg = "已登出!" });
+            return RedirectToAction("login" , "account", new { logout = true, msg = "已登出!" });
         }
 
     }
