@@ -117,12 +117,12 @@ namespace UCOMProject.Methods
                     DateTime currentDate = new DateTime(year, month, day);
                     //round判斷哪幾天屬於A班或B班上班日
                     int round = currentDate.DayOfYear % workCycle;
-                    ShiftType type = ShiftType.A;
+                    ShiftType type = ShiftType.A班;
                     if (round == 0)
                         round = workCycle;
                     //round
                     if (round > (workCycle / 2))
-                        type = ShiftType.B;
+                        type = ShiftType.B班;
                     workDays.Add(new ShiftWork(type, currentDate));
                     day++;
                 }

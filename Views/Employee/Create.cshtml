@@ -5,185 +5,285 @@
 }
 
 
-@using (Html.BeginForm("Create", "employee", FormMethod.Post, new { enctype = "multipart/form-data", @class = "container mt-5" }))
+@using (Html.BeginForm("Create", "employee", FormMethod.Post, new { enctype = "multipart/form-data", @class = "container mt-5", id = "form" }))
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <div class="row">
-            <p>
-                <a href="@Url.Action("index" , "home")" class="btn btn-outline-warning">
-                    返回
-                </a>
-            </p>
-            <h4 class="col text-center">建立員工檔案</h4>
-
-        </div>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div class="form-group row">
-            @Html.LabelFor(model => model.EId, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-7">
-                @Html.EditorFor(model => model.EId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EId, "", new { @class = "text-danger" })
-            </div>
-            @Html.LabelFor(model => model.ShiftSelect, htmlAttributes: new { @class = "col-sm-1 col-form-label" })
-            <div class="col-sm-2">
-                @Html.CheckBoxFor(model => model.ShiftSelect, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ShiftSelect, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group row">
-            @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-7">
-                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-            </div>
-            @Html.LabelFor(model => model.SexSelect, htmlAttributes: new { @class = "col-sm-1 col-form-label" })
-            <div class="col-sm-2">
-                @Html.CheckBoxFor(model => model.SexSelect, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SexSelect, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group row">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group row">
-            @Html.LabelFor(model => model.EnglishName, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-10">
-                @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group row">
-            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-10">
-                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group row">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-10">
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group row">
-            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-10">
-                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
-                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group row">
-            @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-            <div class="col-sm-10">
-                @Html.TextBoxFor(model => model.Image, new { @class = "form-control-file", type = "file" })
-                @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group row">
-            @Html.ValidationMessageFor(model => model.Branch, "", new { @class = "text-danger" })
-            <div class="demo Branch">
-                @Html.EnumDropDownListFor(model => model.Branch, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
-
-        <div class="form-group row">
-            @Html.ValidationMessageFor(model => model.JobTitle, "", new { @class = "text-danger" })
-            <div class="demo JobTitle">
-                @Html.EnumDropDownListFor(model => model.JobTitle, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
-
-
-        <div class="form-group row">
-            <button type="submit" class="btn btn-primary col-2">新增</button>
-        </div>
+<div class="form-horizontal">
+    <div class="row">
+        <p>
+            <a href="@Url.Action("index" , "home")" class="btn btn-outline-warning">
+                返回
+            </a>
+        </p>
+        <h4 class="col text-center">建立員工檔案</h4>
 
     </div>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.EId, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.EId, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.EId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+        </div>
+    
+    </div>
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.SexType, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.CheckBoxFor(model => model.SexType, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.SexType, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.EnglishName, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group row mt-3">
+        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+        <div class="col-sm-10">
+            @Html.TextBoxFor(model => model.Image, new { @class = "form-control form-control-file", type = "file" })
+            @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    @Html.ValidationMessageFor(model => model.ShiftType, "", new { @class = "text-danger" })
+    <div class="form-group row">
+        <div class="demo Shift">
+            @Html.EnumDropDownListFor(model => model.ShiftType,
+            new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    @Html.ValidationMessageFor(model => model.BranchType, "", new { @class = "text-danger" })
+    <div class="form-group row">
+        <div class="demo Branch">
+            @Html.EnumDropDownListFor(model => model.BranchType,
+            new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+    <div class="form-group row">
+        @Html.ValidationMessageFor(model => model.JobType, "", new { @class = "text-danger" })
+        <div class="demo JobTitle">
+            @Html.EnumDropDownListFor(model => model.JobType,
+            new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <button type="submit" class="btn btn-primary col-2">新增</button>
+    </div>
+
+</div>
 
 }
 
+
+@*<button id="show">show</button>
+    <div id="mydata" style="list-style-type:circle;float:left">
+    </div>*@
 @section Script{
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script src="~/Content/Multi-Column-Select/Multi-Column-Select.js"></script>
     <script src="~/Scripts/jquery-ui.js"></script>
     <script>
         $(function () {
-            $('#SexSelect').bootstrapToggle({
+
+            let msg = '@ViewBag.Msg';
+            if(msg)
+            eAlert(msg);
+            //$('#show').click(showdata);
+
+
+            //function showdata() {
+            //    let str = '';
+            //    $('#mydata').text('');
+            //    let data = $('form').serializeArray();
+            //    data.shift();
+            //    data.forEach(element => {
+            //        switch (element.name) {
+            //            case 'EId':
+            //                element.name = '工號';
+            //                break;
+            //            case 'Password':
+            //                element.name = '身分證';
+            //                break;
+            //            case 'SexType':
+            //                element.name = '性別';
+            //                break;
+            //            case 'Name':
+            //                element.name = '中文姓名';
+            //                break;
+            //            case 'EnglishName':
+            //                element.name = '英文姓名';
+            //                break;
+            //            case 'Phone':
+            //                element.name = '聯絡方式';
+            //                break;
+            //            case 'Email':
+            //                element.name = '信箱';
+            //                break;
+            //            case 'StartDate':
+            //                element.name = '到職日期';
+            //                break;
+            //            case 'ShiftType':
+            //                element.name = '班別';
+            //                break;
+            //            case 'BranchType':
+            //                element.name = '單位';
+            //                element.value = element.value == 0 ? '尚未選擇單位' : element.value;
+            //                break;
+            //            case 'JobType':
+            //                element.name = '職稱';
+            //                break;
+            //            default:
+            //        }
+            //        console.log(element);
+            //        str += `${element.name}:${element.value}<br/>`;
+            //    })
+
+            //    Swal.fire({
+            //        title: `準備提交以下檔案<br/>${str}`,
+            //        icon: 'question',
+            //        showCancelButton: true,
+            //        confirmButtonText: '送出',
+            //        cancelButtonText: '取消',
+            //        confirmButtonColor: '#d33',
+            //        cancelButtonColor: '#3085d6',
+            //    }).then((result) => {
+            //        if (result.isConfirmed) {
+            //        } else {
+            //            return;
+            //        }
+            //    })
+            //}
+
+
+            $('#SexType').bootstrapToggle({
                 on: '男',
                 onstyle: 'primary',
                 off: '女',
                 offstyle: 'danger',
             }).change((e) => {
-                console.log(e.target.checked);
             });
 
-            $('#ShiftSelect').bootstrapToggle({
-                on: 'A',
-                onstyle: 'success',
-                off: 'B',
-                offstyle: 'secondary',
-            }).change((e) => {
-                console.log(e.target.checked);
-            });
+            //$('#ShiftSelect').bootstrapToggle({
+            //    on: 'A',
+            //    onstyle: 'success',
+            //    off: 'B',
+            //    offstyle: 'secondary',
+            //}).change((e) => {
+            //});
         })
 
-
-        $('.Branch').MultiColumnSelect({
-
+        $('.Shift').MultiColumnSelect({
             // Single or Multiple Select
             multiple: false,
-
             // Use text from option. Use false if you plan to use images
             useOptionText: true,
-
             // Hide Original Select Control
             hideselect: true,
-
             // Toggle Open Button Class
             openmenuClass: 'mcs-open',
-
             // Text for button
-            openmenuText: '所屬單位',
-
+            openmenuText: '選擇班別',
             // Class added to Toggle button on open
             openclass: 'open',
-
             // Class of parent container
             containerClass: 'mcs-container',
-
             // Class of menu items
             itemClass: 'mcs-item',
-
             // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
             idprefix: null,
-
             // Toggle Height duration
             duration: 200,
-
             //Callbacks
             onOpen: null,
-            onClose: () => { $('.JobTitle').hide() },
-            onItemSelect: () => { $('.JobTitle').show() },
+            onClose: null,
+            onItemSelect: null,
 
         });
+
+        $('.Branch').MultiColumnSelect({
+            // Single or Multiple Select
+            multiple: false,
+            // Use text from option. Use false if you plan to use images
+            useOptionText: true,
+            // Hide Original Select Control
+            hideselect: true,
+            // Toggle Open Button Class
+            openmenuClass: 'mcs-open',
+            // Text for button
+            openmenuText: '所屬單位',
+            // Class added to Toggle button on open
+            openclass: 'open',
+            // Class of parent container
+            containerClass: 'mcs-container',
+            // Class of menu items
+            itemClass: 'mcs-item',
+            // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
+            idprefix: null,
+            // Toggle Height duration
+            duration: 200,
+            //Callbacks
+            onOpen: null,
+            onClose: null,
+            onItemSelect: null,
+        });
+
         $('.JobTitle').MultiColumnSelect({
 
             // Single or Multiple Select
@@ -222,7 +322,6 @@
             onItemSelect: null,
 
         });
-        $('.JobTitle').hide();
 
 
         $("#StartDate").datepicker({
@@ -231,14 +330,12 @@
             dateFormat: "yy-mm-dd",
             dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"],
             monthNamesShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
-            //yearRange: selectYear,
+            yearRange: `2000:${new Date().getFullYear()}`,
             showAnim: "fade",
         }).change(function () {
             let start = $(this).datepicker("getDate");
             let end = $("#endDatepicker").datepicker("option", "minDate", start).datepicker("getDate");
         })
-
-
 
     </script>
 }

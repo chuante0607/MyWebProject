@@ -33,23 +33,32 @@ namespace UCOMProject.Controllers
 
         // POST: Employee/Create
         [HttpPost]
-        public ActionResult Create(EmployeeViewModel  emp)
+        public ActionResult Create(EmployeeViewModel emp)
         {
             //if (SessionEmp.CurrentEmp == null ||  SessionEmp.CurrentEmp.JobRank != 2) return RedirectToAction("index", "home");
             try
             {
                 if (ModelState.IsValid)
                 {
-
+                    var createEmp = EmployeeUtility.CreateEmpInfo(emp);
+                    if (createEmp.result)
+                    {
+                        ViewBag.Msg = createEmp.msg;
+                        string path = Server.MapPath($@"\img\{createEmp.fileName}");
+                        emp.Image.SaveAs(path);
+                        return View();
+                    }
+                    else
+                    {
+                        ViewBag.Msg = createEmp.msg;
+                        return View(emp);
+                    }
                 }
                 else
                 {
-
-                    return View();
+                    ViewBag.Msg = "資料填寫有誤";
+                    return View(emp);
                 }
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
             }
             catch
             {

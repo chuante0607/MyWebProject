@@ -7,6 +7,7 @@ namespace UCOMProject.Models
 {
     public enum ShiftType
     {
-       A, B
+        請選擇 = 0,
+        常日班, A班, B班
     }
 }

@@ -85,32 +85,41 @@ namespace UCOMProject.Methods
             }
         }
 
-        public static bool CreateEmpInfo(EmployeeViewModel vm)
+        /// <summary>
+        /// 建立員工資料
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns></returns>
+        public static (bool result, string msg, string fileName) CreateEmpInfo(EmployeeViewModel vm)
         {
-            bool isCreate = false;
             using (MyDBEntities db = new MyDBEntities())
             {
-                var result = db.Employees.Find(vm.EId);
-                if (result != null) return isCreate;
-                result = new Employee
+                var emp = db.Employees.Find(vm.EId);
+                if (emp != null)
+                    return (false, $"{vm.EId}已存在,請勿使用", null);
+
+                string fileName = $"{DateTime.Now.Ticks}{vm.Image.FileName}";
+                emp = new Employee
                 {
                     EId = vm.EId,
+                    Password = vm.Password,
                     Name = vm.Name,
-                    EnglishName = vm.Email,
-                    Sex = vm.Sex.ToString(),
-                    Branch = vm.Branch.ToString(),
-                    JobTitle = vm.JobTitle.ToString(),
-                    JobRank = (int)vm.JobTitle,
+                    EnglishName = vm.EnglishName,
+                    Sex = vm.Sex,
+                    Branch = vm.Branch,
+                    JobTitle = vm.JobTitle,
+                    JobRank = vm.JobRank,
                     Email = vm.Email,
                     Phone = vm.Phone,
                     Shift = vm.Shift.ToString(),
                     StartDate = vm.StartDate,
-                    Allow = false
-
-
+                    Image = fileName,
+                    Allow = false,
                 };
 
-                return false;
+                db.Employees.Add(emp);
+                db.SaveChanges();
+                return (true, $"單位:{emp.Branch}\r\n工號:{emp.EId} ,姓名${emp.Name}帳號已開通!", fileName);
             }
         }
 

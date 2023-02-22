@@ -12,61 +12,73 @@ namespace UCOMProject.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "*")]
         [Display(Name = "工號")]
         public string EId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "*")]
         [Display(Name = "中文姓名")]
         public string Name { get; set; }
 
-        [Required]
+
+        [Required(ErrorMessage = "*")]
+        [Display(Name = "英文名")]
+        //[RegularExpression("/^[A-Za-z][A-Za-z0-9]*$/", ErrorMessage = "請輸入英文字母")]
+        public string EnglishName { get; set; }
+
+
+        [Required(ErrorMessage = "*")]
         [Display(Name = "身分證字號")]
         public string Password { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="*")]
         [Display(Name = "員工大頭照")]
         public HttpPostedFileBase Image { get; set; }
 
-        [Required]
-        [Display(Name = "單位")]
-        public BranchType Branch { get; set; }
-
-        [Required]
-        [Display(Name = "職位")]
-        public JobTitleType JobTitle { get; set; }
-        public int JobRank { get { return (int)JobTitle; } }
-
-
-        [Required]
-        [Display(Name = "性別")]
-        public bool SexSelect { get; set; }
-        [BindNever]
-        public string Sex { get { return SexSelect ? "男" : "女"; } }
-
-
-        [Required]
+        [Required(ErrorMessage = "*")]
         [Display(Name = "班別")]
-        public bool ShiftSelect { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "*")]
+        public ShiftType ShiftType { get; set; }
+
         [BindNever]
-        public ShiftType Shift { get { return ShiftSelect ? ShiftType.A : ShiftType.B; }  }
+        public string Shift { get { return ShiftType.ToString(); } }
+
+        [Required(ErrorMessage = "*")]
+        [Display(Name = "單位")]
+        [Range(1, int.MaxValue, ErrorMessage = "*")]
+        public BranchType BranchType { get; set; }
+        [BindNever]
+        public string Branch { get { return BranchType.ToString(); } }
+
+        [Required(ErrorMessage = "*")]
+        [Display(Name = "職位")]
+        [Range(1, int.MaxValue, ErrorMessage = "*")]
+        public JobTitleType JobType { get; set; }
+
+        [BindNever]
+        public int JobRank { get { return (int)JobType; } }
+
+        [BindNever]
+        public string JobTitle { get { return JobType.ToString(); } }
+
+        [Required()]
+        [Display(Name = "性別")]
+        public bool SexType { get; set; }
+
+        [BindNever]
+        public string Sex { get { return SexType ? "男" : "女"; } }
 
         [Display(Name = "信箱")]
         [EmailAddress(ErrorMessage = "請輸入有效電子郵件")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "*")]
         [Phone(ErrorMessage = "請輸入手機號碼")]
         [Display(Name = "手機號碼")]
         public string Phone { get; set; }
 
-        [Required]
-        [Display(Name = "英文名字")]
-        //[RegularExpression("/^[A-Za-z][A-Za-z0-9]*$/", ErrorMessage = "請輸入英文字母")]
-        public string EnglishName { get; set; }
 
-
-        [Required]
+        [Required(ErrorMessage = "*")]
         [Display(Name = "到職日")]
         public DateTime StartDate { get; set; }
 

@@ -20,6 +20,10 @@ namespace UCOMProject.Controllers
     {
         HolidayDetailTableViewModel vmTable = new HolidayDetailTableViewModel();
 
+        /// <summary>
+        /// 休假申請
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> Apply()
         {
             ApplyViewModel vm = new ApplyViewModel();
@@ -30,6 +34,11 @@ namespace UCOMProject.Controllers
             return View(vm);
         }
 
+        /// <summary>
+        /// 休假申請POST
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Apply(ApplyViewModel payload)
         {
@@ -71,6 +80,11 @@ namespace UCOMProject.Controllers
             }
         }
 
+        /// <summary>
+        /// 休假紀錄
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult> Index(string eid)
         {
@@ -81,6 +95,11 @@ namespace UCOMProject.Controllers
             return View(vmTable);
         }
 
+        /// <summary>
+        /// 休假審核狀況
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult> Allow(string eid)
         {
@@ -91,7 +110,12 @@ namespace UCOMProject.Controllers
             return View(vmTable);
         }
 
-
+        /// <summary>
+        /// 休假待審核刪除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="eid"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Delete(List<int> id, string eid)
         {
