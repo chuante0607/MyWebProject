@@ -24,7 +24,7 @@
                                             <input type="text" class="form-control form-control-user text-center" value="@Model.Employee.EId @Model.Employee.Name" disabled>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control form-control-user text-center" value="@Model.Employee.Branch  @Model.Employee.Shift 班" disabled>
+                                            <input type="text" class="form-control form-control-user text-center" value="@Model.Employee.Branch  @Model.Employee.Shift" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -246,7 +246,6 @@
                     vm.range = {start , end};
                 }
             })
-
             //結束日期選單
             $("#endDatepicker").datepicker({
                 changeMonth: true,
@@ -263,7 +262,6 @@
                     vm.range = { start, end };
                 }
             })
-
         });
 
         //Vue
@@ -344,7 +342,7 @@
                     //some只要一找到相符的值就跳出
                     let isWork = matchMonth.some(item => {
                         let workDate = new Date(item.workDate);
-                        return workDate.valueOf() === date.valueOf() && item.shiftType === this.employee.shift;
+                        return workDate.valueOf() === date.valueOf() && item.shift === this.employee.shift;
                     })
                     return [isWork, '', ''];
                 },

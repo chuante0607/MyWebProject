@@ -32,7 +32,7 @@ namespace UCOMProject.Controllers
             vm.WorkDayOfYearByMonth = HolidayUtility.GetWorkDayOfYearByMonth(DateTime.Now.Year);
             ViewBag.vm = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(vm);
-        }
+        } 
 
         /// <summary>
         /// 休假申請POST
@@ -63,7 +63,7 @@ namespace UCOMProject.Controllers
                         //將檔案儲存
                         foreach (var file in payload.Files.Select((value, index) => new { value, index }))
                         {
-                            string path = Server.MapPath($@"\Uploads\{result.FilesName[file.index]}");
+                            string path = Server.MapPath($@"\Uploads\{result.FilesNames[file.index]}");
                             file.value.SaveAs(path);
                         }
                     }
@@ -81,7 +81,7 @@ namespace UCOMProject.Controllers
         }
 
         /// <summary>
-        /// 休假紀錄
+        /// 休假待審核或退回頁面
         /// </summary>
         /// <param name="eid"></param>
         /// <returns></returns>
@@ -90,13 +90,13 @@ namespace UCOMProject.Controllers
         {
             vmTable.Employee = await EmployeeUtility.GetEmp(eid);
             var query = await HolidayUtility.GetHolidayDetailList(eid);
-            vmTable.Details = query.Where(w => w.State == 2).ToList();
+            vmTable.Details = query.Where(w => w.State == 1 || w.State == 3).ToList();
             ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(vmTable);
         }
 
         /// <summary>
-        /// 休假審核狀況
+        /// 休假已審核的歷史紀錄
         /// </summary>
         /// <param name="eid"></param>
         /// <returns></returns>
@@ -105,7 +105,7 @@ namespace UCOMProject.Controllers
         {
             vmTable.Employee = await EmployeeUtility.GetEmp(eid);
             var query = await HolidayUtility.GetHolidayDetailList(eid);
-            vmTable.Details = query.Where(w => w.State == 1).ToList();
+            vmTable.Details = query.Where(w => w.State == 2).ToList();
             ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(vmTable);
         }

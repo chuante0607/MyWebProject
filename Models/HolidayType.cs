@@ -14,7 +14,7 @@ namespace UCOMProject.Models
         事假,
         病假,
         生理假,
-        家庭照顧假,
+        家照假,
         產檢假,
         陪產假,
         安胎假,

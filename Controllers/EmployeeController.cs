@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace UCOMProject.Controllers
         // GET: Employee/Create
         public ActionResult Create()
         {
+            ViewBag.Result = JsonConvert.SerializeObject(new ApplyResult());
             //if (SessionEmp.CurrentEmp == null || SessionEmp.CurrentEmp.JobRank != 2) return RedirectToAction("index", "home");
             return View();
         }
@@ -38,27 +40,26 @@ namespace UCOMProject.Controllers
             //if (SessionEmp.CurrentEmp == null ||  SessionEmp.CurrentEmp.JobRank != 2) return RedirectToAction("index", "home");
             try
             {
+                ApplyResult result = new ApplyResult();
                 if (ModelState.IsValid)
                 {
-                    var createEmp = EmployeeUtility.CreateEmpInfo(emp);
-                    if (createEmp.result)
+                    result = EmployeeUtility.CreateEmpInfo(emp);
+                    if (result.Error)
                     {
-                        ViewBag.Msg = createEmp.msg;
-                        string path = Server.MapPath($@"\img\{createEmp.fileName}");
-                        emp.Image.SaveAs(path);
-                        return View();
+                        ViewBag.Result = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
                     }
                     else
                     {
-                        ViewBag.Msg = createEmp.msg;
-                        return View(emp);
+                        string path = Server.MapPath($@"\img\{result.FileName}");
+                        emp.ImageFile.SaveAs(path);
+                        ViewBag.Result = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
                     }
+                    return View();
                 }
-                else
-                {
-                    ViewBag.Msg = "資料填寫有誤";
-                    return View(emp);
-                }
+                result.Error = true;
+                result.Msg = "資料填寫不完整";
+                ViewBag.Result = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                return View();
             }
             catch
             {

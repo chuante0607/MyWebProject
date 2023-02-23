@@ -8,14 +8,29 @@ namespace UCOMProject.Extension
 {
     public static class EnumExtension
     {
-        public static HolidayType xHolidayTranEnum(this string title)
+        public static HolidayType xTranHolidayEnum(this string title)
         {
             return (HolidayType)Enum.Parse(typeof(HolidayType), title);
         }
 
-        public static ShiftType xShiftTranEnum(this string shift)
+        public static ShiftType xTranShiftEnum(this string shift)
         {
             return (ShiftType)Enum.Parse(typeof(ShiftType), shift);
+        }
+
+        public static BranchType xTranBranchEnum(this string branch)
+        {
+            return (BranchType)Enum.Parse(typeof(BranchType), branch);
+        }
+
+        public static JobTitleType xTranJobTitleEnum(this string title)
+        {
+            return (JobTitleType)Enum.Parse(typeof(JobTitleType), title);
+        }
+
+        public static bool xTranSexBool(this string sex)
+        {
+            return sex == "男" ? true : false;
         }
     }
 }

@@ -2028,6 +2028,7 @@
     <Content Include="images\ui-icons_ffffff_256x240.png" />
     <Content Include="img\123.jpg" />
     <Content Include="img\321.png" />
+    <Content Include="img\638127396292489863123.jpg" />
     <Content Include="img\admin.png" />
     <Content Include="img\lin.jpg" />
     <Content Include="img\office.jpg" />
@@ -2489,8 +2490,8 @@
     <Content Include="Views\Holiday\Allow.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
-    <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Employee\Create.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

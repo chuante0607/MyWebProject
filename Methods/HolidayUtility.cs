@@ -206,7 +206,7 @@ namespace UCOMProject.Methods
                     UsedDays = payload.UsedDays,
                     Remark = payload.Remark,
                     Prove = fileStr,
-                    State = 1,
+                    State = 1,//審核狀態: 待審核為1 審核通過2 退回3
                 };
                 db.HolidayDetails.Add(holidayDetail);
                 db.SaveChanges();
@@ -214,7 +214,7 @@ namespace UCOMProject.Methods
                 applyMsg = $"申請已送出！\r\n" +
                            $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
                            $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
-                return new ApplyResult { Error = false, Msg = applyMsg, FilesName = fileNames };
+                return new ApplyResult { Error = false, Msg = applyMsg, FilesNames = fileNames };
             }
         }
 
@@ -263,7 +263,7 @@ namespace UCOMProject.Methods
             {
                 List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
                 var query = await db.HolidayDetails
-                    .Where(w => w.Employee.Shift.xShiftTranEnum() == shift)
+                    .Where(w => w.Employee.Shift.xTranShiftEnum() == shift)
                     .OrderByDescending(o => o.Id).ToListAsync();
                 var emp = await db.Employees.FindAsync(eid);
                 foreach (var item in query)

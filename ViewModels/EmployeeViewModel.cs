@@ -33,7 +33,9 @@ namespace UCOMProject.Models
 
         [Required(ErrorMessage ="*")]
         [Display(Name = "員工大頭照")]
-        public HttpPostedFileBase Image { get; set; }
+        public HttpPostedFileBase ImageFile { get; set; }
+        [BindNever]
+        public string Image { get; set; }
 
         [Required(ErrorMessage = "*")]
         [Display(Name = "班別")]
@@ -41,14 +43,14 @@ namespace UCOMProject.Models
         public ShiftType ShiftType { get; set; }
 
         [BindNever]
-        public string Shift { get { return ShiftType.ToString(); } }
+        public string Shift { get { return ShiftType.ToString(); } set { } }
 
         [Required(ErrorMessage = "*")]
         [Display(Name = "單位")]
         [Range(1, int.MaxValue, ErrorMessage = "*")]
         public BranchType BranchType { get; set; }
         [BindNever]
-        public string Branch { get { return BranchType.ToString(); } }
+        public string Branch { get { return BranchType.ToString(); } set { } }
 
         [Required(ErrorMessage = "*")]
         [Display(Name = "職位")]
@@ -56,17 +58,16 @@ namespace UCOMProject.Models
         public JobTitleType JobType { get; set; }
 
         [BindNever]
-        public int JobRank { get { return (int)JobType; } }
-
+        public int JobRank { get { return (int)JobType; }set { } }
         [BindNever]
-        public string JobTitle { get { return JobType.ToString(); } }
+        public string JobTitle { get { return JobType.ToString(); } set { } }
 
         [Required()]
         [Display(Name = "性別")]
         public bool SexType { get; set; }
 
         [BindNever]
-        public string Sex { get { return SexType ? "男" : "女"; } }
+        public string Sex { get { return SexType ? "男" : "女"; } set { } }
 
         [Display(Name = "信箱")]
         [EmailAddress(ErrorMessage = "請輸入有效電子郵件")]

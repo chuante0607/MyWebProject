@@ -15,7 +15,7 @@ namespace UCOMProject.Models
             _type = type;
             _work = work;
         }
-        public string ShiftType { get { return _type.ToString(); } }
+        public string Shift { get { return _type.ToString(); } }
         public DateTime WorkDate { get { return _work; } }
     }
 }

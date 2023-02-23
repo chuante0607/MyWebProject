@@ -12,7 +12,8 @@ namespace UCOMProject.Models
     {
         public bool Error { get; set; }
         public string Msg { get; set; }
-        public List<string> FilesName { get; set; }
+        public List<string> FilesNames { get; set; }
+        public string FileName { get; set; }
     }
 
     public class ApplyViewModel

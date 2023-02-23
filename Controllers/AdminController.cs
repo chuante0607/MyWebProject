@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Filters;
 using System.Web.Mvc;
+using UCOMProject.Methods;
+using UCOMProject.Models;
 
 namespace UCOMProject.Controllers
 {
@@ -34,13 +37,14 @@ namespace UCOMProject.Controllers
         public ActionResult Logout()
         {
             Session["admin"] = null;
-            return RedirectToAction("login","admin");
+            return RedirectToAction("login", "admin");
         }
 
         // GET: Admin
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
+            List<EmployeeViewModel> emps = await EmployeeUtility.GetWaitApplyEmp();
+            return View(emps);
         }
 
         // GET: Admin/Details/5
