@@ -20,7 +20,6 @@ namespace UCOMProject.Models
         [Display(Name = "中文姓名")]
         public string Name { get; set; }
 
-
         [Required(ErrorMessage = "*")]
         [Display(Name = "英文名")]
         //[RegularExpression("/^[A-Za-z][A-Za-z0-9]*$/", ErrorMessage = "請輸入英文字母")]

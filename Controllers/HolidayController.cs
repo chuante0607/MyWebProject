@@ -88,7 +88,7 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(string eid)
         {
-            vmTable.Employee = await EmployeeUtility.GetEmp(eid);
+            vmTable.Employee = await EmployeeUtility.GetEmpById(eid);
             var query = await HolidayUtility.GetHolidayDetailList(eid);
             vmTable.Details = query.Where(w => w.State == 1 || w.State == 3).ToList();
             ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
@@ -103,7 +103,7 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<ActionResult> Allow(string eid)
         {
-            vmTable.Employee = await EmployeeUtility.GetEmp(eid);
+            vmTable.Employee = await EmployeeUtility.GetEmpById(eid);
             var query = await HolidayUtility.GetHolidayDetailList(eid);
             vmTable.Details = query.Where(w => w.State == 2).ToList();
             ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });

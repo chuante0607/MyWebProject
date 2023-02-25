@@ -20,11 +20,17 @@ namespace UCOMProject.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(string id, string pwd)
+        public async Task<ActionResult> Login(string id, string pwd)
         {
             if (id.ToLower() == "admin" && pwd.ToLower() == "admin")
             {
-                Session["admin"] = id;
+                Employee admin = await EmployeeUtility.GetEmp(id, pwd);
+                if (admin == null)
+                {
+                    ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼無效" });
+                    return View();
+                }
+                Session["emp"] = admin;
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -36,14 +42,15 @@ namespace UCOMProject.Controllers
 
         public ActionResult Logout()
         {
-            Session["admin"] = null;
+            Session["emp"] = null;
             return RedirectToAction("login", "admin");
         }
 
         // GET: Admin
         public async Task<ActionResult> Index()
         {
-            List<EmployeeViewModel> emps = await EmployeeUtility.GetWaitApplyEmp();
+            UserManage user = new Admin();
+            var emps = await user.GetEmployees();
             return View(emps);
         }
 

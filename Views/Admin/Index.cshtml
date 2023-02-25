@@ -10,6 +10,40 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            if (!item.Allow)
+            {
+                <div class="col-lg-4 col-xl-3">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top img-fluid" style="height:270px" src="~/img/@item.Image" alt="Card image cap">
+                        <div class="card-body">
+
+                            <p>到職日:@item.StartDate.ToShortDateString()</p>
+                            <span class="card-text"> <span class="card-title">@item.Name<small>(@item.EnglishName)</small></span>@item.Branch <small class="badge badge-danger">@item.JobTitle</small></span>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Cras justo odio</li>
+                            <li class="list-group-item">Dapibus ac facilisis in</li>
+                            <li class="list-group-item">Vestibulum at eros</li>
+                        </ul>
+                        <div class="card-body">
+                            <a href="#" class="card-link btn btn-success">開通帳號</a>
+                            <a href="#" class="card-link">Another link</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+
+    </div>
+</div>
+
+
+
 <table class="table">
     <tr>
         <th>
@@ -17,33 +51,23 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.EnglishName)
         </th>
+
         <th>
             @Html.DisplayNameFor(model => model.Password)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Image)
+            @Html.DisplayNameFor(model => model.ShiftType)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Shift)
+            @Html.DisplayNameFor(model => model.BranchType)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Branch)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.JobRank)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.JobTitle)
+            @Html.DisplayNameFor(model => model.JobType)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.SexType)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Sex)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Email)
@@ -55,64 +79,84 @@
             @Html.DisplayNameFor(model => model.StartDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Allow)
+            帳號狀態
         </th>
-        <th></th>
+        <th>
+            功能
+        </th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.EId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EnglishName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Password)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Image)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Shift)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Branch)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.JobRank)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.JobTitle)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SexType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Sex)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Phone)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StartDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Allow)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        if (item.Allow)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.EnglishName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Shift)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Branch)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sex)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                @if (item.Allow)
+                {
+                    <td>
+                        @Html.CheckBoxFor(modelItem => item.Allow, new { @class = "form-control" })
+                    </td>
+                }
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    }
 
 </table>
+
+@section Script{
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <script>
+        $(() => {
+            $('#SexType').bootstrapToggle({
+                on: '男',
+                onstyle: 'primary',
+                off: '女',
+                offstyle: 'danger',
+            }).change((e) => {
+            });
+        })
+
+    </script>
+}
+
+@section Style{
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+}

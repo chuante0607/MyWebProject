@@ -154,10 +154,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Methods\Admin.cs" />
     <Compile Include="Methods\Common.cs" />
+    <Compile Include="Methods\UserManage.cs" />
+    <Compile Include="Methods\EmployeeM.cs" />
     <Compile Include="Methods\EmployeeUtility.cs" />
     <Compile Include="Methods\HolidayUtility.cs" />
     <Compile Include="Methods\AuthorizationFilter.cs" />
+    <Compile Include="Methods\Manager.cs" />
     <Compile Include="Methods\SessionEmp.cs" />
     <Compile Include="Methods\ShiftUtility.cs" />
     <Compile Include="Models\BranchType.cs" />
@@ -165,6 +169,7 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\JobTitleType.cs" />
+    <Compile Include="Models\RoleType.cs" />
     <Compile Include="ViewModels\ApplyViewModel.cs" />
     <Compile Include="ViewModels\ChartViewModel.cs" />
     <Compile Include="Models\Employee.cs">
@@ -2497,6 +2502,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

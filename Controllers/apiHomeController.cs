@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -15,11 +16,11 @@ namespace UCOMProject.Controllers
     [AuthorizationFilter]
     public class apiHomeController : ApiController
     {
-        SummaryViewModel vm = new SummaryViewModel();
 
         // GET: api/apiHome
-        public SummaryViewModel Get()
+        public JsonResult Get()
         {
+          
             return null;
         }
 
@@ -27,7 +28,7 @@ namespace UCOMProject.Controllers
         public SummaryViewModel Get(string Eid)
         {
           
-            return vm;
+            return null;
         }
 
         // POST: api/apiHome
