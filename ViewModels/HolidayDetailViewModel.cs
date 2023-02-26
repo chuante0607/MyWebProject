@@ -25,6 +25,7 @@ namespace UCOMProject.Models
         public string Remark { get; set; }
         public int UsedDays { get; set; }
         public string Prove { get; set; }
+        public EmployeeViewModel Head { get;set; }
         public List<string> ProveImg
         {
             get

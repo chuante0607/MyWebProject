@@ -30,7 +30,7 @@ namespace UCOMProject.Models
         [Display(Name = "身分證字號")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage ="*")]
+        [Required(ErrorMessage = "*")]
         [Display(Name = "員工大頭照")]
         public HttpPostedFileBase ImageFile { get; set; }
         [BindNever]
@@ -51,13 +51,15 @@ namespace UCOMProject.Models
         [BindNever]
         public string Branch { get { return BranchType.ToString(); } set { } }
 
+        public int BranchId { get; set; }
+
         [Required(ErrorMessage = "*")]
         [Display(Name = "職位")]
         [Range(1, int.MaxValue, ErrorMessage = "*")]
         public JobTitleType JobType { get; set; }
 
         [BindNever]
-        public int JobRank { get { return (int)JobType; }set { } }
+        public int JobRank { get { return (int)JobType; } set { } }
         [BindNever]
         public string JobTitle { get { return JobType.ToString(); } set { } }
 

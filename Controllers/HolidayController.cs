@@ -32,7 +32,7 @@ namespace UCOMProject.Controllers
             vm.WorkDayOfYearByMonth = HolidayUtility.GetWorkDayOfYearByMonth(DateTime.Now.Year);
             ViewBag.vm = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(vm);
-        } 
+        }
 
         /// <summary>
         /// 休假申請POST
@@ -89,8 +89,7 @@ namespace UCOMProject.Controllers
         public async Task<ActionResult> Index(string eid)
         {
             vmTable.Employee = await EmployeeUtility.GetEmpById(eid);
-            var query = await HolidayUtility.GetHolidayDetailList(eid);
-            vmTable.Details = query.Where(w => w.State == 1 || w.State == 3).ToList();
+            vmTable.Details = await HolidayUtility.GetHolidayDetailList(eid);
             ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(vmTable);
         }
@@ -103,9 +102,10 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<ActionResult> Allow(string eid)
         {
-            vmTable.Employee = await EmployeeUtility.GetEmpById(eid);
-            var query = await HolidayUtility.GetHolidayDetailList(eid);
-            vmTable.Details = query.Where(w => w.State == 2).ToList();
+            UserManage user = new Manager(RoleType.Manager);
+            vmTable.Employee = await user.GetEmployeeById(eid);
+            var query = await user.GetHolidayDetails();
+            vmTable.Details = query.Where(w => w.State == 1).ToList();
             ViewBag.Source = JsonConvert.SerializeObject(vmTable, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             return View(vmTable);
         }
@@ -126,5 +126,15 @@ namespace UCOMProject.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 編輯休假資訊
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Edit(int id)
+        {
+
+            return View();
+        }
     }
 }

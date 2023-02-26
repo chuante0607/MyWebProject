@@ -10,17 +10,7 @@ namespace UCOMProject.Methods
 {
     public class EmployeeM : UserManage
     {
-        public override UserManage GetUser()
-        {
-            Role = RoleType.Employee;
-            return new EmployeeM();
-        }
-
-        public override Task<List<EmployeeViewModel>> GetEmployees()
-        {
-            throw new Exception("Admin與Manager才可查詢所有員工資訊");
-        }
-
+        public EmployeeM(RoleType role) : base(role) { }
         public override Task<EmployeeViewModel> GetEmployeeById(string eid)
         {
             if (eid == CurrentUser.EId)
@@ -29,6 +19,17 @@ namespace UCOMProject.Methods
             {
                 throw new Exception("Admin與Manager才可查詢其員工資訊");
             }
+        }
+
+        public override Task<List<EmployeeViewModel>> GetEmployees()
+        {
+            throw new Exception("Admin與Manager才可查詢所有員工資訊");
+        }
+
+        public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
+        {
+            //ToDo self
+            return null;
         }
     }
 }

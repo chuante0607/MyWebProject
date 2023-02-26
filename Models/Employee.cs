@@ -35,6 +35,9 @@ namespace UCOMProject.Models
         public string Shift { get; set; }
         public System.DateTime StartDate { get; set; }
         public bool Allow { get; set; }
+        public int BranchId { get; set; }
+        [JsonIgnore]
+        public virtual Branch Branch1 { get; set; }
         [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<HolidayDetail> HolidayDetails { get; set; }

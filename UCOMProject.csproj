@@ -164,6 +164,9 @@
     <Compile Include="Methods\Manager.cs" />
     <Compile Include="Methods\SessionEmp.cs" />
     <Compile Include="Methods\ShiftUtility.cs" />
+    <Compile Include="Models\Branch.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\BranchType.cs" />
     <Compile Include="Models\Holiday.cs">
       <DependentUpon>Model1.tt</DependentUpon>

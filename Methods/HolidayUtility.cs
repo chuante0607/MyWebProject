@@ -219,7 +219,7 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
-        /// 查詢休假紀錄
+        /// 依員工查詢全部休假紀錄
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -237,6 +237,7 @@ namespace UCOMProject.Methods
                     vm.Name = emp.Name;
                     vm.Sex = emp.Sex;
                     vm.Shift = emp.Shift;
+                    vm.Head = await EmployeeUtility.GetEmpById(emp.Branch1.Head);
                     vm.Id = item.Id;
                     vm.HId = item.HId;
                     vm.Title = item.Holiday.Title;
@@ -246,7 +247,45 @@ namespace UCOMProject.Methods
                     vm.State = item.State;
                     vm.Remark = item.Remark;
                     vm.Prove = item.Prove;
+                    vm.ApplyDate = item.ApplyDate;
                     vmList.Add(vm);
+                }
+                return vmList;
+            }
+        }
+
+        /// <summary>
+        /// 依部門查詢員工全部休假紀錄
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetailList(BranchType type)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
+                var emps = await db.Employees.Where(e => e.Branch == type.ToString()).ToListAsync();
+                foreach (var emp in emps)
+                {
+                    foreach (var detail in emp.HolidayDetails)
+                    {
+                        HolidayDetailViewModel vm = new HolidayDetailViewModel();
+                        vm.EId = emp.EId;
+                        vm.Name = emp.Name;
+                        vm.Shift = emp.Shift;
+                        vm.Head = await EmployeeUtility.GetEmpById(emp.Branch1.Head);
+                        vm.Id = detail.Id;
+                        vm.HId = detail.HId;
+                        vm.Title = detail.Holiday.Title;
+                        vm.UsedDays = detail.UsedDays;
+                        vm.BeginDate = detail.BeginDate;
+                        vm.EndDate = detail.EndDate;
+                        vm.State = detail.State;
+                        vm.Remark = detail.Remark;
+                        vm.Prove = detail.Prove;
+                        vm.ApplyDate = detail.ApplyDate;
+                        vmList.Add(vm);
+                    }
                 }
                 return vmList;
             }
@@ -305,6 +344,6 @@ namespace UCOMProject.Methods
             }
         }
 
-     
+
     }
 }

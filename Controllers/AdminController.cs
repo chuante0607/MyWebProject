@@ -49,7 +49,7 @@ namespace UCOMProject.Controllers
         // GET: Admin
         public async Task<ActionResult> Index()
         {
-            UserManage user = new Admin();
+            UserManage user = new Admin(RoleType.Admin);
             var emps = await user.GetEmployees();
             return View(emps);
         }

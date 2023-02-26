@@ -5,12 +5,9 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <div class="container">
+    <h2 class="text-center">待開通帳號</h2>
+
     <div class="row">
         @foreach (var item in Model)
         {

@@ -9,16 +9,7 @@ namespace UCOMProject.Methods
 {
     public class Manager : UserManage
     {
-        public Manager(BranchType branchType)
-        {
-            BranchType = branchType;
-        }
-
-        public override UserManage GetUser()
-        {
-            Role = RoleType.Manager;
-            return new Manager(BranchType);
-        }
+        public Manager(RoleType role) : base(role) { }
 
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
@@ -33,6 +24,11 @@ namespace UCOMProject.Methods
                 }
                 return viewModels;
             }
+        }
+
+        public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
+        {
+            return await HolidayUtility.GetHolidayDetailList(BranchType);
         }
     }
 }

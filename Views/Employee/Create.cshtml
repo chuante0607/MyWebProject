@@ -8,113 +8,102 @@
 @using (Html.BeginForm("Create", "employee", FormMethod.Post, new { enctype = "multipart/form-data", @class = "container mt-5", id = "form" }))
 {
     @Html.AntiForgeryToken()
-
-<div class="form-horizontal">
-    <div class="row">
-        <p>
+    <h4 class="col text-center">建立員工檔案</h4>
+    <div class="form-horizontal">
+        @*<img id="img" class="img-fluid" style="max-height:300px" />*@
+        <hr />
+        <div class="input-group mb-3" style="justify-content: space-between;">
+            <button type="submit" class="btn btn-primary"> <i class="fi fi-rr-left">新增</button>
             <a href="@Url.Action("index" , "home")" class="btn btn-outline-warning">
-                返回
+                <i class="fi fi-rr-left">返回</i>
             </a>
-        </p>
-        <h4 class="col text-center">建立員工檔案</h4>
-
-    </div>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-
-    <div class="form-group row">
-        @Html.LabelFor(model => model.EId, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-4">
-            @Html.EditorFor(model => model.EId, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.EId, "", new { @class = "text-danger" })
-        </div>
-        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-4">
-            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
         </div>
 
-    </div>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.EId, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rs-users-alt"></i></span>
+            </div>
+            @Html.EditorFor(model => model.EId, new { htmlAttributes = new { @class = "form-control", placeholder = "工號" } })
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-id-badge"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "身分證字號" } })
+        </div>
 
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-user"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", placeholder = "中文姓名" } })
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-sr-user"></i></span>
+            </div>
+            @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control", placeholder = "英文名" } })
+        </div>
 
-    <div class="form-group row">
-        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-4">
-            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"> <i class="fi fi-rr-phone-call"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "聯絡方式" } })
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-envelope"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "信箱" } })
         </div>
-        @Html.LabelFor(model => model.EnglishName, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-4">
-            @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
-        </div>
-    </div>
 
-    <div class="form-group row">
-        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-4">
-            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
-        </div>
-        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-4">
-            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group row mt-3">
-        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-4">
-            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control"} })
-            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-        </div>
-        @Html.LabelFor(model => model.SexType, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-2">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-calendar-clock"></i></span>
+            </div>
+            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", placeholder = "到職日", @readonly = "readonly", style = "background-color:white" } })
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.SexType, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-venus-mars"></i></span>
+            </div>
             @Html.CheckBoxFor(model => model.SexType, new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.SexType, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-cloud-upload"></i></span>
+            </div>
+            @Html.TextBoxFor(model => model.ImageFile, new { @class = "form-control form-control-file", type = "file", placeholder = "請上傳員工大頭照" })
+
+        </div>
+
+        @Html.ValidationMessageFor(model => model.ShiftType, "", new { @class = "text-danger" })
+        <div class="form-group row">
+            <div class="demo Shift">
+                @Html.EnumDropDownListFor(model => model.ShiftType,
+                new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        @Html.ValidationMessageFor(model => model.BranchType, "", new { @class = "text-danger" })
+        <div class="form-group row">
+            <div class="demo Branch">
+                @Html.EnumDropDownListFor(model => model.BranchType,
+                new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group row">
+            @Html.ValidationMessageFor(model => model.JobType, "", new { @class = "text-danger" })
+            <div class="demo JobTitle">
+                @Html.EnumDropDownListFor(model => model.JobType,
+                new { htmlAttributes = new { @class = "form-control" } })
+            </div>
         </div>
     </div>
-
-    <div class="form-group row mt-3">
-        @Html.LabelFor(model => model.ImageFile, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
-        <div class="col-sm-10">
-            @Html.TextBoxFor(model => model.ImageFile, new { @class = "form-control form-control-file", type = "file" })
-            @Html.ValidationMessageFor(model => model.ImageFile, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    @Html.ValidationMessageFor(model => model.ShiftType, "", new { @class = "text-danger" })
-    <div class="form-group row">
-        <div class="demo Shift">
-            @Html.EnumDropDownListFor(model => model.ShiftType,
-            new { htmlAttributes = new { @class = "form-control" } })
-        </div>
-    </div>
-
-    @Html.ValidationMessageFor(model => model.BranchType, "", new { @class = "text-danger" })
-    <div class="form-group row">
-        <div class="demo Branch">
-            @Html.EnumDropDownListFor(model => model.BranchType,
-            new { htmlAttributes = new { @class = "form-control" } })
-        </div>
-    </div>
-
-    <div class="form-group row">
-        @Html.ValidationMessageFor(model => model.JobType, "", new { @class = "text-danger" })
-        <div class="demo JobTitle">
-            @Html.EnumDropDownListFor(model => model.JobType,
-            new { htmlAttributes = new { @class = "form-control" } })
-        </div>
-    </div>
-</div>
-
-    <div class="form-group row">
-        <button type="submit" class="btn btn-primary col-2">新增</button>
-    </div>
-
-
 }
 
 
@@ -125,6 +114,17 @@
     <script src="~/Scripts/jquery-ui.js"></script>
     <script>
         $(function () {
+            $("#ImageFile").change(function () {
+                var reader = new FileReader();
+
+                reader.onload = function (event) {
+                    $("#img").attr("src", event.target.result);
+                };
+
+                reader.readAsDataURL(this.files[0]);
+            });
+
+
             let result = @Html.Raw(ViewBag.Result);
             if (result.error) {
                 eAlert(result.msg);
@@ -267,8 +267,15 @@
     <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
     <link href="~/Content/Multi-Column-Select/Multi-Column-Select.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.css" rel="stylesheet" />
-
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-thin-straight/css/uicons-thin-straight.css'>
     <style>
+        input[type="radio"] {
+            padding: 50px;
+        }
+
         .demo {
             width: 100%;
             padding: 0px 12px;
@@ -280,6 +287,19 @@
 
             .toggle.ios .toggle-handle {
                 border-radius: 20rem;
+            }
+
+        .preview {
+            background: #888888;
+            width: 550px;
+            height: auto;
+            text-align: center;
+        }
+
+            .preview img {
+                height: 320px;
+                order: 1;
+                vertical-align: middle;
             }
     </style>
 

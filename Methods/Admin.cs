@@ -10,11 +10,7 @@ namespace UCOMProject.Methods
 {
     public class Admin : UserManage
     {
-        public override UserManage GetUser()
-        {
-            Role = RoleType.Admin;
-            return new Admin();
-        }
+        public Admin(RoleType role) : base(role) { }
 
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
@@ -29,6 +25,12 @@ namespace UCOMProject.Methods
                 }
                 return viewModels;
             }
+        }
+
+        public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
+        {
+            //ToDo Get All
+            return null;
         }
     }
 }

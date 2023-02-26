@@ -26,7 +26,6 @@
     <link href="~/Content/Site.css" rel="stylesheet" />
     <!--main-->
     <link href="~/Content/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
-
     <style>
         .bg-gradient-light {
             background-color: #f8f9fc;
@@ -56,36 +55,24 @@
                 </div>
                 <div class="sidebar-brand-text mx-3">Employee<sup>sys</sup></div>
             </a>
+
+            <span class="badge badge-light">
+                @SessionEmp.CurrentEmp.Branch
+            </span>
             <span class="badge badge-info">
                 @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name (@SessionEmp.CurrentEmp.EnglishName)
                 <span class="badge badge-danger">
                     @SessionEmp.CurrentEmp.JobTitle
                 </span>
             </span>
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Dashboard -->
-            @*<li class="nav-item active">
-                    <a class="nav-link" href="@Url.Action("Index","Home")"
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>員工系統</span>
-                    </a>
-                </li>*@
+   
 
-            <!-- Divider -->
             <hr class="sidebar-divider">
-            <!-- Heading -->
-            @*<div class="sidebar-heading text-center">
-                    @employee.EId - @employee.Name (@employee.JobTitle)
-                </div>*@
-            <!-- Heading -->
-
             <div class="sidebar-heading">
-                holiday system
-
+                Personal ' SYSTEM
             </div>
-            <!-- Nav Item - Pages Collapse Menu -->
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
@@ -95,21 +82,34 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         @*<h6 class="collapse-header">Holiday System</h6>*@
-                        <a class="collapse-item" href="@Url.Action("apply","holiday")">申請</a>
-                        <a class="collapse-item" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">審核進度</a>
-                        <a class="collapse-item" href="@Url.Action("allow","holiday" ,new { Eid = employee.EId})">歷史紀錄</a>
-                        <a class="collapse-item border-bottom-success" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">批次審核</a>
+                        <a class="collapse-item" href="@Url.Action("apply","holiday")">休假申請</a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday" ,new { eid = employee.EId })">審核進度</a>
+                        <a class="collapse-item" href="@Url.Action("allow","holiday" ,new { Eid = employee.EId })">歷史紀錄</a>
                     </div>
                 </div>
             </div>
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-            <!-- Heading -->
+
+
             <div class="sidebar-heading">
-                account system
+                MANAGE ' SYSTEM
             </div>
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
+            <div class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse"
+                   aria-expanded="true" aria-controls="collapse">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>休假審核</span>
+                </a>
+                <div id="collapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        @*<a class="collapse-item" href="@Url.Action("apply","holiday")">員工休假審核</a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">審核進度</a>
+                        <a class="collapse-item" href="@Url.Action("allow","holiday" ,new { Eid = employee.EId})">歷史紀錄</a>*@
+                        <a class="collapse-item" href="@Url.Action("allow","holiday" ,new { Eid = employee.EId})">批次審核</a>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                    aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
@@ -119,7 +119,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         @*<h6 class="collapse-header">Login Screens:</h6>*@
                         <a class="collapse-item" href="@Url.Action("create" , "employee")">建立員工檔案</a>
-                        <a class="collapse-item" href="register.html">Register</a>
+                        <a class="collapse-item" href="@Url.Action("account" , "employee")">帳號開通狀態</a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
@@ -127,23 +127,7 @@
                         <a class="collapse-item" href="blank.html">Blank Page</a>
                     </div>
                 </div>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            @*<li class="nav-item">
-                    <a class="nav-link" href="charts.html">
-                        <i class="fas fa-fw fa-chart-area"></i>
-                        <span>Charts</span>
-                    </a>
-                </li>*@
-
-            <!-- Nav Item - Tables -->
-            @*<li class="nav-item">
-                    <a class="nav-link" href="tables.html">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Tables</span>
-                    </a>
-                </li>*@
+            </div>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

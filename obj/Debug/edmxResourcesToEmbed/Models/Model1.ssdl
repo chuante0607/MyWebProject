@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="MyDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Branch">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Head" Type="nvarchar" MaxLength="50" Nullable="false" />
+  </EntityType>
   <EntityType Name="Employees">
     <Key>
       <PropertyRef Name="EId" />
@@ -18,6 +26,7 @@
     <Property Name="Shift" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="StartDate" Type="date" Nullable="false" />
     <Property Name="Allow" Type="bit" Nullable="false" />
+    <Property Name="BranchId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="HolidayDetails">
     <Key>
@@ -55,6 +64,18 @@
     <Property Name="version" Type="int" />
     <Property Name="definition" Type="varbinary(max)" />
   </EntityType>
+  <Association Name="FK_Employees_Branch1">
+    <End Role="Branch" Type="Self.Branch" Multiplicity="1" />
+    <End Role="Employees" Type="Self.Employees" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Branch">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Employees">
+        <PropertyRef Name="BranchId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_HolidayDetails_Employees">
     <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
     <End Role="HolidayDetails" Type="Self.HolidayDetails" Multiplicity="*" />
@@ -80,10 +101,15 @@
     </ReferentialConstraint>
   </Association>
   <EntityContainer Name="MyDBModelStoreContainer">
+    <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="HolidayDetails" EntityType="Self.HolidayDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Employees_Branch1" Association="Self.FK_Employees_Branch1">
+      <End Role="Branch" EntitySet="Branch" />
+      <End Role="Employees" EntitySet="Employees" />
+    </AssociationSet>
     <AssociationSet Name="FK_HolidayDetails_Employees" Association="Self.FK_HolidayDetails_Employees">
       <End Role="Employees" EntitySet="Employees" />
       <End Role="HolidayDetails" EntitySet="HolidayDetails" />

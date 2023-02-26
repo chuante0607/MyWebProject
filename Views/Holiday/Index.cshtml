@@ -8,11 +8,6 @@
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
-        @*<div class="row form-inline d-flex justify-content-center md-form form-sm mt-0">
-            <i class="fas fa-search" aria-hidden="true"></i>
-            <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="搜尋休假紀錄"
-                   aria-label="Search">
-        </div>*@
         <ul class="nav nav-pills mt-5 mb-2" id="pills-tab" role="tablist" style="justify-content:center">
             <li class="nav-item border-bottom-warning funPos" role="presentation">
                 <button class="nav-link active"
@@ -27,7 +22,7 @@
                 </button>
                 <span class="badge badge-warning badge-counter fun funWait" v-show="allowWait.length">{{allowWait.length}}</span>
             </li>
-            <li class="nav-item border-bottom-success" role="presentation">
+            <li class="nav-item border-bottom-danger funPos" role="presentation">
                 <button class="nav-link"
                         id="pills-profile-tab"
                         data-toggle="pill"
@@ -36,26 +31,16 @@
                         role="tab"
                         aria-controls="pills-profile"
                         aria-selected="false">
-                    已審核
-                </button>
-            </li>
-            <li class="nav-item border-bottom-danger funPos" role="presentation">
-                <button class="nav-link"
-                        id="pills-contact-tab"
-                        data-toggle="pill"
-                        data-target="#pills-contact"
-                        type="button"
-                        role="tab"
-                        aria-controls="pills-contact"
-                        aria-selected="false">
                     退回
                 </button>
-                <span class="badge badge-danger badge-counter fun funBack">5</span>
+                <span class="badge badge-danger badge-counter fun funBack" v-show="allowBack.length">{{allowBack.length}}</span>
             </li>
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" style="position:relative">
+            <!--allowWait table-->
+            <div class="tab-pane fade show active funPos" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
                 <div class="funBtn">
                     <template v-if="isAll">
                         <div class="btn btn-sm btn-danger" v-show="isAll" @@click="delChecked">全部刪除</div>
@@ -64,10 +49,11 @@
                         <div class="btn btn-sm btn-danger" v-show="isChecked" @@click="delChecked">已選擇({{isChecked}}筆)刪除</div>
                     </template>
                 </div>
+
                 <div class="row card shadow">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover" id="dataTable1" width="100%" cellspacing="0">
+                            <table class="table table-bordered table-hover" id="AllowWait" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
                                         <th v-show="allowWait.length">
@@ -77,101 +63,41 @@
                                             </div>
                                         </th>
                                         <th>編號</th>
-                                        <th>班別</th>
-                                        <th>姓名</th>
+                                        <th>部門資訊</th>
                                         <th>假別</th>
-                                        <th>開始日期</th>
-                                        <th>結束日期</th>
-                                        <th>使用天數</th>
+                                        <th>申請日期</th>
+                                        <th>休假期間</th>
+                                        <th>總計天數</th>
                                         <th>事由</th>
-                                        <th>提供證明</th>
-                                        <th>編輯</th>
+                                        <th>證明</th>
+                                        <th>審核單位</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="data in allowWait" :key="data.id" :class="{'checkedColor':data.checked}">
                                         <td v-show="allowWait.length">
+
                                             <div class="custom-control custom-checkbox text-center">
                                                 <input type="checkbox" class="custom-control-input" :id="'defaultUnchecked' + data.id" v-model="data.checked">
                                                 <label class="custom-control-label" :for="'defaultUnchecked' + data.id"></label>
                                             </div>
                                         </td>
                                         <td>h00{{data.id}}</td>
-                                        <td>{{data.shift}}</td>
-                                        <td>{{data.name}}</td>
-                                        <td>{{data.title}}</td>
-                                        <td>{{formatDate(data.beginDate)}}</td>
-                                        <td>{{formatDate(data.endDate)}}</td>
-                                        <td>{{data.usedDays}}天</td>
-                                        <td>{{data.remark}}</td>
-                                        <td v-if="data.prove">
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" :data-target="'#exampleModalCenter'+data.id " >
-                                                證明
-                                            </button>
-                                            <!-- Modal -->
-                                            <div class="modal fade" :id="'exampleModalCenter'+data.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLongTitle">{{data.name}} - 請假事由 : {{data.remark}}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div v-for="img in data.proveImg" :key="img" >
-                                                                <img :src="'/Uploads/' +img" alt="Alternate Text" style="width:100%;max-height:1000px" />
-                                                                <hr />
-                                                            </div>
-                                                       
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <td>
+                                            {{employee.branch}}<br />
+                                            <span class="badge badge-info">
+                                                {{employee.shift}}
+                                            </span>
                                         </td>
-                                        <td v-else>無需證明</td>
-                                        <td><div class="btn btn-sm btn-outline-primary">編輯</div></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-pane fade " id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                <div class="row card shadow">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>編號</th>
-                                        <th>班別</th>
-                                        <th>假別</th>
-                                        <th>開始日期</th>
-                                        <th>結束日期</th>
-                                        <th>使用天數</th>
-                                        <th>事由</th>
-                                        <th>證明</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="data in allow" :key="data.id">
-                                        <td>hoo{{data.id}}</td>
-                                        <td>{{data.shift}}</td>
                                         <td>{{data.title}}</td>
-                                        <td>{{formatDate(data.beginDate)}}</td>
-                                        <td>{{formatDate(data.endDate)}}</td>
-                                        <td>{{data.usedDays}}天</td>
+                                        <td>{{formatDate(data.applyDate)}}</td>
+                                        <td>{{formatDate(data.beginDate)}} ~ <br />{{formatDate(data.endDate)}}</td>
+                                        <td class="text-danger font-weight-bold">{{data.usedDays}}天</td>
                                         <td>{{data.remark}}</td>
                                         <td v-if="data.prove">
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" :data-target="'#exampleModalCenter'+data.id ">
+                                            <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" :data-target="'#exampleModalCenter'+data.id ">
                                                 證明
                                             </button>
-                                            <!-- Modal -->
                                             <div class="modal fade" :id="'exampleModalCenter'+data.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -193,6 +119,13 @@
                                             </div>
                                         </td>
                                         <td v-else>無需證明</td>
+                                        <td>
+                                            <span class="badge badge-warning">
+                                                {{data.head.branch}}主管
+                                            </span>
+                                            <br />
+                                            {{data.head.name}}({{data.head.englishName}})
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -200,26 +133,96 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+
+            <!--allowBack table-->
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <div class="row card shadow">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="allowBack" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>功能</th>
+                                        <th>退回原因</th>
+                                        <th>編號</th>
+                                        <th>部門資訊</th>
+                                        <th>假別</th>
+                                        <th>休假期間</th>
+                                        <th>總計天數</th>
+                                        <th>事由</th>
+                                        <th>證明</th>
+                                        <th>審核單位</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="data in allowBack" :key="data.id">
+                                        <td>
+                                            <a class="btn btn-outline-info">修改</a>
+                                            <a class="btn btn-danger" v-on:click="delBackCheck(data.id)">刪除</a>
+                                        </td>
+                                        <td class="text-danger font-weight-bold">證明拍得不清楚</td>
+                                        <td>h00{{data.id}}</td>
+                                        <td>
+                                            {{employee.branch}}<br />
+                                            <span class="badge badge-info">
+                                                {{employee.shift}}
+                                            </span>
+                                        </td>
+                                        <td>{{data.title}}</td>
+                                        <td>{{formatDate(data.beginDate)}} ~ <br />{{formatDate(data.endDate)}}</td>
+                                        <td class="text-danger font-weight-bold">{{data.usedDays}}天</td>
+                                        <td>{{data.remark}}</td>
+                                        <td v-if="data.prove">
+                                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" :data-target="'#exampleModalCenter'+data.id ">
+                                                證明
+                                            </button>
+                                            <div class="modal fade" :id="'exampleModalCenter'+data.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLongTitle">{{data.name}} - 請假事由 : {{data.remark}}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div v-for="img in data.proveImg" :key="img">
+                                                                <img :src="'/Uploads/' +img" alt="Alternate Text" style="width:100%;max-height:1000px" />
+                                                                <hr />
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td v-else>無需證明</td>
+                                        <td>
+                                            <span class="badge badge-warning">
+                                                {{data.head.branch}}主管
+                                            </span>
+                                            <br />
+                                            {{data.head.name}}({{data.head.englishName}})
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- /.container-fluid -->
-
-
-
 </div>
 
 @section Script{
     <!-- Page level plugins -->
     <script src="~/Content/admin/vendor/datatables/jquery.dataTables.js"></script>
     <script src="~/Content/admin/vendor/datatables/dataTables.bootstrap4.js"></script>
-
+    <script src="~/Scripts/jquery-ui.js"></script>
     <script>
-        $(() => {
-            // Call the dataTables jQuery plugin
             $(document).ready(function () {
-                $('#dataTable1').DataTable({
+                $('#AllowWait').DataTable({
                     "searching": false,
                     "language": {
                         "emptyTable": "暫無休假資訊..",
@@ -234,10 +237,10 @@
                     }
 
                 });
-                $('#dataTable2').DataTable({
-                    "searching": false, 
+                $('#allowBack').DataTable({
+                    "searching": false,
                     "language": {
-                        "emptyTable": "暫無休假資訊..",
+                        "emptyTable": "暫無退回資訊..",
                         "info": "顯示 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
                         "infoEmpty": "顯示 0 至 0 項結果，共 0 項",
                         "paginate": {
@@ -249,32 +252,36 @@
                     }
                 });
             });
-        })
 
-        const vm =  new Vue({
+        const vm = new Vue({
             el: '#app',
             data: {
                 source: {},
-                allow:[],
+                allowBack: [],
                 allowWait: [],
                 employee: {},
+                edit: false,
             },
             mounted() {
                 this.source = @Html.Raw(ViewBag.Source);
                 this.employee = this.source.employee;
                 this.source.details.forEach(item => {
                     this.$set(item, 'checked', false);
-                    if (item.allow) {
-                        this.allow.push(item)
-                    } else {
-                        this.allowWait.push(item)
+                    switch (item.state) {
+                        case 1:
+                            this.allowWait.push(item)
+                            break;
+                        case 2:
+                            this.allowBack.push(item)
+                            break;
+                        default:
                     }
                 })
             },
             computed: {
                 isChecked() {
                     return this.allowWait.reduce((acc, current) => {
-                        return acc + (current.checked ? 1 : 0 );
+                        return acc + (current.checked ? 1 : 0);
                     }, 0)
                 },
                 isAll: {
@@ -307,7 +314,26 @@
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonText: '刪除',
-                        cancelButtonText:'取消',
+                        cancelButtonText: '取消',
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.delData(data);
+                        } else {
+                            return;
+                        }
+                    })
+                },
+                delBackCheck(id) {
+                    let data = [];
+                    data.push(id);
+                    Swal.fire({
+                        title: `確定刪除編號h00${id}假單？`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: '刪除',
+                        cancelButtonText: '取消',
                         confirmButtonColor: '#d33',
                         cancelButtonColor: '#3085d6',
                     }).then((result) => {
@@ -319,23 +345,23 @@
                     })
                 },
                 delData(data) {
-                     $.ajax({
+                    $.ajax({
                         type: 'post',
                         url: '@Url.Action("delete" , new { eid = Model.Employee.EId})',
                         data: JSON.stringify(data),
                         contentType: 'application/json',
-                     }).done(data => {
-                             sAlert('成功刪除')
-                             $(Swal.getConfirmButton()).click(function () {
-                                 $('body').loading();
-                                 setTimeout(function () {
-                                     window.location.href = '@Url.Action("index", "holiday", new { eid = Model.Employee.EId })';
-                                 }, 1500)
-                             })
-                        }).fail(error => {
-                            console.log('error', error);
+                    }).done(data => {
+                        sAlert('成功刪除')
+                        $(Swal.getConfirmButton()).click(function () {
+                            $('body').loading();
+                            setTimeout(function () {
+                                window.location.href = '@Url.Action("index", "holiday", new { eid = Model.Employee.EId })';
+                            }, 1500)
                         })
-                }
+                    }).fail(error => {
+                        console.log('error', error);
+                    })
+                },
             }
         })
     </script>
@@ -343,6 +369,7 @@
 
 @section Style{
     <link href="~/Content/admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
     <style>
         img {
             width: 50px;
