@@ -5,31 +5,36 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using UCOMProject.Models;
+using UCOMProject.Methods;
 
-namespace UCOMProject.Methods
+namespace UCOMProject.Roles
 {
-    public class EmployeeM : UserManage
+    public class User : RoleManage
     {
-        public EmployeeM(RoleType role) : base(role) { }
+        public User(RoleType role) : base(role) { }
+
+
         public override Task<EmployeeViewModel> GetEmployeeById(string eid)
         {
+            //employee只能查詢自己的資訊
             if (eid == CurrentUser.EId)
                 return base.GetEmployeeById(eid);
             else
             {
-                throw new Exception("Admin與Manager才可查詢其員工資訊");
+                throw new Exception("Employee只可查詢自己的資訊");
             }
         }
 
         public override Task<List<EmployeeViewModel>> GetEmployees()
         {
-            throw new Exception("Admin與Manager才可查詢所有員工資訊");
+            //employee無法查詢其他員工資訊
+            throw new Exception("Employee不可查詢所有員工資訊");
         }
 
         public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
         {
-            //ToDo self
-            return null;
+            return await HolidayUtility.GetHolidayDetails(CurrentUser.EId);
         }
+
     }
 }

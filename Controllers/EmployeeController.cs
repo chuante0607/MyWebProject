@@ -14,6 +14,7 @@ namespace UCOMProject.Controllers
     public class EmployeeController : Controller
     {
         // GET: Employee
+        JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
         public ActionResult Index()
         {
             return View();
@@ -29,7 +30,6 @@ namespace UCOMProject.Controllers
         public ActionResult Create()
         {
             ViewBag.Result = JsonConvert.SerializeObject(new ApplyResult());
-            //if (SessionEmp.CurrentEmp == null || SessionEmp.CurrentEmp.JobRank != 2) return RedirectToAction("index", "home");
             return View();
         }
 
@@ -37,28 +37,27 @@ namespace UCOMProject.Controllers
         [HttpPost]
         public ActionResult Create(EmployeeViewModel emp)
         {
-            //if (SessionEmp.CurrentEmp == null ||  SessionEmp.CurrentEmp.JobRank != 2) return RedirectToAction("index", "home");
             try
             {
                 ApplyResult result = new ApplyResult();
                 if (ModelState.IsValid)
                 {
                     result = EmployeeUtility.CreateEmpInfo(emp);
-                    if (result.Error)
-                    {
-                        ViewBag.Result = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                    }
-                    else
+                    if (result.isPass)
                     {
                         string path = Server.MapPath($@"\img\{result.FileName}");
                         emp.ImageFile.SaveAs(path);
-                        ViewBag.Result = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                        ViewBag.Result = JsonConvert.SerializeObject(result, camelSetting);
+                    }
+                    else
+                    {
+                        ViewBag.Result = JsonConvert.SerializeObject(result, camelSetting);
                     }
                     return View();
                 }
-                result.Error = true;
-                result.Msg = "資料填寫不完整";
-                ViewBag.Result = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                result.isPass = false;
+                result.msg = "資料填寫不完整";
+                ViewBag.Result = JsonConvert.SerializeObject(result, camelSetting);
                 return View();
             }
             catch

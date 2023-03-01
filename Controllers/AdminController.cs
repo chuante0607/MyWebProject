@@ -8,6 +8,7 @@ using System.Web.Http.Filters;
 using System.Web.Mvc;
 using UCOMProject.Methods;
 using UCOMProject.Models;
+using UCOMProject.Roles;
 
 namespace UCOMProject.Controllers
 {
@@ -24,7 +25,7 @@ namespace UCOMProject.Controllers
         {
             if (id.ToLower() == "admin" && pwd.ToLower() == "admin")
             {
-                Employee admin = await EmployeeUtility.GetEmp(id, pwd);
+                Employee admin = await EmployeeUtility.MatchUser(id, pwd);
                 if (admin == null)
                 {
                     ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼無效" });
@@ -49,7 +50,7 @@ namespace UCOMProject.Controllers
         // GET: Admin
         public async Task<ActionResult> Index()
         {
-            UserManage user = new Admin(RoleType.Admin);
+            RoleManage user = new Admin(RoleType.Admin);
             var emps = await user.GetEmployees();
             return View(emps);
         }

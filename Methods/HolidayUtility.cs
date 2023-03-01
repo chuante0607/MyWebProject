@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UCOMProject.Extension;
 using UCOMProject.Models;
+using UCOMProject.Roles;
 
 namespace UCOMProject.Methods
 {
@@ -56,7 +57,7 @@ namespace UCOMProject.Methods
             using (MyDBEntities db = new MyDBEntities())
             {
                 //依照休假年份群組化
-                var query = await db.HolidayDetails.Where(s => s.EId == eid).GroupBy(g => g.BelongYear, g => new { g.BeginDate, g.UsedDays }).ToListAsync();
+                var query = await db.HolidayDetails.Where(s => s.EId == eid && s.State == 2).GroupBy(g => g.BelongYear, g => new { g.BeginDate, g.UsedDays }).ToListAsync();
                 List<ChartViewModel> vmList = new List<ChartViewModel>();
                 foreach (var item in query)
                 {
@@ -173,7 +174,7 @@ namespace UCOMProject.Methods
                                 applyMsg = item.EndDate.Subtract(item.BeginDate).Days == 0 ?
                                    $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請" :
                                    $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
-                                return new ApplyResult { Error = true, Msg = applyMsg };
+                                return new ApplyResult { isPass = false, msg = applyMsg };
                             }
                             checkDays--;
                         }
@@ -206,7 +207,7 @@ namespace UCOMProject.Methods
                     UsedDays = payload.UsedDays,
                     Remark = payload.Remark,
                     Prove = fileStr,
-                    State = 1,//審核狀態: 待審核為1 審核通過2 退回3
+                    State = (int)ReviewType.Wait,
                 };
                 db.HolidayDetails.Add(holidayDetail);
                 db.SaveChanges();
@@ -214,41 +215,25 @@ namespace UCOMProject.Methods
                 applyMsg = $"申請已送出！\r\n" +
                            $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
                            $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
-                return new ApplyResult { Error = false, Msg = applyMsg, FilesNames = fileNames };
+                return new ApplyResult { isPass = true, msg = applyMsg, FilesNames = fileNames };
             }
         }
 
         /// <summary>
-        /// 依員工查詢全部休假紀錄
+        /// 依員工資訊查詢全部休假紀錄
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetailList(string eid)
+        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetails(string eid)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
                 List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
-                var query = await db.HolidayDetails.Where(w => w.EId == eid).OrderByDescending(o => o.Id).ToListAsync();
+                var details = await db.HolidayDetails.Where(w => w.EId == eid).OrderByDescending(o => o.Id).ToListAsync();
                 var emp = await db.Employees.FindAsync(eid);
-                foreach (var item in query)
+                foreach (var detail in details)
                 {
-                    HolidayDetailViewModel vm = new HolidayDetailViewModel();
-                    vm.EId = emp.EId;
-                    vm.Name = emp.Name;
-                    vm.Sex = emp.Sex;
-                    vm.Shift = emp.Shift;
-                    vm.Head = await EmployeeUtility.GetEmpById(emp.Branch1.Head);
-                    vm.Id = item.Id;
-                    vm.HId = item.HId;
-                    vm.Title = item.Holiday.Title;
-                    vm.UsedDays = item.UsedDays;
-                    vm.BeginDate = item.BeginDate;
-                    vm.EndDate = item.EndDate;
-                    vm.State = item.State;
-                    vm.Remark = item.Remark;
-                    vm.Prove = item.Prove;
-                    vm.ApplyDate = item.ApplyDate;
-                    vmList.Add(vm);
+                    vmList.Add(await SetDetailViewModelData(detail, emp));
                 }
                 return vmList;
             }
@@ -259,7 +244,7 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetailList(BranchType type)
+        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetails(BranchType type)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -269,22 +254,7 @@ namespace UCOMProject.Methods
                 {
                     foreach (var detail in emp.HolidayDetails)
                     {
-                        HolidayDetailViewModel vm = new HolidayDetailViewModel();
-                        vm.EId = emp.EId;
-                        vm.Name = emp.Name;
-                        vm.Shift = emp.Shift;
-                        vm.Head = await EmployeeUtility.GetEmpById(emp.Branch1.Head);
-                        vm.Id = detail.Id;
-                        vm.HId = detail.HId;
-                        vm.Title = detail.Holiday.Title;
-                        vm.UsedDays = detail.UsedDays;
-                        vm.BeginDate = detail.BeginDate;
-                        vm.EndDate = detail.EndDate;
-                        vm.State = detail.State;
-                        vm.Remark = detail.Remark;
-                        vm.Prove = detail.Prove;
-                        vm.ApplyDate = detail.ApplyDate;
-                        vmList.Add(vm);
+                        vmList.Add(await SetDetailViewModelData(detail, emp));
                     }
                 }
                 return vmList;
@@ -292,58 +262,113 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
-        /// 依班別員工查詢休假紀錄
+        /// 查詢全部員工休假紀錄
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetailList(string eid, ShiftType shift)
+        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
         {
             using (MyDBEntities db = new MyDBEntities())
             {
                 List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
-                var query = await db.HolidayDetails
-                    .Where(w => w.Employee.Shift.xTranShiftEnum() == shift)
-                    .OrderByDescending(o => o.Id).ToListAsync();
-                var emp = await db.Employees.FindAsync(eid);
-                foreach (var item in query)
+                var emps = await db.Employees.ToListAsync();
+                foreach (var emp in emps)
                 {
-                    HolidayDetailViewModel vm = new HolidayDetailViewModel();
-                    vm.EId = emp.EId;
-                    vm.Name = emp.Name;
-                    vm.Sex = emp.Sex;
-                    vm.Shift = emp.Shift;
-                    vm.Id = item.Id;
-                    vm.HId = item.HId;
-                    vm.Title = item.Holiday.Title;
-                    vm.UsedDays = item.UsedDays;
-                    vm.BeginDate = item.BeginDate;
-                    vm.EndDate = item.EndDate;
-                    vm.State = item.State;
-                    vm.Remark = item.Remark;
-                    vm.Prove = item.Prove;
-                    vmList.Add(vm);
+                    foreach (var detail in emp.HolidayDetails)
+                    {
+                        vmList.Add(await SetDetailViewModelData(detail, emp));
+                    }
                 }
                 return vmList;
             }
         }
 
         /// <summary>
-        /// 刪除休假歷史紀錄
+        /// 設定ViewModel資料
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="emp"></param>
+        /// <returns></returns>
+        private static async Task<HolidayDetailViewModel> SetDetailViewModelData(HolidayDetail data, Employee emp)
+        {
+            HolidayDetailViewModel vm = new HolidayDetailViewModel();
+            vm.EId = data.EId;
+            vm.Name = emp.Name;
+            vm.Shift = emp.Shift;
+            vm.Branch = emp.Branch;
+            vm.Head = await EmployeeUtility.GetEmpById(emp.Branch1.Head);
+            vm.Id = data.Id;
+            vm.HId = data.HId;
+            vm.Title = data.Holiday.Title;
+            vm.UsedDays = data.UsedDays;
+            vm.BeginDate = data.BeginDate;
+            vm.EndDate = data.EndDate;
+            vm.State = data.State;
+            vm.Remark = data.Remark;
+            vm.Prove = data.Prove;
+            vm.ApplyDate = data.ApplyDate;
+            vm.Reason = data.Reason;
+            return vm;
+        }
+
+        /// <summary>
+        /// 修改休假申請狀態
         /// </summary>
         /// <param name="id"></param>
-        public static void DelHolidayDetail(int id, string eid)
+        /// <returns></returns>
+        public static async Task<bool> EditHolidayDetailsState(List<HolidayDetailViewModel> data, ReviewType state)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                var result = db.HolidayDetails.FirstOrDefault(f => f.Id == id && f.EId == eid);
-                if (result != null)
+                List<int> ids = data.Select(s => s.Id).ToList();
+                var details = await db.HolidayDetails.Where(w => ids.Contains(w.Id)).ToListAsync();
+                foreach (var detail in details)
                 {
-                    db.HolidayDetails.Remove(result);
-                    db.SaveChanges();
+                    switch (state)
+                    {
+                        case ReviewType.Wait:
+                            detail.Reason = null;
+                            break;
+                        case ReviewType.Pass:
+                            detail.Reason = null;
+                            break;
+                        case ReviewType.Back:
+                            detail.Reason = data.Find(f => f.Id == detail.Id).Reason;
+                            break;
+                        default:
+                            break;
+                    }
+                    detail.State = (int)state;
+                }
+                try
+                {
+                    await db.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    return false;
                 }
             }
+            return true;
         }
 
-
+        /// <summary>
+        /// 刪除待審核的休假申請
+        /// </summary>
+        /// <param name="id"></param>
+        public static async Task<bool> DelHolidayDetails(List<int> id, string eid)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var result = await db.HolidayDetails.Where(w => id.Contains(w.Id) && w.EId == eid).ToListAsync();
+                if (result == null)
+                {
+                    return false;
+                }
+                db.HolidayDetails.RemoveRange(result);
+                await db.SaveChangesAsync();
+                return true;
+            }
+        }
     }
 }

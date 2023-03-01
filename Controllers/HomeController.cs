@@ -15,7 +15,7 @@ namespace UCOMProject.Controllers
     public class HomeController : Controller
     {
         public SummaryViewModel vm = new SummaryViewModel();
-
+        JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
         public async Task<ActionResult> Index(int? year)
         {
             year = year == null ? DateTime.Now.Year : year;
@@ -25,7 +25,7 @@ namespace UCOMProject.Controllers
             vm.ChartInfos = await HolidayUtility.GetchartInfos(vm.Employee.EId, (int)year);
             try
             {
-                ViewBag.Source = JsonConvert.SerializeObject(vm, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                ViewBag.Source = JsonConvert.SerializeObject(vm, camelSetting);
             }
             catch (ObjectDisposedException ex)
             {

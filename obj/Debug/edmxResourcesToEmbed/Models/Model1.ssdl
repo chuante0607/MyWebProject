@@ -43,6 +43,7 @@
     <Property Name="UsedDays" Type="int" Nullable="false" />
     <Property Name="BelongYear" Type="int" Nullable="false" />
     <Property Name="ApplyDate" Type="date" Nullable="false" />
+    <Property Name="Reason" Type="nvarchar(max)" />
   </EntityType>
   <EntityType Name="Holidays">
     <Key>

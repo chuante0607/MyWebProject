@@ -5,12 +5,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using UCOMProject.Models;
-namespace UCOMProject.Methods
+using UCOMProject.Methods;
+using UCOMProject.Interfaces;
+
+namespace UCOMProject.Roles
 {
-    public class Manager : UserManage
+    public class Manager : RoleManage, IHolidayReview
     {
         public Manager(RoleType role) : base(role) { }
 
+        /// <summary>
+        /// 主管只能查詢自己部門的員工資訊
+        /// </summary>
+        /// <returns></returns>
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
             using (MyDBEntities db = new MyDBEntities())
@@ -26,9 +33,18 @@ namespace UCOMProject.Methods
             }
         }
 
+        /// <summary>
+        /// 主管只能查詢自己部門員工休假資訊
+        /// </summary>
+        /// <returns></returns>
         public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
         {
-            return await HolidayUtility.GetHolidayDetailList(BranchType);
+            return await HolidayUtility.GetHolidayDetails(BranchType);
+        }
+
+        public async Task<bool> Review(List<HolidayDetailViewModel> data, ReviewType state)
+        {
+            return await HolidayUtility.EditHolidayDetailsState(data, state);
         }
     }
 }

@@ -5,5 +5,8 @@ using System.Web;
 
 namespace UCOMProject.Models
 {
-    public enum RoleType { Admin = 0, Employee, Manager }
+    public enum ReviewType
+    {
+        Wait = 1, Pass, Back
+    }
 }

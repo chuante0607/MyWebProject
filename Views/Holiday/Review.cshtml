@@ -9,7 +9,7 @@
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <ul class="nav nav-pills mt-5 mb-2" id="pills-tab" role="tablist" style="justify-content:center">
-            <li class="nav-item border-bottom-warning funPos" role="presentation">
+            <li class="nav-item border-bottom-danger funPos" role="presentation">
                 <button class="nav-link active"
                         id="pills-home-tab"
                         data-toggle="pill"
@@ -18,22 +18,10 @@
                         role="tab"
                         aria-controls="pills-home"
                         aria-selected="true">
-                    待審核
+                    待審核&nbsp;
+                    <span class="badge badge-light">員工休假申請</span>
                 </button>
-                <span class="badge badge-warning badge-counter fun funWait" v-show="allowWait.length">{{allowWait.length}}</span>
-            </li>
-            <li class="nav-item border-bottom-danger funPos" role="presentation">
-                <button class="nav-link"
-                        id="pills-profile-tab"
-                        data-toggle="pill"
-                        data-target="#pills-profile"
-                        type="button"
-                        role="tab"
-                        aria-controls="pills-profile"
-                        aria-selected="false">
-                    退回
-                </button>
-                <span class="badge badge-danger badge-counter fun funBack" v-show="allowBack.length">{{allowBack.length}}</span>
+                <span class="badge badge-danger badge-counter fun funWait" v-show="allowWait.length">{{allowWait.length}}</span>
             </li>
         </ul>
 
@@ -43,23 +31,98 @@
 
                 <div class="funBtn1">
                     <template v-if="isAll">
-                        <div class="btn btn-sm btn-danger" v-show="isAll" @@click="handleChecked(false)">全部退回</div>
+                        <div class="btn btn-sm btn-danger"
+                             v-show="isAll"
+                             data-toggle="modal"
+                             data-target="#reason">
+                            全部退回
+                        </div>
                     </template>
                     <template v-else>
-                        <div class="btn btn-sm btn-danger" v-show="isChecked" @@click="handleChecked(false)">已選擇({{isChecked}}筆)退回</div>
+                        <div class="btn btn-sm btn-danger"
+                             v-show="isChecked"
+                             data-toggle="modal"
+                             data-target="#reason">
+                            已選擇({{isChecked}}筆)退回
+                        </div>
                     </template>
+                </div>
+                <!--modal-->
+                <div class="modal fade"
+                     id="reason"
+                     tabindex="-1"
+                     role="dialog"
+                     aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h5 class="modal-title text-center" id="exampleModalLabel">請說明退回原因，共{{isChecked}}筆</h5>
+                                <button type="button"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div v-for="(data , index) in allowWait" :key="data.id">
+                                    <template v-if="data.checked">
+                                        <div class="form-group">
+                                            <p for="recipient-name" class="col-form-label">
+                                                {{data.branch}}
+                                                <template v-if="data.shift == 'A班'">
+                                                    <span class="badge badge-info">
+                                                        {{data.shift}}
+                                                    </span>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="badge badge-secondary">
+                                                        {{data.shift}}
+                                                    </span>
+                                                </template>
+                                                {{data.eId}}
+                                                {{data.name}}
+                                            </p>
+                                            <p for="recipient-name" class="col-form-label">單號:h00{{data.id}}</p>
+                                            <p for="recipient-name" class="col-form-label">
+                                                {{data.title}}&nbsp;
+                                                <span class="badge badge-danger">{{data.usedDays}}天</span>
+                                            </p>
+                                            <label :for="'reason' + data.id" class="col-form-label">原因:</label>
+                                            <input class="form-control" v-model="data.reason">
+                                        </div>
+                                    </template>
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button"
+                                        class="btn btn-danger"
+                                        v-on:click="handleAction('back')">
+                                    退回
+                                </button>
+                                <button type="button"
+                                        class="btn btn-primary"
+                                        data-dismiss="modal">
+                                    取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="funBtn">
                     <template v-if="isAll">
-                        <div class="btn btn-sm btn-success" v-show="isAll" @@click="handleChecked(true)">全部通過</div>
+                        <div class="btn btn-sm btn-success" v-show="isAll" @@click="handleAction('pass')">全部通過</div>
                     </template>
                     <template v-else>
-                        <div class="btn btn-sm btn-success" v-show="isChecked" @@click="handleChecked(true)">已選擇({{isChecked}}筆)通過</div>
+                        <div class="btn btn-sm btn-success" v-show="isChecked" @@click="handleAction('pass')">已選擇({{isChecked}}筆)通過</div>
                     </template>
                 </div>
-
-
 
                 <div class="row card shadow">
                     <div class="card-body">
@@ -87,7 +150,6 @@
                                 <tbody>
                                     <tr v-for="data in allowWait" :key="data.id" :class="{'checkedColor':data.checked}">
                                         <td v-show="allowWait.length">
-
                                             <div class="custom-control custom-checkbox text-center">
                                                 <input type="checkbox" class="custom-control-input" :id="'defaultUnchecked' + data.id" v-model="data.checked">
                                                 <label class="custom-control-label" :for="'defaultUnchecked' + data.id"></label>
@@ -95,7 +157,7 @@
                                         </td>
                                         <td>h00{{data.id}}</td>
                                         <td>
-                                            {{employee.branch}}<br />
+                                            {{data.branch}}
                                             <template v-if="data.shift == 'A班'">
                                                 <span class="badge badge-info">
                                                     {{data.shift}}
@@ -106,6 +168,9 @@
                                                     {{data.shift}}
                                                 </span>
                                             </template>
+                                            <br />
+                                            {{data.eId}}
+                                            {{data.name}}
                                         </td>
                                         <td>{{data.title}}</td>
                                         <td>{{formatDate(data.applyDate)}}</td>
@@ -114,84 +179,6 @@
                                         <td>{{data.remark}}</td>
                                         <td v-if="data.prove">
                                             <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" :data-target="'#exampleModalCenter'+data.id ">
-                                                證明
-                                            </button>
-                                            <div class="modal fade" :id="'exampleModalCenter'+data.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLongTitle">{{data.name}} - 請假事由 : {{data.remark}}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div v-for="img in data.proveImg" :key="img">
-                                                                <img :src="'/Uploads/' +img" alt="Alternate Text" style="width:100%;max-height:1000px" />
-                                                                <hr />
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td v-else>無需證明</td>
-                                        <td>
-                                            <span class="badge badge-warning">
-                                                {{data.head.branch}}主管
-                                            </span>
-                                            <br />
-                                            {{data.head.name}}({{data.head.englishName}})
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!--allowBack table-->
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                <div class="row card shadow">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="allowBack" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>功能</th>
-                                        <th>退回原因</th>
-                                        <th>編號</th>
-                                        <th>部門資訊</th>
-                                        <th>假別</th>
-                                        <th>休假期間</th>
-                                        <th>總計天數</th>
-                                        <th>事由</th>
-                                        <th>證明</th>
-                                        <th>審核單位</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="data in allowBack" :key="data.id">
-                                        <td>
-                                            <a class="btn btn-outline-info">修改</a>
-                                            <a class="btn btn-danger" v-on:click="delBackCheck(data.id)">刪除</a>
-                                        </td>
-                                        <td class="text-danger font-weight-bold">證明拍得不清楚</td>
-                                        <td>h00{{data.id}}</td>
-                                        <td>
-                                            {{employee.branch}}<br />
-                                            <span class="badge badge-info">
-                                                {{employee.shift}}
-                                            </span>
-                                        </td>
-                                        <td>{{data.title}}</td>
-                                        <td>{{formatDate(data.beginDate)}} ~ <br />{{formatDate(data.endDate)}}</td>
-                                        <td class="text-danger font-weight-bold">{{data.usedDays}}天</td>
-                                        <td>{{data.remark}}</td>
-                                        <td v-if="data.prove">
-                                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" :data-target="'#exampleModalCenter'+data.id ">
                                                 證明
                                             </button>
                                             <div class="modal fade" :id="'exampleModalCenter'+data.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -255,27 +242,13 @@
                     }
 
                 });
-                $('#allowBack').DataTable({
-                    "searching": false,
-                    "language": {
-                        "emptyTable": "暫無退回資訊..",
-                        "info": "顯示 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
-                        "infoEmpty": "顯示 0 至 0 項結果，共 0 項",
-                        "paginate": {
-                            "first": "第一頁",
-                            "last": "最後一頁",
-                            "next": "下一頁",
-                            "previous": "上一頁"
-                        }
-                    }
-                });
+
             });
 
         const vm = new Vue({
             el: '#app',
             data: {
                 source: {},
-                allowBack: [],
                 allowWait: [],
                 employee: {},
                 edit: false,
@@ -284,30 +257,27 @@
                 this.source = @Html.Raw(ViewBag.Source);
                 this.employee = this.source.employee;
                 this.source.details.forEach(item => {
+                    //設定資料來源賦予checked , reason屬性
                     this.$set(item, 'checked', false);
-                    switch (item.state) {
-                        case 1:
-                            this.allowWait.push(item)
-                            break;
-                        case 2:
-                            this.allowBack.push(item)
-                            break;
-                        default:
-                    }
+                    this.$set(item, 'reason', '');
+                    this.allowWait.push(item);
                 })
             },
             computed: {
                 isChecked() {
+                    //計算目前選取項目的筆數
                     return this.allowWait.reduce((acc, current) => {
                         return acc + (current.checked ? 1 : 0);
                     }, 0)
                 },
                 isAll: {
                     get() {
+                         //使用者一個一個勾選時 , 計算是否滿足全選
                         if (!this.allowWait.length) return false;
                         return this.isChecked === this.allowWait.length;
                     },
                     set(value) {
+                         //使用者勾選"全選"時 , 將value set allowWait裡的checked狀態
                         this.allowWait.forEach(item => {
                             item.checked = value;
                         })
@@ -316,61 +286,100 @@
             },
             methods: {
                 formatDate(date) {
+                    //時間格式化
                     moment.locale('zh-tw');
                     return moment(date).format('l');
                 },
-                handleChecked(pass) {
+                handleAction(action) {
+                    let title = '';
                     let data = [];
+                    //把選取的項目儲存在data
                     this.allowWait.forEach(item => {
                         if (item.checked) {
-                            data.push(item.id);
+                            data.push({ id: item.id, reason: item.reason, action:action});
                         }
                     });
-                    if (!data.length) return;
-                    let title = '';
-                    if (pass) {
-                        title = `${data.length}筆資料即將通過審核？`
-                    } else {
-                        title = `確定要退回${data.length}筆資料`;
-                    }   
-
+                    if (!data.length)
+                        return;
+                    //全部或部分選取彈跳出來視窗的標題內容
+                    let isAll = this.isAll ? '全部' : `${data.length}筆`;
+                    //依action動作分類處理,有pass(通過)與back(退回)
+                    switch (action) {
+                        case 'pass': //pass流程
+                            title = `${isAll}資料通過審核？`;
+                            this.sendAction(data, title, action);
+                            break;
+                        case 'back': //back流程
+                            //退回時需要註明原因
+                            let ng = data.filter(item => !item.reason.trim());
+                            if (ng.length) {
+                                //如果未註明原因會彈跳錯誤視窗,請使用者一定要輸入'
+                                let ngId = '編號:'
+                                ng.forEach(n => {
+                                    ngId += `h00${n.id}&nbsp;`;
+                                })
+                                eAlert(`${ngId}<br/>請輸入退回原因`);
+                            } else {
+                                //原因都填寫就準備送出
+                                title = `${isAll}資料即將退回至申請人？`;
+                                this.sendAction(data, title, action);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                sendAction(data, title, action) {
+                    let confirmTxt = '';
+                    let color = ''
+                    switch (action) {
+                        case 'pass':
+                            confirmTxt = '送出';
+                            color = '#28a745';
+                            break;
+                        case 'back':
+                            confirmTxt = '退回'
+                            color = '#dc3545';
+                            break;
+                        default:
+                            break;
+                    }
+                    //送出資料前彈跳確認視窗
                     Swal.fire({
                         title,
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonText: '送出',
+                        confirmButtonText: confirmTxt,
+                        confirmButtonColor: color,
                         cancelButtonText: '取消',
-                        confirmButtonColor: '#d33',
                         cancelButtonColor: '#3085d6',
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            this.sendData(data , pass);
+                            //使用者按下送出或退回時將資料送出
+                            $.ajax({
+                                type: 'post',
+                                url: '@Url.Action("review")',
+                                data: JSON.stringify(data),
+                                contentType: 'application/json',
+                            })
+                            .done(data => {
+                                if (data.isPass)
+                                    sAlert(data.msg);
+                                else
+                                    eAlert(data.msg);
+                                $(Swal.getConfirmButton()).click(function () {
+                                    $('body').loading();
+                                    setTimeout(function () {
+                                        window.location.href = location.href;
+                                    }, 1500)
+                                })
+                            })
+                            .fail(error => {
+                                console.log('error', error);
+                            })
                         } else {
                             return;
                         }
-                    })
-                },
-                sendData(data, pass) {
-                    let url = '';
-                    if (pass)
-                        url = '@Url.Action("allow" , new { eid = Model.Employee.EId})';
-                    else
-                        url = '@Url.Action("back", new { eid = Model.Employee.EId})';
-                    $.ajax({
-                        type: 'post',
-                        url,
-                        data: JSON.stringify(data),
-                        contentType: 'application/json',
-                    }).done(data => {
-                        sAlert('成功刪除')
-                        $(Swal.getConfirmButton()).click(function () {
-                            $('body').loading();
-                            setTimeout(function () {
-                                window.location.href = '@Url.Action("index", "holiday", new { eid = Model.Employee.EId })';
-                            }, 1500)
-                        })
-                    }).fail(error => {
-                        console.log('error', error);
                     })
                 },
             }

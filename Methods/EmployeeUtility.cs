@@ -43,7 +43,7 @@ namespace UCOMProject.Methods
         /// <param name="id"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public static async Task<Employee> GetEmp(string id, string pwd)
+        public static async Task<Employee> MatchUser(string id, string pwd)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -81,8 +81,8 @@ namespace UCOMProject.Methods
                 if (emp != null)
                     return new ApplyResult
                     {
-                        Error = true,
-                        Msg = $"工號:{vm.EId}已存在,請勿使用"
+                        isPass = false,
+                        msg = $"工號:{vm.EId}已存在,請勿使用"
                     };
 
                 string fileName = $"{DateTime.Now.Ticks}{vm.ImageFile.FileName}";
@@ -108,8 +108,8 @@ namespace UCOMProject.Methods
                 db.SaveChanges();
                 return new ApplyResult
                 {
-                    Error = false,
-                    Msg = $"單位:{emp.Branch}\r\n工號:{emp.EId} ,姓名:{emp.Name}\r\n資料已送出,待管理員審核!",
+                    isPass = true,
+                    msg = $"單位:{emp.Branch}\r\n工號:{emp.EId} ,姓名:{emp.Name}\r\n資料已送出,待管理員審核!",
                     FileName = fileName
                 };
             }

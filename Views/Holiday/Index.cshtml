@@ -63,7 +63,7 @@
                                             </div>
                                         </th>
                                         <th>編號</th>
-                                        <th>部門資訊</th>
+                                        <th>申請人資訊</th>
                                         <th>假別</th>
                                         <th>申請日期</th>
                                         <th>休假期間</th>
@@ -84,10 +84,20 @@
                                         </td>
                                         <td>h00{{data.id}}</td>
                                         <td>
-                                            {{employee.branch}}<br />
-                                            <span class="badge badge-info">
-                                                {{employee.shift}}
-                                            </span>
+                                            {{data.branch}}
+                                            <template v-if="data.shift == 'A班'">
+                                                <span class="badge badge-info">
+                                                    {{data.shift}}
+                                                </span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="badge badge-secondary">
+                                                    {{data.shift}}
+                                                </span>
+                                            </template>
+                                            <br />
+                                            {{data.eId}}
+                                            {{data.name}}
                                         </td>
                                         <td>{{data.title}}</td>
                                         <td>{{formatDate(data.applyDate)}}</td>
@@ -160,13 +170,19 @@
                                             <a class="btn btn-outline-info">修改</a>
                                             <a class="btn btn-danger" v-on:click="delBackCheck(data.id)">刪除</a>
                                         </td>
-                                        <td class="text-danger font-weight-bold">證明拍得不清楚</td>
+                                        <td class="text-danger font-weight-bold">{{data.reason}}</td>
                                         <td>h00{{data.id}}</td>
                                         <td>
-                                            {{employee.branch}}<br />
-                                            <span class="badge badge-info">
-                                                {{employee.shift}}
-                                            </span>
+                                            <div>
+                                                {{data.branch}}
+                                                <span class="badge badge-info">
+                                                    {{data.shift}}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                {{data.eId}}
+                                                {{data.name}}
+                                            </div>
                                         </td>
                                         <td>{{data.title}}</td>
                                         <td>{{formatDate(data.beginDate)}} ~ <br />{{formatDate(data.endDate)}}</td>
@@ -271,7 +287,7 @@
                         case 1:
                             this.allowWait.push(item)
                             break;
-                        case 2:
+                        case 3:
                             this.allowBack.push(item)
                             break;
                         default:
@@ -347,15 +363,18 @@
                 delData(data) {
                     $.ajax({
                         type: 'post',
-                        url: '@Url.Action("delete" , new { eid = Model.Employee.EId})',
+                        url: '@Url.Action("delete")',
                         data: JSON.stringify(data),
                         contentType: 'application/json',
-                    }).done(data => {
-                        sAlert('成功刪除')
+                    }).done(result => {
+                        if (result.isPass)
+                            sAlert(result.msg);
+                        else
+                            eAlert(result.msg);
                         $(Swal.getConfirmButton()).click(function () {
                             $('body').loading();
                             setTimeout(function () {
-                                window.location.href = '@Url.Action("index", "holiday", new { eid = Model.Employee.EId })';
+                                window.location.href = '@Url.Action("index")';
                             }, 1500)
                         })
                     }).fail(error => {

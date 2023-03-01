@@ -394,25 +394,23 @@
                                 formData.append('Files', this.files[i]);
                             }
                         }
-
                         $.ajax({
                             method: 'post',
-                            url: 'http://localhost:51010/holiday/apply',
+                            url: '@Url.Action("apply")',
                             data: formData,
                             processData: false,  // formData 不將數據轉換為字符串
                             contentType: false,  // formData 不設置Content-Type請求頭
-                            success: res => {
-                                if (res.Error) {
-                                    console.log(res.payload);
-                                    eAlert(res.Msg);
-                                } else {
-                                    sAlert(res.Msg)
-                                    $(Swal.getConfirmButton()).click(function () {
+                            success: result => {
+                                if (result.isPass) {
+                                    sAlert(result.msg);
+                                     $(Swal.getConfirmButton()).click(function () {
                                         $('body').loading();
                                         setTimeout(function () {
-                                            location.href = window.location.href;
+                                            location.href = '@Url.Action("index")';
                                         }, 1500)
                                     })
+                                } else {
+                                    eAlert(result.msg)
                                 }
                             },
                             error: error => {

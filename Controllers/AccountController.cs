@@ -37,7 +37,7 @@ namespace UCOMProject.Controllers
                 return View();
             }
 
-            Employee employee = await EmployeeUtility.GetEmp(id, pwd);
+            Employee employee = await EmployeeUtility.MatchUser(id, pwd);
             if (employee == null)
             {
                 ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼錯誤!" });

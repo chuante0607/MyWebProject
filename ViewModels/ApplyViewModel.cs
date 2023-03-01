@@ -11,8 +11,8 @@ namespace UCOMProject.Models
 {
     public class ApplyResult
     {
-        public bool Error { get; set; }
-        public string Msg { get; set; }
+        public bool isPass { get; set; }
+        public string msg { get; set; }
         public List<string> FilesNames { get; set; }
         public string FileName { get; set; }
     }

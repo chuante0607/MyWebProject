@@ -14,6 +14,7 @@ namespace UCOMProject.Models
         public string EId { get; set; }
         public string Name { get; set; }
         public string Sex { get; set; }
+        public string Branch { get; set; }
         public string Shift { get; set; }
         public int HId { get; set; }
         public string Title { get; set; }
@@ -25,7 +26,9 @@ namespace UCOMProject.Models
         public string Remark { get; set; }
         public int UsedDays { get; set; }
         public string Prove { get; set; }
-        public EmployeeViewModel Head { get;set; }
+        public string Reason { get; set; }
+        public string Action { get; set; }
+        public EmployeeViewModel Head { get; set; }
         public List<string> ProveImg
         {
             get

@@ -1,14 +1,22 @@
 ﻿@using UCOMProject.Methods
+@using UCOMProject.Roles;
+
 @{
     if (SessionEmp.CurrentEmp != null)
     {
-        if(SessionEmp.CurrentEmp.JobRank > 1 || SessionEmp.CurrentEmp.JobRank == 0)
+        switch (SessionEmp.CurrentEmp.JobRank)
         {
-            Layout = "~/Views/Shared/_LayoutSuper.cshtml";
-        }
-        else
-        {
-            Layout = "~/Views/Shared/_Layout.cshtml";
+            case (int)RoleType.Admin:
+                Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+                break;
+            case (int)RoleType.User:
+                Layout = "~/Views/Shared/_Layout.cshtml";
+                break;
+            case (int)RoleType.Manager:
+                Layout = "~/Views/Shared/_LayoutSuper.cshtml";
+                break;
+            default:
+                break;
         }
     }
 

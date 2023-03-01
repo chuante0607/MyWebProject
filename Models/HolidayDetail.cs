@@ -26,9 +26,10 @@ namespace UCOMProject.Models
         public int UsedDays { get; set; }
         public int BelongYear { get; set; }
         public System.DateTime ApplyDate { get; set; }
-        [JsonIgnore]
-        public virtual Holiday Holiday { get; set; }
+        public string Reason { get; set; }
         [JsonIgnore]
         public virtual Employee Employee { get; set; }
+        [JsonIgnore]
+        public virtual Holiday Holiday { get; set; }
     }
 }
