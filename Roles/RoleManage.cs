@@ -22,6 +22,12 @@ namespace UCOMProject.Roles
             Role = role;
         }
         /// <summary>
+        /// 取得目前使用者的權限物件
+        /// </summary>
+        /// <returns></returns>
+        public abstract RoleManage GetRole();
+
+        /// <summary>
         /// 取得目前使用者的資訊
         /// </summary>
         /// <returns></returns>

@@ -144,11 +144,10 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\apiHolidayController.cs" />
-    <Compile Include="Controllers\apiHomeController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
+    <Compile Include="Controllers\NationalHolidayController.cs" />
     <Compile Include="Extension\DateExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />
     <Compile Include="Global.asax.cs">
@@ -1897,6 +1896,8 @@
     <Content Include="Content\admin\vendor\jquery\jquery.min.js" />
     <Content Include="Content\admin\vendor\jquery\jquery.slim.js" />
     <Content Include="Content\admin\vendor\jquery\jquery.slim.min.js" />
+    <Content Include="Content\datatable\jquery.dataTables.min.css" />
+    <Content Include="Content\datatable\jquery.dataTables.min.js" />
     <Content Include="Content\lib\bootstrap\dist\css\bootstrap-grid.css" />
     <Content Include="Content\lib\bootstrap\dist\css\bootstrap-grid.min.css" />
     <Content Include="Content\lib\bootstrap\dist\css\bootstrap-reboot.css" />
@@ -2497,6 +2498,7 @@
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Holiday\Apply.cshtml" />
     <Content Include="Views\Shared\_LayoutSuper.cshtml" />
+    <Content Include="Views\Holiday\Record.cshtml" />
     <None Include="Views\Holiday\Review.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />

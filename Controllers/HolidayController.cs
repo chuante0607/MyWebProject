@@ -127,7 +127,14 @@ namespace UCOMProject.Controllers
             return View();
         }
 
-        
+        public async Task<ActionResult> Record()
+        {
+            RoleManage user = new User(RoleType.User);
+            var query = await user.GetHolidayDetails();
+            List<HolidayDetailViewModel> holidayDetails = query.Where(w => w.State == (int)ReviewType.Pass).ToList();
+            ViewBag.Source = JsonConvert.SerializeObject(holidayDetails, camelSetting);
+            return View();
+        }
 
         //-----------------------主管權限才可以訪問的頁面-------------------------------
 
@@ -149,7 +156,7 @@ namespace UCOMProject.Controllers
             ViewBag.Source = JsonConvert.SerializeObject(vmTable, camelSetting);
             return View(vmTable);
         }
-        
+
         /// <summary>
         /// 變更休假申請狀態
         /// </summary>

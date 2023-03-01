@@ -13,6 +13,10 @@ namespace UCOMProject.Roles
     {
         public User(RoleType role) : base(role) { }
 
+        public override RoleManage GetRole()
+        {
+            return new User(RoleType.User);
+        }
 
         public override Task<EmployeeViewModel> GetEmployeeById(string eid)
         {

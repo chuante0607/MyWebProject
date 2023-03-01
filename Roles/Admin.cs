@@ -14,6 +14,11 @@ namespace UCOMProject.Roles
     {
         public Admin(RoleType role) : base(role) { }
 
+        public override RoleManage GetRole()
+        {
+            return new Admin(RoleType.Admin);
+        }
+
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
             //admin可以查詢所有部門員工資訊

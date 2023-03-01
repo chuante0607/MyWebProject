@@ -28,23 +28,19 @@
         <div class="field">
             <div class="icon"></div>
             <input class="button" type="submit" value="LOGIN" />
-            @*<div class="side-top-bottom"></div>
-            <div class="side-left-right"></div>*@
+        </div>
+        <div class="field">
+            <div class="icon"></div>
+            <input class="button" type="button" value="員工" onclick="handleOp()" />
         </div>
 
         <div class="field">
             <div class="icon"></div>
-            <input class="button" type="button" value="作業員" onclick="handleOp()" />
-        </div>
-
-        <div class="field">
-            <div class="icon"></div>
-            <input class="button" type="button" value="組長" onclick="handleLeader()" />
+            <input class="button" type="button" value="主管" onclick="handleLeader()" />
         </div>
         <div class="field">
             <div class="icon"></div>
-            @Html.ActionLink("管理員", "login", "admin", null, new { @class = "button" })
-            @*<a class="button" href="#">管理員</a>*@
+            <input class="button" type="button" value="管理員" onclick="handleAdmin()" />
         </div>
 
     </form>
@@ -61,6 +57,9 @@
         function handleLeader() {
             $('[name="id"]').val('E004');
             $('[name="pwd"]').val('O123456789');
+        }
+        function handleAdmin() {
+            window.location.href = '@Url.Action("login" , "admin")'
         }
         let login = JSON.parse('@Html.Raw(ViewBag.login)');
         if (login)

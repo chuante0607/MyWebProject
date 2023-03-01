@@ -14,10 +14,11 @@ namespace UCOMProject.Roles
     {
         public Manager(RoleType role) : base(role) { }
 
-        /// <summary>
-        /// 主管只能查詢自己部門的員工資訊
-        /// </summary>
-        /// <returns></returns>
+        public override RoleManage GetRole()
+        {
+            return new Manager(RoleType.Manager);
+        }
+
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
             using (MyDBEntities db = new MyDBEntities())
@@ -33,10 +34,6 @@ namespace UCOMProject.Roles
             }
         }
 
-        /// <summary>
-        /// 主管只能查詢自己部門員工休假資訊
-        /// </summary>
-        /// <returns></returns>
         public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
         {
             return await HolidayUtility.GetHolidayDetails(BranchType);

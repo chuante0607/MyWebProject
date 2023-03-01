@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "休假歷史紀錄";
+}
+
+<h1 class="text-center">休假歷史紀錄</h1>
+<table id="myTable" class="display mt-5" style="width:100%">
+    <thead>
+        <tr>
+            <th>編號</th>
+            <th>申請人資訊</th>
+            <th>假別</th>
+            <th>休假期間</th>
+            <th>總計天數</th>
+            <th>事由</th>
+            <th>證明</th>
+            <th>審核單位</th>
+        </tr>
+    </thead>
+</table>
+
+@section Script{
+    <script src="~/Content/datatable/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let source = @Html.Raw(ViewBag.Source);
+            console.log(source);
+            $('#myTable').DataTable({
+                data: source,
+                columns: [
+                    {data:'id'},
+                    {data:'name'},
+                    {data:'title'},
+                    {data:'beginDate'},
+                    {data:'usedDays'},
+                    {data:'remark'},
+                    {data:'prove'},
+                    {data:'id'},
+                ]
+            });
+        });
+    </script>
+}
+
+@section Style{
+    <link href="~/Content/datatable/jquery.dataTables.min.css" rel="stylesheet" />
+}

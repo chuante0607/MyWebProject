@@ -72,24 +72,25 @@
                     @employee.EId - @employee.Name (@employee.JobTitle)
                 </div>*@
 
-            <div class="sidebar-heading">
+            @*<div class="sidebar-heading">
                 Personal ' SYSTEM
-            </div>
+            </div>*@
             <!-- Nav Item - Pages Collapse Menu -->
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>休假管理</span>
+                    <span>個人功能</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        @*<h6 class="collapse-header">Holiday System</h6>*@
+                        <h6 class="collapse-header">Holiday System</h6>
                         <a class="collapse-item" href="@Url.Action("apply","holiday")">休假申請</a>
-                        <a class="collapse-item" href="@Url.Action("index","holiday")">審核進度</a>
-                        <a class="collapse-item" href="#")">歷史紀錄</a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday")">休假審核進度</a>
+                        <a class="collapse-item" href="@Url.Action("record","holiday")" )">歷史紀錄</a>
                     </div>
                 </div>
+                
             </div>
 
             <!-- Nav Item - Utilities Collapse Menu -->

@@ -1,5 +1,6 @@
 ﻿@using UCOMProject.Models;
 @using UCOMProject.Methods;
+@using UCOMProject.Roles;
 @{
     Employee employee = SessionEmp.CurrentEmp;
 }
@@ -66,66 +67,48 @@
                 </span>
             </span>
             <hr class="sidebar-divider my-0">
-
-   
-
             <hr class="sidebar-divider">
-            <div class="sidebar-heading">
-                Personal ' SYSTEM
-            </div>
+            @*<div class="sidebar-heading">
+                    Personal ' SYSTEM
+                </div>*@
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>休假管理</span>
+                    <span>個人功能</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        @*<h6 class="collapse-header">Holiday System</h6>*@
+                        <h6 class="collapse-header">Holiday System</h6>
                         <a class="collapse-item" href="@Url.Action("apply","holiday")">休假申請</a>
-                        <a class="collapse-item" href="@Url.Action("index","holiday")">審核進度</a>
-                        <a class="collapse-item" href="#">歷史紀錄</a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday")">休假審核進度</a>
+                        <a class="collapse-item" href="@Url.Action("record","holiday")" )">歷史紀錄</a>
                     </div>
                 </div>
             </div>
-
-
-            <div class="sidebar-heading">
-                MANAGE ' SYSTEM
-            </div>
-            <div class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse"
-                   aria-expanded="true" aria-controls="collapse">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>休假審核</span>
-                </a>
-                <div id="collapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        @*<a class="collapse-item" href="@Url.Action("apply","holiday")">員工休假審核</a>
-                        <a class="collapse-item" href="@Url.Action("index","holiday" ,new { Eid = employee.EId})">審核進度</a>
-                        <a class="collapse-item" href="@Url.Action("allow","holiday" ,new { Eid = employee.EId})">歷史紀錄</a>*@
-                        <a class="collapse-item" href="@Url.Action("Review","holiday")">批次審核</a>
-                    </div>
-                </div>
-            </div>
-        
 
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                    aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>員工管理</span>
+                    @if (SessionEmp.CurrentEmp.JobRank == (int)RoleType.Admin)
+                    {
+                        <span>管理員功能</span>
+                    }
+                    else
+                    {
+                        <span>主管功能</span>
+                    }
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        @*<h6 class="collapse-header">Login Screens:</h6>*@
+                        <h6 class="collapse-header">Holiday System</h6>
+                        <a class="collapse-item" href="@Url.Action("Review","holiday")">休假申請審核</a>
+                        <h6 class="collapse-header">Review System</h6>
                         <a class="collapse-item" href="@Url.Action("create" , "employee")">建立員工檔案</a>
                         <a class="collapse-item" href="@Url.Action("account" , "employee")">帳號開通狀態</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        @*<a class="collapse-item" href="forgot-password.html">Forgot Password</a>*@
                         <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
                     </div>
                 </div>
             </div>
