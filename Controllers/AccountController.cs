@@ -36,22 +36,29 @@ namespace UCOMProject.Controllers
                 ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "此為管理員限定帳號" });
                 return View();
             }
-
             Employee employee = await EmployeeUtility.MatchUser(id, pwd);
             if (employee == null)
             {
                 ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼錯誤!" });
                 return View();
             }
-            Session["emp"] = employee;
-            return RedirectToAction("Index", "Home");
+            if (employee.Allow)
+            {
+                Session["emp"] = employee;
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "待管理員開通帳號權限!" });
+                return View();
+            }
         }
 
         [AuthorizationFilter]
         public ActionResult Logout()
         {
             HttpContext.Session["emp"] = null;
-            return RedirectToAction("login" , "account", new { logout = true, msg = "已登出!" });
+            return RedirectToAction("login", "account", new { logout = true, msg = "已登出!" });
         }
 
     }

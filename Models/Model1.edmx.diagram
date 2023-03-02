@@ -6,11 +6,11 @@
     <edmx:Diagrams>
       <Diagram DiagramId="34e7d7c345f04e1ebf666f844bee3f0a" Name="Diagram1">
         <EntityTypeShape EntityType="MyDBModel.Holiday" Width="1.5" PointX="0.75" PointY="1.625" />
-        <EntityTypeShape EntityType="MyDBModel.sysdiagram" Width="1.5" PointX="5.75" PointY="0.75" />
-        <EntityTypeShape EntityType="MyDBModel.Branch" Width="1.5" PointX="8" PointY="6.625" />
-        <EntityTypeShape EntityType="MyDBModel.Employee" Width="1.5" PointX="8" PointY="1.375" />
+        <EntityTypeShape EntityType="MyDBModel.Branch" Width="1.5" PointX="6" PointY="1.625" />
+        <EntityTypeShape EntityType="MyDBModel.sysdiagram" Width="1.5" PointX="7.75" PointY="1.625" />
+        <EntityTypeShape EntityType="MyDBModel.Employee" Width="1.5" PointX="0.75" PointY="3.875" />
+        <EntityTypeShape EntityType="MyDBModel.HolidayDetail" Width="1.5" PointX="4.125" PointY="1.625" />
         <AssociationConnector Association="MyDBModel.FK_Employees_Branch1" />
-        <EntityTypeShape EntityType="MyDBModel.HolidayDetail" Width="1.5" PointX="2.75" PointY="2.375" />
         <AssociationConnector Association="MyDBModel.FK_HolidayDetails_Employees" />
         <AssociationConnector Association="MyDBModel.FK_HolidayDetails_Holidays1" />
         </Diagram>

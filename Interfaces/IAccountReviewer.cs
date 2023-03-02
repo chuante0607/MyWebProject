@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UCOMProject.Models;
 
 namespace UCOMProject.Interfaces
 {
-    public interface IHolidayReview
+    interface IAccountReviewer
     {
-       Task<bool> Review(List<HolidayDetailViewModel> data , ReviewType state);
+        Task<bool> AllowEmpAccount(string eid);
+        Task<bool> AllowEmpAccount(List<string> eid);
     }
 }

@@ -3,10 +3,12 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using UCOMProject.Methods;
 using UCOMProject.Models;
+using UCOMProject.Roles;
 
 namespace UCOMProject.Controllers
 {
@@ -26,14 +28,16 @@ namespace UCOMProject.Controllers
             return View();
         }
 
-        // GET: Employee/Create
+        /// <summary>
+        /// 建立員工資訊
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
-            ViewBag.Result = JsonConvert.SerializeObject(new ApplyResult());
+            ViewBag.Result = ViewBag.Result = JsonConvert.SerializeObject(new ApplyResult(), camelSetting);
             return View();
         }
 
-        // POST: Employee/Create
         [HttpPost]
         public ActionResult Create(EmployeeViewModel emp)
         {
@@ -64,6 +68,21 @@ namespace UCOMProject.Controllers
             {
                 return View();
             }
+        }
+
+        public async Task<ActionResult> Review()
+        {
+            RoleManage user = new Admin(RoleType.Admin);
+            var emps = await user.GetEmployees();
+            ViewBag.Source = JsonConvert.SerializeObject(emps, camelSetting);
+            return View(emps);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> Allow(string eid)
+        {
+            
+            return Json(JsonConvert.SerializeObject(null , camelSetting)) ; ;
         }
 
         // GET: Employee/Edit/5

@@ -10,7 +10,7 @@ using UCOMProject.Interfaces;
 
 namespace UCOMProject.Roles
 {
-    public class Manager : RoleManage, IHolidayReview
+    public class Manager : RoleManage, IHolidayReviewer
     {
         public Manager(RoleType role) : base(role) { }
 
@@ -21,6 +21,7 @@ namespace UCOMProject.Roles
 
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
+            //manager可以查看自己部門的員工資訊
             using (MyDBEntities db = new MyDBEntities())
             {
                 var query = await db.Employees.Where(w => w.Branch == BranchType.ToString()).ToListAsync();
@@ -41,7 +42,7 @@ namespace UCOMProject.Roles
 
         public async Task<bool> Review(List<HolidayDetailViewModel> data, ReviewType state)
         {
-            return await HolidayUtility.EditHolidayDetailsState(data, state);
+            return await HolidayUtility.EditHolidayDetailsState(data, state , CurrentUser);
         }
     }
 }

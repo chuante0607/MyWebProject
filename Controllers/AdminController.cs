@@ -32,7 +32,7 @@ namespace UCOMProject.Controllers
                     return View();
                 }
                 Session["emp"] = admin;
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index),"home");
             }
             else
             {
@@ -54,6 +54,8 @@ namespace UCOMProject.Controllers
             var emps = await user.GetEmployees();
             return View(emps);
         }
+
+    
 
         // GET: Admin/Details/5
         public ActionResult Details(int id)

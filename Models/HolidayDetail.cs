@@ -27,6 +27,7 @@ namespace UCOMProject.Models
         public int BelongYear { get; set; }
         public System.DateTime ApplyDate { get; set; }
         public string Reason { get; set; }
+        public string AllowManager { get; set; }
         [JsonIgnore]
         public virtual Employee Employee { get; set; }
         [JsonIgnore]

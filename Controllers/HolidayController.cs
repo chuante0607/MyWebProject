@@ -169,7 +169,7 @@ namespace UCOMProject.Controllers
             //確認目前使用者權限
             RoleManage user = ConfirmIdentity();
             //管理職與admin才可以審核員工休假申請
-            IHolidayReview allower = null;
+            IHolidayReviewer allower = null;
             ApplyResult result = new ApplyResult();
             result.isPass = false;
             switch (user.Role)

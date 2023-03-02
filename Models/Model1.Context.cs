@@ -26,8 +26,8 @@ namespace UCOMProject.Models
         }
     
         public virtual DbSet<Holiday> Holidays { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Branch> Branches { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<HolidayDetail> HolidayDetails { get; set; }
     }

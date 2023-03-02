@@ -72,6 +72,9 @@
                                     <template v-if="data.checked">
                                         <div class="form-group">
                                             <p for="recipient-name" class="col-form-label">
+                                                單號:h00{{data.id}}&nbsp;
+                                                {{data.title}}&nbsp;
+                                                <span class="badge badge-danger">{{data.usedDays}}天</span>
                                                 {{data.branch}}
                                                 <template v-if="data.shift == 'A班'">
                                                     <span class="badge badge-info">
@@ -83,16 +86,9 @@
                                                         {{data.shift}}
                                                     </span>
                                                 </template>
-                                                {{data.eId}}
-                                                {{data.name}}
+                                                {{data.eId}}&nbsp;{{data.name}}
                                             </p>
-                                            <p for="recipient-name" class="col-form-label">單號:h00{{data.id}}</p>
-                                            <p for="recipient-name" class="col-form-label">
-                                                {{data.title}}&nbsp;
-                                                <span class="badge badge-danger">{{data.usedDays}}天</span>
-                                            </p>
-                                            <label :for="'reason' + data.id" class="col-form-label">原因:</label>
-                                            <input class="form-control" v-model="data.reason">
+                                            <input class="form-control" v-model="data.reason" placeholder="退回原因">
                                         </div>
                                     </template>
                                 </div>
@@ -137,7 +133,7 @@
                                             </div>
                                         </th>
                                         <th>編號</th>
-                                        <th>部門資訊</th>
+                                        <th>申請人資訊</th>
                                         <th>假別</th>
                                         <th>申請日期</th>
                                         <th>休假期間</th>
@@ -168,13 +164,12 @@
                                                     {{data.shift}}
                                                 </span>
                                             </template>
-                                            <br />
                                             {{data.eId}}
                                             {{data.name}}
                                         </td>
                                         <td>{{data.title}}</td>
                                         <td>{{formatDate(data.applyDate)}}</td>
-                                        <td>{{formatDate(data.beginDate)}} ~ <br />{{formatDate(data.endDate)}}</td>
+                                        <td>{{formatDate(data.beginDate)}} ~ {{formatDate(data.endDate)}}</td>
                                         <td class="text-danger font-weight-bold">{{data.usedDays}}天</td>
                                         <td>{{data.remark}}</td>
                                         <td v-if="data.prove">
@@ -206,7 +201,6 @@
                                             <span class="badge badge-warning">
                                                 {{data.head.branch}}主管
                                             </span>
-                                            <br />
                                             {{data.head.name}}({{data.head.englishName}})
                                         </td>
                                     </tr>
@@ -222,17 +216,18 @@
 
 @section Script{
     <!-- Page level plugins -->
-    <script src="~/Content/admin/vendor/datatables/jquery.dataTables.js"></script>
-    <script src="~/Content/admin/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script src="~/Content/datatable/jquery.dataTables.min.js"></script>
     <script src="~/Scripts/jquery-ui.js"></script>
     <script>
-            $(document).ready(function () {
+        $(document).ready(function () {
                 $('#AllowWait').DataTable({
                     "searching": false,
                     "language": {
-                        "emptyTable": "暫無休假資訊..",
-                        "info": "顯示 _START_ 至 _END_ 項結果，共 _TOTAL_ 項",
+                        "emptyTable": "暫無待審核項目..",
+                        "info": "顯示 _START_ 到 _END_ 項結果，共 _TOTAL_ 項",
                         "infoEmpty": "顯示 0 至 0 項結果，共 0 項",
+                        "search": "搜尋:",
+                        "lengthMenu": "顯示 _MENU_ 筆",
                         "paginate": {
                             "first": "第一頁",
                             "last": "最後一頁",
@@ -240,7 +235,6 @@
                             "previous": "上一頁"
                         }
                     }
-
                 });
 
             });
@@ -388,7 +382,7 @@
 }
 
 @section Style{
-    <link href="~/Content/admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="~/Content/datatable/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.css" rel="stylesheet" />
     <style>
         img {

@@ -87,31 +87,48 @@
                 </div>
             </div>
 
-            <div class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                   aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    @if (SessionEmp.CurrentEmp.JobRank == (int)RoleType.Admin)
-                    {
-                        <span>管理員功能</span>
-                    }
-                    else
-                    {
-                        <span>主管功能</span>
-                    }
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Holiday System</h6>
-                        <a class="collapse-item" href="@Url.Action("Review","holiday")">休假申請審核</a>
-                        <h6 class="collapse-header">Review System</h6>
-                        <a class="collapse-item" href="@Url.Action("create" , "employee")">建立員工檔案</a>
-                        <a class="collapse-item" href="@Url.Action("account" , "employee")">帳號開通狀態</a>
-                        @*<a class="collapse-item" href="forgot-password.html">Forgot Password</a>*@
-                        <div class="collapse-divider"></div>
+            @switch (SessionEmp.CurrentEmp.JobRank)
+            {
+                case (int)RoleType.Manager:
+                    <div class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                           aria-expanded="true" aria-controls="collapsePages">
+                            <i class="fas fa-fw fa-folder"></i>
+                            <span>主管功能</span>
+                        </a>
+                        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Holiday System</h6>
+                                <a class="collapse-item" href="@Url.Action("Review","holiday")">休假申請審核</a>
+                                <h6 class="collapse-header">Employee System</h6>
+                                <a class="collapse-item" href="@Url.Action("create" , "employee")">建立員工檔案</a>
+                                <a class="collapse-item" href="@Url.Action("account" , "employee")">帳號開通狀態</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                    break;
+                case (int)RoleType.Admin:
+                    <div class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                           aria-expanded="true" aria-controls="collapsePages">
+                            <i class="fas fa-fw fa-folder"></i>
+                            <span>管理員功能</span>
+                        </a>
+                        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Holiday System</h6>
+                                <a class="collapse-item" href="@Url.Action("review","holiday")">休假申請審核</a>
+                                <h6 class="collapse-header">Employee System</h6>
+                                <a class="collapse-item" href="@Url.Action("review" , "employee")">帳號權限設定</a>
+                                <a class="collapse-item" href="@Url.Action("create" , "employee")">建立員工檔案</a>
+                                <a class="collapse-item" href="@Url.Action("account" , "employee")">帳號開通狀態</a>
+                            </div>
+                        </div>
+                    </div>
+                    break;
+                default:
+                    break;
+            }
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

@@ -153,7 +153,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IHolidayAllower.cs" />
+    <Compile Include="Interfaces\IAccountReviewer.cs" />
+    <Compile Include="Interfaces\IHolidayReviewer.cs" />
     <Compile Include="Models\ReviewType.cs" />
     <Compile Include="Roles\Admin.cs" />
     <Compile Include="Methods\Common.cs" />
@@ -2503,7 +2504,7 @@
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Employee\Create.cshtml" />
-    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Employee\Review.cshtml" />
     <Content Include="Uploads\112年中華民國政府行政機關辦公日曆表.csv" />
   </ItemGroup>
   <ItemGroup>
@@ -2518,6 +2519,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

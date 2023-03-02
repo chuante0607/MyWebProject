@@ -10,7 +10,7 @@ using UCOMProject.Interfaces;
 
 namespace UCOMProject.Roles
 {
-    public class Admin : RoleManage, IHolidayReview
+    public class Admin : RoleManage, IHolidayReviewer, IAccountReviewer
     {
         public Admin(RoleType role) : base(role) { }
 
@@ -41,7 +41,17 @@ namespace UCOMProject.Roles
 
         public async Task<bool> Review(List<HolidayDetailViewModel> data, ReviewType state)
         {
-            return await HolidayUtility.EditHolidayDetailsState(data, state);
+            return await HolidayUtility.EditHolidayDetailsState(data, state, CurrentUser);
+        }
+
+        public async Task<bool> AllowEmpAccount(string eid)
+        {
+            return await EmployeeUtility.AllowEmpAccount(eid);
+        }
+
+        public async Task<bool> AllowEmpAccount(List<string> eid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

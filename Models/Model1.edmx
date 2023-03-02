@@ -49,6 +49,7 @@
           <Property Name="BelongYear" Type="int" Nullable="false" />
           <Property Name="ApplyDate" Type="date" Nullable="false" />
           <Property Name="Reason" Type="nvarchar(max)" />
+          <Property Name="AllowManager" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Holidays">
           <Key>
@@ -131,14 +132,14 @@
       <Schema Namespace="MyDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="MyDBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
-          <EntitySet Name="sysdiagrams" EntityType="MyDBModel.sysdiagram" />
           <EntitySet Name="Branches" EntityType="MyDBModel.Branch" />
+          <EntitySet Name="sysdiagrams" EntityType="MyDBModel.sysdiagram" />
           <EntitySet Name="Employees" EntityType="MyDBModel.Employee" />
+          <EntitySet Name="HolidayDetails" EntityType="MyDBModel.HolidayDetail" />
           <AssociationSet Name="FK_Employees_Branch1" Association="MyDBModel.FK_Employees_Branch1">
             <End Role="Branch" EntitySet="Branches" />
             <End Role="Employee" EntitySet="Employees" />
           </AssociationSet>
-          <EntitySet Name="HolidayDetails" EntityType="MyDBModel.HolidayDetail" />
           <AssociationSet Name="FK_HolidayDetails_Employees" Association="MyDBModel.FK_HolidayDetails_Employees">
             <End Role="Employee" EntitySet="Employees" />
             <End Role="HolidayDetail" EntitySet="HolidayDetails" />
@@ -159,6 +160,15 @@
           <Property Name="AnyOne" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="Holiday" ToRole="HolidayDetail" />
         </EntityType>
+        <EntityType Name="Branch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Head" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employees" Relationship="MyDBModel.FK_Employees_Branch1" FromRole="Branch" ToRole="Employee" />
+        </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -168,15 +178,6 @@
           <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
-        <EntityType Name="Branch">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Head" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Employees" Relationship="MyDBModel.FK_Employees_Branch1" FromRole="Branch" ToRole="Employee" />
         </EntityType>
         <EntityType Name="Employee">
           <Key>
@@ -200,18 +201,6 @@
           <NavigationProperty Name="Branch1" Relationship="MyDBModel.FK_Employees_Branch1" FromRole="Employee" ToRole="Branch" />
           <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="Employee" ToRole="HolidayDetail" />
         </EntityType>
-        <Association Name="FK_Employees_Branch1">
-          <End Type="MyDBModel.Branch" Role="Branch" Multiplicity="1" />
-          <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Branch">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Employee">
-              <PropertyRef Name="BranchId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="HolidayDetail">
           <Key>
             <PropertyRef Name="Id" />
@@ -228,9 +217,22 @@
           <Property Name="BelongYear" Type="Int32" Nullable="false" />
           <Property Name="ApplyDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Reason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AllowManager" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="HolidayDetail" ToRole="Employee" />
           <NavigationProperty Name="Holiday" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="HolidayDetail" ToRole="Holiday" />
         </EntityType>
+        <Association Name="FK_Employees_Branch1">
+          <End Type="MyDBModel.Branch" Role="Branch" Multiplicity="1" />
+          <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="BranchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_HolidayDetails_Employees">
           <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="1" />
           <End Type="MyDBModel.HolidayDetail" Role="HolidayDetail" Multiplicity="*" />
@@ -272,6 +274,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Branches">
+            <EntityTypeMapping TypeName="MyDBModel.Branch">
+              <MappingFragment StoreEntitySet="Branch">
+                <ScalarProperty Name="Head" ColumnName="Head" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
             <EntityTypeMapping TypeName="MyDBModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
@@ -280,15 +291,6 @@
                 <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Branches">
-            <EntityTypeMapping TypeName="MyDBModel.Branch">
-              <MappingFragment StoreEntitySet="Branch">
-                <ScalarProperty Name="Head" ColumnName="Head" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -316,6 +318,7 @@
           <EntitySetMapping Name="HolidayDetails">
             <EntityTypeMapping TypeName="MyDBModel.HolidayDetail">
               <MappingFragment StoreEntitySet="HolidayDetails">
+                <ScalarProperty Name="AllowManager" ColumnName="AllowManager" />
                 <ScalarProperty Name="Reason" ColumnName="Reason" />
                 <ScalarProperty Name="ApplyDate" ColumnName="ApplyDate" />
                 <ScalarProperty Name="BelongYear" ColumnName="BelongYear" />

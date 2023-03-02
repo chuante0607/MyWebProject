@@ -115,6 +115,15 @@ namespace UCOMProject.Methods
             }
         }
 
-
+        public static async Task<bool> AllowEmpAccount(string eid)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var emp = await db.Employees.FindAsync(eid);
+                if (emp == null) return false;
+                emp.Allow = !emp.Allow;
+                return true;
+            }
+        }
     }
 }

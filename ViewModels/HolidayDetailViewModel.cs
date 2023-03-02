@@ -29,6 +29,7 @@ namespace UCOMProject.Models
         public string Reason { get; set; }
         public string Action { get; set; }
         public EmployeeViewModel Head { get; set; }
+        public EmployeeViewModel AllowManager { get; set; }
         public List<string> ProveImg
         {
             get

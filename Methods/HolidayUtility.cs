@@ -308,6 +308,8 @@ namespace UCOMProject.Methods
             vm.Prove = data.Prove;
             vm.ApplyDate = data.ApplyDate;
             vm.Reason = data.Reason;
+            if (data.AllowManager != null)
+                vm.AllowManager = await EmployeeUtility.GetEmpById(data.AllowManager);
             return vm;
         }
 
@@ -316,7 +318,7 @@ namespace UCOMProject.Methods
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<bool> EditHolidayDetailsState(List<HolidayDetailViewModel> data, ReviewType state)
+        public static async Task<bool> EditHolidayDetailsState(List<HolidayDetailViewModel> data, ReviewType state, Employee allowManager)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
@@ -339,6 +341,7 @@ namespace UCOMProject.Methods
                             break;
                     }
                     detail.State = (int)state;
+                    detail.AllowManager = allowManager.EId;
                 }
                 try
                 {

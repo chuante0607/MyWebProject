@@ -126,22 +126,21 @@
 
 
             let result = @Html.Raw(ViewBag.Result);
-            if (result.error) {
-                eAlert(result.msg);
-
-            }
-            else {
                 if (result.msg) {
-                    sAlert(result.msg);
-                    $(Swal.getConfirmButton()).click(function () {
-                        $('body').loading();
-                        setTimeout(function () {
-                            window.location.href = '@Url.Action("index","home")';
-                        }, 1500)
-                    })
+                      if (result.isPass) {
+                      sAlert(result.msg);
+                        $(Swal.getConfirmButton()).click(function () {
+                            $('body').loading();
+                            setTimeout(function () {
+                                window.location.href = '@Url.Action("index","home")';
+                            }, 1500)
+                        })
                 }
-
+                else {
+                    eAlert(result.msg);
+                }
             }
+
 
             $('#SexType').bootstrapToggle({
                     on: '男',
@@ -177,7 +176,6 @@
             onOpen: null,
             onClose: null,
             onItemSelect: null,
-
         });
 
         $('.Branch').MultiColumnSelect({

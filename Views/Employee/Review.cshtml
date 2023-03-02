@@ -1,0 +1,145 @@
+﻿@model IEnumerable<UCOMProject.Models.EmployeeViewModel>
+
+@{
+    ViewBag.Title = "帳號權限設定";
+}
+
+<div id="app">
+    <h1 class="text-center">帳號權限設定</h1>
+    <div class="row branch">
+        <select v-model.number="branchId">
+            <option value="0">全部</option>
+            @foreach (var item in Model.Select(s => new { s.Branch, s.BranchId }).Distinct())
+            {
+                <option value="@item.BranchId" v-on:click="handleBranch">@item.Branch</option>
+            }
+        </select>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-xl-3 mt-5" v-for="(data , index) in source" :key="data.eid">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top img-fluid" style="height:270px" :src="'/img/' + data.image" alt="Card image cap">
+                <div class="card-body">
+                    <p>到職日:{{formatDate(data.startDate)}}</p>
+                    <span class="card-text">{{data.branch}} &nbsp;</span>
+                    <span class="card-title">{{data.name}}<small>({{data.englishName}})</small></span>
+                    <small class="badge badge-danger">{{data.jobTitle}}</small>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <label class="btn btn-secondary" for="accountCheck1">
+                            帳號狀態 :
+                            <input type="checkbox" id="accountCheck1" name="name" />
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="btn btn-secondary" for="accountCheck2">
+                            員工權限 :
+                            <input type="checkbox" id="accountCheck2" name="name" />
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="btn btn-secondary" for="accountCheck3">
+                            主管權限 :
+                            <input type="checkbox" id="accountCheck3" name="name" />
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Script{
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <script src="~/Content/Multi-Column-Select/Multi-Column-Select.js"></script>
+    <script>
+
+    $(() => {
+        $('input[type="checkbox"]').bootstrapToggle({
+            on: '開啟',
+            onstyle: 'success',
+            off: '關閉',
+            offstyle: 'danger',
+        })
+        .change(e => {
+            console.log(e.target.checked);
+        });
+
+        $('.branch').MultiColumnSelect({
+            // Single or Multiple Select
+            multiple: false,
+            // Use text from option. Use false if you plan to use images
+            useOptionText: true,
+            // Hide Original Select Control
+            hideselect: true,
+            // Toggle Open Button Class
+            openmenuClass: 'mcs-open',
+            // Text for button
+            openmenuText: '選擇部門',
+            // Class added to Toggle button on open
+            openclass: 'open',
+            // Class of parent container
+            containerClass: 'mcs-container',
+            // Class of menu items
+            itemClass: 'mcs-item',
+            // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
+            idprefix: null,
+            // Toggle Height duration
+            duration: 200,
+            //Callbacks
+            onOpen: null,
+            onClose: null,
+            onItemSelect: function () {
+                console.log($(this)[0].dataset.data);
+            },
+        })
+
+    })
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            source:@Html.Raw(ViewBag.Source),
+            branchId: 0,
+        },
+        methods: {
+            allowAccount(eid) {
+                console.log(eid);
+                fetch('@Url.Action("allow", "employee")')
+                    .then(res => {
+                        return res.json();
+                    })
+                    .then(result => {
+                        console.log(result);
+                    })
+            },
+            formatDate(date) {
+                moment.locale('zh-tw');
+                return moment(date).format('l');
+            },
+            handleBranch() {
+                console.log(1);
+            }
+        },
+    })
+    </script>
+}
+
+@section Style{
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <link href="~/Content/Multi-Column-Select/Multi-Column-Select.css" rel="stylesheet" />
+    <style>
+        li[class="list-group-item"] {
+            padding: 0px;
+            margin: 0px;
+        }
+
+            li[class="list-group-item"] label {
+                margin: 0;
+                border-radius: initial;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+    </style>
+}

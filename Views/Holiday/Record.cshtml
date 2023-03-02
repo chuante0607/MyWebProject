@@ -3,42 +3,116 @@
     ViewBag.Title = "休假歷史紀錄";
 }
 
-<h1 class="text-center">休假歷史紀錄</h1>
-<table id="myTable" class="display mt-5" style="width:100%">
-    <thead>
-        <tr>
-            <th>編號</th>
-            <th>申請人資訊</th>
-            <th>假別</th>
-            <th>休假期間</th>
-            <th>總計天數</th>
-            <th>事由</th>
-            <th>證明</th>
-            <th>審核單位</th>
-        </tr>
-    </thead>
-</table>
+<div id="app">
+    <h1 class="text-center">休假歷史紀錄</h1>
+    <table id="myTable" class="display mt-5" style="width:100%">
+        <thead>
+            <tr>
+                <th>編號</th>
+                <th>申請人資訊</th>
+                <th>假別</th>
+                <th>申請日期</th>
+                <th>休假期間</th>
+                <th>總計天數</th>
+                <th>事由</th>
+                <th>證明</th>
+                <th>簽核單位</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(data,index) in source" :key="data.id">
+                <td>h00{{data.id}}</td>
+                <td>
+                    {{data.branch}}
+                    <template v-if="data.shift == 'A班'">
+                        <span class="badge badge-info">
+                            {{data.shift}}
+                        </span>
+                    </template>
+                    <template v-else>
+                        <span class="badge badge-secondary">
+                            {{data.shift}}
+                        </span>
+                    </template>
+                    {{data.eId}}
+                    {{data.name}}
+                </td>
+                <td>{{data.title}}</td>
+                <td>{{formatDate(data.applyDate)}}</td>
+                <td>{{formatDate(data.beginDate)}} ~ {{formatDate(data.endDate)}}</td>
+                <td class="text-danger font-weight-bold">{{data.usedDays}}天</td>
+                <td>{{data.remark}}</td>
+                <td v-if="data.prove">
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" :data-target="'#exampleModalCenter'+data.id ">
+                        證明
+                    </button>
+                    <div class="modal fade" :id="'exampleModalCenter'+data.id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">{{data.name}} - 請假事由 : {{data.remark}}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div v-for="img in data.proveImg" :key="img">
+                                        <img :src="'/Uploads/' +img" alt="Alternate Text" style="width:100%;max-height:1000px" />
+                                        <hr />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td v-else>無需證明</td>
+                <td>
+                    <span class="badge badge-warning">
+                        {{data.allowManager.branch}}主管
+                    </span>
+                    {{data.allowManager.name}}({{data.allowManager.englishName}})
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 
 @section Script{
     <script src="~/Content/datatable/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
             let source = @Html.Raw(ViewBag.Source);
-            console.log(source);
             $('#myTable').DataTable({
-                data: source,
-                columns: [
-                    {data:'id'},
-                    {data:'name'},
-                    {data:'title'},
-                    {data:'beginDate'},
-                    {data:'usedDays'},
-                    {data:'remark'},
-                    {data:'prove'},
-                    {data:'id'},
-                ]
+                "language": {
+                    "emptyTable": "暫無休假歷史資訊..",
+                    "info": "顯示 _START_ 到 _END_ 項結果，共 _TOTAL_ 項",
+                    "infoEmpty": "顯示 0 至 0 項結果，共 0 項",
+                    "search": "搜尋:",
+                    "lengthMenu": "顯示 _MENU_ 筆",
+                    "paginate": {
+                        "first": "第一頁",
+                        "last": "最後一頁",
+                        "next": "下一頁",
+                        "previous": "上一頁"
+                    }
+                }
             });
         });
+       
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                source:@Html.Raw(ViewBag.Source),
+            },
+            methods: {
+                formatDate(date) {
+                    moment.locale('zh-tw');
+                    return moment(date).format('l');
+                },
+            }
+        })
     </script>
 }
 
