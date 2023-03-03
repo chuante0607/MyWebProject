@@ -10,7 +10,7 @@ using UCOMProject.Interfaces;
 
 namespace UCOMProject.Roles
 {
-    public class Admin : RoleManage, IHolidayReviewer, IAccountReviewer
+    public class Admin : RoleManage, IHolidayReviewer, IAccountReviewer, IEmployeeList
     {
         public Admin(RoleType role) : base(role) { }
 
@@ -21,17 +21,12 @@ namespace UCOMProject.Roles
 
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
-            //admin可以查詢所有部門員工資訊
-            using (MyDBEntities db = new MyDBEntities())
-            {
-                var query = await db.Employees.Where(w => w.EId != CurrentUser.EId).OrderBy(o => o.StartDate).ThenBy(t => !t.Allow).ToListAsync();
-                List<EmployeeViewModel> viewModels = new List<EmployeeViewModel>();
-                foreach (var emp in query)
-                {
-                    viewModels.Add(EmployeeUtility.RefEmployee(emp));
-                }
-                return viewModels;
-            }
+            return await EmployeeUtility.GetEmployees();
+        }
+
+        public async Task<List<EmployeeViewModel>> GetEmployeesByBranch(List<int> branchId)
+        {
+            return await EmployeeUtility.GetEmployees(branchId);
         }
 
         public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
@@ -39,20 +34,21 @@ namespace UCOMProject.Roles
             return await HolidayUtility.GetHolidayDetails();
         }
 
-        public async Task<bool> Review(List<HolidayDetailViewModel> data, ReviewType state)
+        public async Task<bool> ReviewHolidayApply(List<HolidayDetailViewModel> data, ReviewType state)
         {
             return await HolidayUtility.EditHolidayDetailsState(data, state, CurrentUser);
         }
 
-        public async Task<bool> AllowEmpAccount(string eid)
+        public async Task<bool> ReviewEmployeeAccount(string eid)
         {
-            return await EmployeeUtility.AllowEmpAccount(eid);
+            return await EmployeeUtility.ReviewEmployeeAccount(eid);
         }
 
-        public async Task<bool> AllowEmpAccount(List<string> eid)
+        public async Task<bool> ReviewEmployeeAccount(List<string> eid)
         {
             throw new NotImplementedException();
         }
+
     }
 }
 

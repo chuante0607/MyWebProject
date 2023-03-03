@@ -52,6 +52,47 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
+        /// 取得所有員工資料
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<EmployeeViewModel>> GetEmployees()
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var query = await db.Employees.OrderBy(o => o.Allow).ToListAsync();
+                List<EmployeeViewModel> viewModels = new List<EmployeeViewModel>();
+                foreach (var emp in query)
+                {
+                    viewModels.Add(RefEmployee(emp));
+                }
+                return viewModels;
+            }
+        }
+
+        /// <summary>
+        /// 取得部門員工資料
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<EmployeeViewModel>> GetEmployees(List<int> branchIds)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var query = await db.Employees.Where(w => branchIds.Contains(w.BranchId))
+                    .OrderBy(o => o.Allow).ToListAsync();
+                if (query.Count > 0)
+                {
+                    List<EmployeeViewModel> viewModels = new List<EmployeeViewModel>();
+                    foreach (var emp in query)
+                    {
+                        viewModels.Add(RefEmployee(emp));
+                    }
+                    return viewModels;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
         /// 取得指定員工
         /// </summary>
         /// <param name="eid"></param>
@@ -94,6 +135,7 @@ namespace UCOMProject.Methods
                     EnglishName = vm.EnglishName,
                     Sex = vm.Sex,
                     Branch = vm.Branch,
+                    BranchId = vm.BranchId,
                     JobTitle = vm.JobTitle,
                     JobRank = vm.JobRank,
                     Email = vm.Email,
@@ -115,7 +157,7 @@ namespace UCOMProject.Methods
             }
         }
 
-        public static async Task<bool> AllowEmpAccount(string eid)
+        public static async Task<bool> ReviewEmployeeAccount(string eid)
         {
             using (MyDBEntities db = new MyDBEntities())
             {

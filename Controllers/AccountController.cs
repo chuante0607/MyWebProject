@@ -40,7 +40,8 @@ namespace UCOMProject.Controllers
             }
             if (employee.JobRank == 0)
             {
-                return RedirectToAction(nameof(AdminLogin), new { error = true, msg = "請由管理員頁面登入!" });
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "請由管理員頁面登入!" });
+                return View();
             }
             if (employee.Allow)
             {
@@ -57,12 +58,9 @@ namespace UCOMProject.Controllers
 
 
         [AllowAnonymous]
-        public ActionResult AdminLogin(bool error, string msg)
+        public ActionResult AdminLogin()
         {
-            if (error)
-                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = msg });
-            else
-                ViewBag.login = 0;
+            ViewBag.login = 0;
             return View();
         }
 

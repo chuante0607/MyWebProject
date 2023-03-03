@@ -9,6 +9,6 @@ namespace UCOMProject.Interfaces
 {
     interface IHolidayReviewer
     {
-       Task<bool> Review(List<HolidayDetailViewModel> data , ReviewType state);
+       Task<bool> ReviewHolidayApply(List<HolidayDetailViewModel> data , ReviewType state);
     }
 }

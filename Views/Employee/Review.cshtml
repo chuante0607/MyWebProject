@@ -7,16 +7,16 @@
 <div id="app">
     <h1 class="text-center">帳號權限設定</h1>
     <div class="row branch">
-        <select v-model.number="branchId">
-            <option value="0">全部</option>
-            @foreach (var item in Model.Select(s => new { s.Branch, s.BranchId }).Distinct())
-            {
-                <option value="@item.BranchId" v-on:click="handleBranch">@item.Branch</option>
-            }
+        <select v-model="selectBranches" multiple>
+            <option v-for="b in branches"
+                    :key="b.branchId"
+                    :value="b.branchId">
+                {{b.branch}}
+            </option>
         </select>
     </div>
     <div class="row">
-        <div class="col-lg-4 col-xl-3 mt-5" v-for="(data , index) in source" :key="data.eid">
+        <div class="col-lg-4 col-xl-3 mt-5" v-for="(data , index) in showtEmployees" :key="data.eid">
             <div class="card" style="width: 18rem;">
                 <img class="card-img-top img-fluid" style="height:270px" :src="'/img/' + data.image" alt="Card image cap">
                 <div class="card-body">
@@ -26,22 +26,22 @@
                     <small class="badge badge-danger">{{data.jobTitle}}</small>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item ">
-                        <div class="btn btn-secondary">
-                            <label>帳號狀態 :</label>
-                            <input type="checkbox" name="name" />
-                        </div>
-                    </li>
                     <li class="list-group-item">
-                        <label class="btn btn-secondary" for="accountCheck2">
-                            主管權限 :
-                            <input type="checkbox" id="accountCheck2" name="name" />
+                        <label class="btn btn-secondary" :for="'acc' + index">
+                            帳號開通 :
+                            <input type="checkbox" :id="'acc' + index" name="name" v-model="data.allow"/>
                         </label>
                     </li>
                     <li class="list-group-item">
-                        <label class="btn btn-secondary" for="accountCheck3">
+                        <label class="btn btn-secondary" :for="'ma' + index">
+                            主管權限 :
+                            <input type="checkbox" :id="'ma' + index" name="name" />
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="btn btn-secondary" :for="'ad' + index">
                             管理員權限 :
-                            <input type="checkbox" id="accountCheck3" name="name" />
+                            <input type="checkbox" :id="'ad' + index" name="name" />
                         </label>
                     </li>
                 </ul>
@@ -50,62 +50,86 @@
     </div>
 </div>
 
+
 @section Script{
     @*<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>*@
     <script src="~/Content/Multi-Column-Select/Multi-Column-Select.js"></script>
     <script>
 
     $(() => {
-        //$('input[type="checkbox"]').bootstrapToggle({
-        //    on: '開啟',
-        //    onstyle: 'success',
-        //    off: '關閉',
-        //    offstyle: 'danger',
-        //})
-        //.change(e => {
-        //    console.log(e.target.checked);
-        //});
+        const years = [2016, 2017, 2016, 2019, 2019, 2018, 2016];
+        const distinctYears = [...new Set(years)];
 
-        //$('.branch').MultiColumnSelect({
-        //    // Single or Multiple Select
-        //    multiple: false,
-        //    // Use text from option. Use false if you plan to use images
-        //    useOptionText: true,
-        //    // Hide Original Select Control
-        //    hideselect: true,
-        //    // Toggle Open Button Class
-        //    openmenuClass: 'mcs-open',
-        //    // Text for button
-        //    openmenuText: '選擇部門',
-        //    // Class added to Toggle button on open
-        //    openclass: 'open',
-        //    // Class of parent container
-        //    containerClass: 'mcs-container',
-        //    // Class of menu items
-        //    itemClass: 'mcs-item',
-        //    // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
-        //    idprefix: null,
-        //    // Toggle Height duration
-        //    duration: 200,
-        //    //Callbacks
-        //    onOpen: null,
-        //    onClose: null,
-        //    onItemSelect: function () {
-        //        let branch = $(this)[0].getAttribute('data');
-        //        vm.handleBranch(branch);
-        //    },
-        //})
 
-    })
+    //$('input[type="checkbox"]').bootstrapToggle({
+    //    on: '開啟',
+    //    onstyle: 'success',
+    //    off: '關閉',
+    //    offstyle: 'danger',
+    //})
+    //.change(e => {
+    //    console.log(e.target.checked);
+    //});
+
+    //$('.branch').MultiColumnSelect({
+    //    // Single or Multiple Select
+    //    multiple: false,
+    //    // Use text from option. Use false if you plan to use images
+    //    useOptionText: true,
+    //    // Hide Original Select Control
+    //    hideselect: true,
+    //    // Toggle Open Button Class
+    //    openmenuClass: 'mcs-open',
+    //    // Text for button
+    //    openmenuText: '選擇部門',
+    //    // Class added to Toggle button on open
+    //    openclass: 'open',
+    //    // Class of parent container
+    //    containerClass: 'mcs-container',
+    //    // Class of menu items
+    //    itemClass: 'mcs-item',
+    //    // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
+    //    idprefix: null,
+    //    // Toggle Height duration
+    //    duration: 200,
+    //    //Callbacks
+    //    onOpen: null,
+    //    onClose: null,
+    //    onItemSelect: function () {
+    //        let branch = $(this)[0].getAttribute('data');
+    //        vm.handleBranch(branch);
+    //    },
+    //})
+
+})
     const vm = new Vue({
         el: '#app',
         data: {
             source:@Html.Raw(ViewBag.Source),
-            branchId: 0,
+            showtEmployees:[],
+            selectBranches: [],
+            branches: [],
+            acc: [{eid:'',allow:false}],
+        },
+        mounted() {
+            //setting branches
+            this.branches.push({ branchId: 0, branch:'全部' })
+            this.source.forEach(item => {
+                this.showtEmployees.push(item);
+                this.branches.push({ branchId: item.branchId, branch: item.branch });
+            })
+            //過濾重複的branchId項目
+            this.branches = this.branches.filter((item, index, self) => {
+                //findIndex找陣列物件裡的相同的id回傳物件的index
+                const firstIndex = self.findIndex(f => f.branchId === item.branchId);
+                //目前index與findIndex相同  回傳true
+                return index === firstIndex;
+            })
+            //排列部門順序(id小至大)
+            this.branches.sort((a, b) => a.branchId - b.branchId);
         },
         methods: {
             allowAccount(eid) {
-                console.log(eid);
                 fetch('@Url.Action("allow", "employee")')
                     .then(res => {
                         return res.json();
@@ -118,11 +142,34 @@
                 moment.locale('zh-tw');
                 return moment(date).format('l');
             },
-            handleBranch(b) {
-                let id = Number(b);
-                console.log(id);
-            }
         },
+        watch: {
+            selectBranches(newValue, oldValue) {
+                fetch('http://localhost:51010/api/EmpList', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newValue)
+                }).then(res => {
+                    if (res.ok)
+                        return res.json();
+                    else
+                        throw new Error('請求錯誤', res.status);
+                }).then(result => {
+                    let self = this;
+                    let data = JSON.parse(result);
+                    this.showtEmployees = [];
+                    setTimeout(function () {
+                        data.forEach(item => {
+                            self.showtEmployees.push(item);
+                        })
+                    }, 500)
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
+        }
     })
     </script>
 }

@@ -187,10 +187,10 @@ namespace UCOMProject.Controllers
             switch (act)
             {
                 case "pass":
-                    result.isPass = await allower.Review(payload, ReviewType.Pass);
+                    result.isPass = await allower.ReviewHolidayApply(payload, ReviewType.Pass);
                     break;
                 case "back":
-                    result.isPass = await allower.Review(payload, ReviewType.Back);
+                    result.isPass = await allower.ReviewHolidayApply(payload, ReviewType.Back);
                     break;
                 default:
                     break;

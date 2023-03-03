@@ -7,6 +7,7 @@ using System.Web;
 using UCOMProject.Models;
 using UCOMProject.Methods;
 using UCOMProject.Interfaces;
+using UCOMProject.Extension;
 
 namespace UCOMProject.Roles
 {
@@ -21,18 +22,7 @@ namespace UCOMProject.Roles
 
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
-            //manager可以查看自己部門的員工資訊
-            using (MyDBEntities db = new MyDBEntities())
-            {
-                var query = await db.Employees.Where(w => w.Branch == BranchType.ToString()).ToListAsync();
-
-                List<EmployeeViewModel> viewModels = new List<EmployeeViewModel>();
-                foreach (var emp in query)
-                {
-                    viewModels.Add(EmployeeUtility.RefEmployee(emp));
-                }
-                return viewModels;
-            }
+            return await EmployeeUtility.GetEmployees(new List<int> { (int)BranchType });
         }
 
         public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
@@ -40,9 +30,9 @@ namespace UCOMProject.Roles
             return await HolidayUtility.GetHolidayDetails(BranchType);
         }
 
-        public async Task<bool> Review(List<HolidayDetailViewModel> data, ReviewType state)
+        public async Task<bool> ReviewHolidayApply(List<HolidayDetailViewModel> data, ReviewType state)
         {
-            return await HolidayUtility.EditHolidayDetailsState(data, state , CurrentUser);
+            return await HolidayUtility.EditHolidayDetailsState(data, state, CurrentUser);
         }
     }
 }

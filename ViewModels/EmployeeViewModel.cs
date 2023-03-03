@@ -25,7 +25,6 @@ namespace UCOMProject.Models
         //[RegularExpression("/^[A-Za-z][A-Za-z0-9]*$/", ErrorMessage = "請輸入英文字母")]
         public string EnglishName { get; set; }
 
-
         [Required(ErrorMessage = "*")]
         [Display(Name = "身分證字號")]
         public string Password { get; set; }
@@ -33,6 +32,7 @@ namespace UCOMProject.Models
         [Required(ErrorMessage = "*")]
         [Display(Name = "員工大頭照")]
         public HttpPostedFileBase ImageFile { get; set; }
+
         [BindNever]
         public string Image { get; set; }
 
@@ -48,10 +48,12 @@ namespace UCOMProject.Models
         [Display(Name = "單位")]
         [Range(1, int.MaxValue, ErrorMessage = "*")]
         public BranchType BranchType { get; set; }
+
         [BindNever]
         public string Branch { get { return BranchType.ToString(); } set { } }
 
-        public int BranchId { get; set; }
+        public int BranchId { get { return (int)BranchType; } set { } }
+
 
         [Required(ErrorMessage = "*")]
         [Display(Name = "職位")]
@@ -60,6 +62,7 @@ namespace UCOMProject.Models
 
         [BindNever]
         public int JobRank { get { return (int)JobType; } set { } }
+
         [BindNever]
         public string JobTitle { get { return JobType.ToString(); } set { } }
 
@@ -78,7 +81,6 @@ namespace UCOMProject.Models
         [Phone(ErrorMessage = "請輸入手機號碼")]
         [Display(Name = "手機號碼")]
         public string Phone { get; set; }
-
 
         [Required(ErrorMessage = "*")]
         [Display(Name = "到職日")]
