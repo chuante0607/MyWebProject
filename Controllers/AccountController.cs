@@ -10,6 +10,7 @@ using UCOMProject.Models;
 
 namespace UCOMProject.Controllers
 {
+    [AuthorizationFilter]
     public class AccountController : Controller
     {
 
@@ -31,16 +32,15 @@ namespace UCOMProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(string id, string pwd)
         {
-            if (id.ToLower() == "admin")
-            {
-                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "此為管理員限定帳號" });
-                return View();
-            }
             Employee employee = await EmployeeUtility.MatchUser(id, pwd);
             if (employee == null)
             {
-                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼錯誤!" });
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼無效!" });
                 return View();
+            }
+            if (employee.JobRank == 0)
+            {
+                return RedirectToAction(nameof(AdminLogin), new { error = true, msg = "請由管理員頁面登入!" });
             }
             if (employee.Allow)
             {
@@ -54,12 +54,45 @@ namespace UCOMProject.Controllers
             }
         }
 
-        [AuthorizationFilter]
+
+
+        [AllowAnonymous]
+        public ActionResult AdminLogin(bool error, string msg)
+        {
+            if (error)
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = msg });
+            else
+                ViewBag.login = 0;
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> AdminLogin(string id, string pwd)
+        {
+            Employee admin = await EmployeeUtility.MatchUser(id, pwd);
+            if (admin == null)
+            {
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼無效!" });
+                return View();
+            }
+            if (admin.JobRank == 0)
+            {
+                Session["emp"] = admin;
+                return RedirectToAction("index", "home");
+            }
+            else
+            {
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號權限需為管理員身分!" });
+                return View();
+            }
+
+        }
+
         public ActionResult Logout()
         {
             HttpContext.Session["emp"] = null;
             return RedirectToAction("login", "account", new { logout = true, msg = "已登出!" });
         }
-
     }
 }

@@ -26,21 +26,21 @@
                     <small class="badge badge-danger">{{data.jobTitle}}</small>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <label class="btn btn-secondary" for="accountCheck1">
-                            帳號狀態 :
-                            <input type="checkbox" id="accountCheck1" name="name" />
-                        </label>
+                    <li class="list-group-item ">
+                        <div class="btn btn-secondary">
+                            <label>帳號狀態 :</label>
+                            <input type="checkbox" name="name" />
+                        </div>
                     </li>
                     <li class="list-group-item">
                         <label class="btn btn-secondary" for="accountCheck2">
-                            員工權限 :
+                            主管權限 :
                             <input type="checkbox" id="accountCheck2" name="name" />
                         </label>
                     </li>
                     <li class="list-group-item">
                         <label class="btn btn-secondary" for="accountCheck3">
-                            主管權限 :
+                            管理員權限 :
                             <input type="checkbox" id="accountCheck3" name="name" />
                         </label>
                     </li>
@@ -51,49 +51,50 @@
 </div>
 
 @section Script{
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    @*<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>*@
     <script src="~/Content/Multi-Column-Select/Multi-Column-Select.js"></script>
     <script>
 
     $(() => {
-        $('input[type="checkbox"]').bootstrapToggle({
-            on: '開啟',
-            onstyle: 'success',
-            off: '關閉',
-            offstyle: 'danger',
-        })
-        .change(e => {
-            console.log(e.target.checked);
-        });
+        //$('input[type="checkbox"]').bootstrapToggle({
+        //    on: '開啟',
+        //    onstyle: 'success',
+        //    off: '關閉',
+        //    offstyle: 'danger',
+        //})
+        //.change(e => {
+        //    console.log(e.target.checked);
+        //});
 
-        $('.branch').MultiColumnSelect({
-            // Single or Multiple Select
-            multiple: false,
-            // Use text from option. Use false if you plan to use images
-            useOptionText: true,
-            // Hide Original Select Control
-            hideselect: true,
-            // Toggle Open Button Class
-            openmenuClass: 'mcs-open',
-            // Text for button
-            openmenuText: '選擇部門',
-            // Class added to Toggle button on open
-            openclass: 'open',
-            // Class of parent container
-            containerClass: 'mcs-container',
-            // Class of menu items
-            itemClass: 'mcs-item',
-            // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
-            idprefix: null,
-            // Toggle Height duration
-            duration: 200,
-            //Callbacks
-            onOpen: null,
-            onClose: null,
-            onItemSelect: function () {
-                console.log($(this)[0].dataset.data);
-            },
-        })
+        //$('.branch').MultiColumnSelect({
+        //    // Single or Multiple Select
+        //    multiple: false,
+        //    // Use text from option. Use false if you plan to use images
+        //    useOptionText: true,
+        //    // Hide Original Select Control
+        //    hideselect: true,
+        //    // Toggle Open Button Class
+        //    openmenuClass: 'mcs-open',
+        //    // Text for button
+        //    openmenuText: '選擇部門',
+        //    // Class added to Toggle button on open
+        //    openclass: 'open',
+        //    // Class of parent container
+        //    containerClass: 'mcs-container',
+        //    // Class of menu items
+        //    itemClass: 'mcs-item',
+        //    // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
+        //    idprefix: null,
+        //    // Toggle Height duration
+        //    duration: 200,
+        //    //Callbacks
+        //    onOpen: null,
+        //    onClose: null,
+        //    onItemSelect: function () {
+        //        let branch = $(this)[0].getAttribute('data');
+        //        vm.handleBranch(branch);
+        //    },
+        //})
 
     })
     const vm = new Vue({
@@ -117,8 +118,9 @@
                 moment.locale('zh-tw');
                 return moment(date).format('l');
             },
-            handleBranch() {
-                console.log(1);
+            handleBranch(b) {
+                let id = Number(b);
+                console.log(id);
             }
         },
     })
@@ -126,7 +128,7 @@
 }
 
 @section Style{
-    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    @*<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">*@
     <link href="~/Content/Multi-Column-Select/Multi-Column-Select.css" rel="stylesheet" />
     <style>
         li[class="list-group-item"] {

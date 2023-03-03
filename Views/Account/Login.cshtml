@@ -59,7 +59,7 @@
             $('[name="pwd"]').val('O123456789');
         }
         function handleAdmin() {
-            window.location.href = '@Url.Action("login" , "admin")'
+            window.location.href = '@Url.Action("adminLogin" , "account")'
         }
         let login = JSON.parse('@Html.Raw(ViewBag.login)');
         if (login)
