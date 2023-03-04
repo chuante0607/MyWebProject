@@ -59,7 +59,7 @@ namespace UCOMProject.Methods
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                var query = await db.Employees.OrderBy(o => o.Allow).ToListAsync();
+                var query = await db.Employees.OrderBy(o => o.EId).ToListAsync();
                 List<EmployeeViewModel> viewModels = new List<EmployeeViewModel>();
                 foreach (var emp in query)
                 {
@@ -78,7 +78,7 @@ namespace UCOMProject.Methods
             using (MyDBEntities db = new MyDBEntities())
             {
                 var query = await db.Employees.Where(w => branchIds.Contains(w.BranchId))
-                    .OrderBy(o => o.Allow).ToListAsync();
+                    .OrderBy(o => o.EId).ToListAsync();
                 if (query.Count > 0)
                 {
                     List<EmployeeViewModel> viewModels = new List<EmployeeViewModel>();

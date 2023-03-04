@@ -33,7 +33,7 @@ namespace UCOMProject.Controllers
         {
             Admin admin = new Admin(RoleType.Admin);
             List<EmployeeViewModel> result = null;
-            //前端全過來為"全選"
+            //前端過來為"全選"
             if (ids.Contains(0))
             {
                 result = await admin.GetEmployees();

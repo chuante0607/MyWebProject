@@ -61,7 +61,7 @@ namespace UCOMProject.Models
         public JobTitleType JobType { get; set; }
 
         [BindNever]
-        public int JobRank { get { return (int)JobType; } set { } }
+        public int JobRank { get; set; }
 
         [BindNever]
         public string JobTitle { get { return JobType.ToString(); } set { } }

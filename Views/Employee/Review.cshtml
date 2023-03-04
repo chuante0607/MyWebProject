@@ -4,10 +4,20 @@
     ViewBag.Title = "帳號權限設定";
 }
 
-<div id="app">
+<div id="app" v-cloak>
     <h1 class="text-center">帳號權限設定</h1>
+    <div>
+        總人數:{{source.length}}
+    </div>
+    <div>
+        檢視單位:
+        <span class="badge badge-secondary" v-for="(b , index) in selectBranch" :key="b.branch">
+            {{b}}
+        </span>
+    </div>
+
     <div class="row branch">
-        <select v-model="selectBranches" multiple>
+        <select v-model="selectBranchId" multiple>
             <option v-for="b in branches"
                     :key="b.branchId"
                     :value="b.branchId">
@@ -15,36 +25,42 @@
             </option>
         </select>
     </div>
-    <div class="row">
-        <div class="col-lg-4 col-xl-3 mt-5" v-for="(data , index) in showtEmployees" :key="data.eid">
-            <div class="card" style="width: 18rem;">
-                <img class="card-img-top img-fluid" style="height:270px" :src="'/img/' + data.image" alt="Card image cap">
-                <div class="card-body">
-                    <p>到職日:{{formatDate(data.startDate)}}</p>
-                    <span class="card-text">{{data.branch}} &nbsp;</span>
-                    <span class="card-title">{{data.name}}<small>({{data.englishName}})</small></span>
-                    <small class="badge badge-danger">{{data.jobTitle}}</small>
+    <div class="row" style="margin:0px;">
+        <div class="col-12 col-xl-4 block" v-for="(data , index) in showtEmployees" :key="data.eid">
+            <div class="col-2">
+                <a href="#" :title="data.name">
+                    <template v-if="data.jobRank == 0">
+                        <img :src="'/img/' + data.image" class="img-fluid headImg adminBorderColor" :alt="data.eid" />
+                    </template>
+                    <template v-else-if="data.jobRank == 1">
+                        <img :src="'/img/' + data.image" class="img-fluid headImg userBorderColor" :alt="data.eid" />
+                    </template>
+                    <template v-else>
+                        <img :src="'/img/' + data.image" class="img-fluid headImg managerBorderColor" :alt="data.eid" />
+                    </template>
+                </a>
+            </div>
+            <div class="col-10">
+                <div class="item">
+                    <div class="row">
+                        <div class="col-4">
+                            <span class="badge name">{{data.branch}}</span>
+                            <span class="badge badge-danger" v-if="data.jobRank == 0">{{data.jobTitle}}</span>
+                            <span class="badge badge-success" v-else-if="data.jobRank == 1">{{data.jobTitle}}</span>
+                            <span class="badge badge-primary" v-else-if="data.jobRank == 2">{{data.jobTitle}}</span>
+                        </div>
+                        <div class="col-5">
+                            <span class="badge name">{{data.eId}}&nbsp;{{data.name}}</span>
+                        </div>
+                        <div class="col-3">
+                            <span class="badge">帳號狀態:</span>
+                            <span class="badge badge-success" v-if="data.allow">正常</span>
+                            <span class="badge badge-secondary" v-else>未開通</span>
+                        </div>
+                    </div>
+                    <hr style="margin-top:3px;" />
+                    <h4>content</h4>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <label class="btn btn-secondary" :for="'acc' + index">
-                            帳號開通 :
-                            <input type="checkbox" :id="'acc' + index" name="name" v-model="data.allow"/>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="btn btn-secondary" :for="'ma' + index">
-                            主管權限 :
-                            <input type="checkbox" :id="'ma' + index" name="name" />
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="btn btn-secondary" :for="'ad' + index">
-                            管理員權限 :
-                            <input type="checkbox" :id="'ad' + index" name="name" />
-                        </label>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
@@ -61,59 +77,21 @@
         const distinctYears = [...new Set(years)];
 
 
-    //$('input[type="checkbox"]').bootstrapToggle({
-    //    on: '開啟',
-    //    onstyle: 'success',
-    //    off: '關閉',
-    //    offstyle: 'danger',
-    //})
-    //.change(e => {
-    //    console.log(e.target.checked);
-    //});
-
-    //$('.branch').MultiColumnSelect({
-    //    // Single or Multiple Select
-    //    multiple: false,
-    //    // Use text from option. Use false if you plan to use images
-    //    useOptionText: true,
-    //    // Hide Original Select Control
-    //    hideselect: true,
-    //    // Toggle Open Button Class
-    //    openmenuClass: 'mcs-open',
-    //    // Text for button
-    //    openmenuText: '選擇部門',
-    //    // Class added to Toggle button on open
-    //    openclass: 'open',
-    //    // Class of parent container
-    //    containerClass: 'mcs-container',
-    //    // Class of menu items
-    //    itemClass: 'mcs-item',
-    //    // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
-    //    idprefix: null,
-    //    // Toggle Height duration
-    //    duration: 200,
-    //    //Callbacks
-    //    onOpen: null,
-    //    onClose: null,
-    //    onItemSelect: function () {
-    //        let branch = $(this)[0].getAttribute('data');
-    //        vm.handleBranch(branch);
-    //    },
-    //})
-
 })
-    const vm = new Vue({
-        el: '#app',
-        data: {
-            source:@Html.Raw(ViewBag.Source),
-            showtEmployees:[],
-            selectBranches: [],
-            branches: [],
-            acc: [{eid:'',allow:false}],
-        },
-        mounted() {
-            //setting branches
-            this.branches.push({ branchId: 0, branch:'全部' })
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                source:@Html.Raw(ViewBag.Source),
+                branches: [],//select可選的部門名單
+                showtEmployees: [],//重新渲染emp名單
+                selectBranchId: [0],//select v-model value
+                selectBranch: [],//select 的部門名稱
+                color: color,
+            },
+            mounted() {
+                //setting branches
+                this.branches.push({ branchId: 0, branch: '全部' })
+                this.selectBranch.push({ class:'badge-secondary' , branch:'全部'});
             this.source.forEach(item => {
                 this.showtEmployees.push(item);
                 this.branches.push({ branchId: item.branchId, branch: item.branch });
@@ -144,30 +122,46 @@
             },
         },
         watch: {
-            selectBranches(newValue, oldValue) {
-                fetch('http://localhost:51010/api/EmpList', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(newValue)
-                }).then(res => {
-                    if (res.ok)
-                        return res.json();
-                    else
-                        throw new Error('請求錯誤', res.status);
-                }).then(result => {
-                    let self = this;
-                    let data = JSON.parse(result);
-                    this.showtEmployees = [];
-                    setTimeout(function () {
-                        data.forEach(item => {
-                            self.showtEmployees.push(item);
-                        })
-                    }, 500)
-                }).catch(error => {
-                    console.log(error);
+            selectBranchId(newValue, oldValue) {
+                let isAll = newValue.indexOf(0);
+                if (!isAll) {
+                    this.selectBranch = ['全部'];
+                    this.showtEmployees = this.source;
+                    return;
+                }
+                //重新渲染所選取的Branch名單
+                let selectBranches = this.branches.filter(item => {
+                    return newValue.some(id => id === item.branchId);
                 })
+                console.log(selectBranches);
+                //重新渲染所選取的employees名單
+                this.showtEmployees = this.source.filter(item => {
+                   return newValue.some(id => id === item.branchId);
+                })
+
+                //fetch('http://localhost:51010/api/EmpList', {
+                //    method: 'POST',
+                //    headers: {
+                //        'Content-Type': 'application/json'
+                //    },
+                //    body: JSON.stringify(newValue)
+                //}).then(res => {
+                //    if (res.ok)
+                //        return res.json();
+                //    else
+                //        throw new Error('請求錯誤', res.status);
+                //}).then(result => {
+                //    let self = this;
+                //    let data = JSON.parse(result);
+                //    this.showtEmployees = [];
+                //    setTimeout(function () {
+                //        data.forEach(item => {
+                //            self.showtEmployees.push(item);
+                //        })
+                //    }, 500)
+                //}).catch(error => {
+                //    console.log(error);
+                //})
             }
         }
     })
@@ -178,6 +172,11 @@
     @*<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">*@
     <link href="~/Content/Multi-Column-Select/Multi-Column-Select.css" rel="stylesheet" />
     <style>
+        #app {
+            /*border: 1px solid black;*/
+            /*box-shadow: 5px 5px 5px rgba(0,0,0,0.5);*/
+        }
+
         li[class="list-group-item"] {
             padding: 0px;
             margin: 0px;
@@ -190,5 +189,74 @@
                 justify-content: space-around;
                 align-items: center;
             }
+
+        .headImg {
+            width: 100px;
+            height: 100px;
+            border-radius: 100%;
+            box-shadow: 3px 3px 10px black;
+            cursor: pointer;
+            transition: 0.5s;
+        }
+
+        .userBorderColor {
+            border: 3px solid #4de46c;
+        }
+
+        .managerBorderColor {
+            border: 3px solid #3841f5;
+        }
+
+        .adminBorderColor {
+            border: 3px solid red;
+        }
+
+        .block {
+            transition: 0.5s;
+            cursor: pointer;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            margin: 10px 0px;
+            padding: 0px;
+            border-radius: 5px;
+        }
+
+            .block:hover {
+                background-color: aquamarine;
+            }
+
+                .block:hover img {
+                    box-shadow: 2px 2px 2px black;
+                    border-color: white;
+                }
+
+        .name {
+            font-size: 1.1em;
+        }
+
+        .block:hover .name {
+            background-color: aquamarine;
+            color: black;
+        }
+
+        .item {
+            padding: 0px 0px;
+            margin-left: -10px;
+            box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+        }
+
+            .item h4 {
+                height: 2em;
+                margin: 0px;
+            }
+
+            .item p {
+                margin: 0px;
+            }
+
+        .block > [class="col-10"] {
+            padding: 0px;
+        }
     </style>
 }
