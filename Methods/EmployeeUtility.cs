@@ -157,14 +157,35 @@ namespace UCOMProject.Methods
             }
         }
 
-        public static async Task<bool> ReviewEmployeeAccount(string eid)
+        /// <summary>
+        /// 修改員工資料
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns></returns>
+        public static async Task UpdateEmpInfo(EmployeeViewModel vm)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                var emp = await db.Employees.FindAsync(eid);
-                if (emp == null) return false;
-                emp.Allow = !emp.Allow;
-                return true;
+                Employee emp = await db.Employees.FindAsync(vm.EId);
+                if (emp == null)
+                {
+                    throw new Exception();
+                }
+                emp.Password = vm.Password;
+                emp.Name = vm.Name;
+                emp.EnglishName = vm.EnglishName;
+                emp.Sex = vm.Sex;
+                emp.Branch = vm.Branch;
+                emp.BranchId = vm.BranchId;
+                emp.JobTitle = vm.JobTitle;
+                emp.JobRank = vm.JobRank;
+                emp.Email = vm.Email;
+                emp.Phone = vm.Phone;
+                emp.Shift = vm.Shift.ToString();
+                emp.StartDate = vm.StartDate;
+                emp.Image = vm.Image;
+                emp.Allow = vm.Allow;
+                await db.SaveChangesAsync();
             }
         }
     }

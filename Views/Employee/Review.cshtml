@@ -6,17 +6,7 @@
 
 <div id="app" v-cloak>
     <h1 class="text-center">帳號權限設定</h1>
-    <div>
-        總人數:{{source.length}}
-    </div>
-    <div>
-        檢視單位:
-        <span class="badge badge-secondary" v-for="(b , index) in selectBranch" :key="b.branch">
-            {{b}}
-        </span>
-    </div>
-
-    <div class="row branch">
+    <div class="container">
         <select v-model="selectBranchId" multiple>
             <option v-for="b in branches"
                     :key="b.branchId"
@@ -24,20 +14,29 @@
                 {{b.branch}}
             </option>
         </select>
+        <div>
+            總人數:{{source.length}}人
+        </div>
+        <div>
+            檢視人數:{{showEmps.length}}人
+        </div>
+        <div>
+            檢視單位:
+            <span :class="'badge ' + b.color" v-for="(b , index) in selectBranch" :key="index">
+                {{b.branch}}
+            </span>
+        </div>
+        <button class="btn btn-danger" v-on:click="handleSave" v-show="editEmps.length">Save</button>
     </div>
+
+
+
     <div class="row" style="margin:0px;">
-        <div class="col-12 col-xl-4 block" v-for="(data , index) in showtEmployees" :key="data.eid">
+        <div class="col-12 col-xl-4 block" v-for="(data , index) in showEmps" :key="data.eid">
             <div class="col-2">
                 <a href="#" :title="data.name">
-                    <template v-if="data.jobRank == 0">
-                        <img :src="'/img/' + data.image" class="img-fluid headImg adminBorderColor" :alt="data.eid" />
-                    </template>
-                    <template v-else-if="data.jobRank == 1">
-                        <img :src="'/img/' + data.image" class="img-fluid headImg userBorderColor" :alt="data.eid" />
-                    </template>
-                    <template v-else>
-                        <img :src="'/img/' + data.image" class="img-fluid headImg managerBorderColor" :alt="data.eid" />
-                    </template>
+                    <img :src="'/img/' + data.image" :class="'img-fluid headImg ' + imgBorderColor[data.jobRank]" :alt="data.eid" v-if="data.allow" />
+                    <img :src="'/img/' + data.image" class="img-fluid headImg closeBorderColor" :alt="data.eid" v-else />
                 </a>
             </div>
             <div class="col-10">
@@ -45,21 +44,34 @@
                     <div class="row">
                         <div class="col-4">
                             <span class="badge name">{{data.branch}}</span>
-                            <span class="badge badge-danger" v-if="data.jobRank == 0">{{data.jobTitle}}</span>
-                            <span class="badge badge-success" v-else-if="data.jobRank == 1">{{data.jobTitle}}</span>
-                            <span class="badge badge-primary" v-else-if="data.jobRank == 2">{{data.jobTitle}}</span>
+                            <span :class="'badge ' + rankColor[data.jobRank]">{{data.jobTitle}}</span>
                         </div>
                         <div class="col-5">
                             <span class="badge name">{{data.eId}}&nbsp;{{data.name}}</span>
                         </div>
                         <div class="col-3">
                             <span class="badge">帳號狀態:</span>
-                            <span class="badge badge-success" v-if="data.allow">正常</span>
-                            <span class="badge badge-secondary" v-else>未開通</span>
+                            <span class="badge badge-success" v-on:click="handleAllow(data)" v-if="data.allow">正常</span>
+                            <span class="badge badge-secondary" v-on:click="handleAllow(data)" v-else>未開通</span>
                         </div>
                     </div>
                     <hr style="margin-top:3px;" />
-                    <h4>content</h4>
+                    <input type="checkbox"
+                           name="name"
+                           value=""
+                           :id="'manage' + data.eId"
+                           v-model="data.manageChecked"
+                           v-on:change="handleManage(data)"
+                           v-bind:disabled="!data.allow" />
+                    <label :for="'manage' + data.eId">主管權限</label>
+                    <input type="checkbox"
+                           name="name"
+                           value=""
+                           :id="'admin' + data.eId"
+                           v-model="data.adminChecked"
+                           v-on:change="handleAdmin(data)"
+                           v-bind:disabled="!data.allow" />
+                    <label :for="'admin' + data.eId">管理員權限</label>
                 </div>
             </div>
         </div>
@@ -77,94 +89,158 @@
         const distinctYears = [...new Set(years)];
 
 
-})
+    })
         const vm = new Vue({
             el: '#app',
             data: {
                 source:@Html.Raw(ViewBag.Source),
-                branches: [],//select可選的部門名單
-                showtEmployees: [],//重新渲染emp名單
+                branches: [],//可選的部門名單
                 selectBranchId: [0],//select v-model value
                 selectBranch: [],//select 的部門名稱
                 color: color,
+                rankColor: ['badge-danger', 'badge-success', 'badge-primary'],
+                imgBorderColor: ['adminBorderColor', 'userBorderColor', 'managerBorderColor'],
+                editEmps:[],
             },
             mounted() {
                 //setting branches
                 this.branches.push({ branchId: 0, branch: '全部' })
-                this.selectBranch.push({ class:'badge-secondary' , branch:'全部'});
-            this.source.forEach(item => {
-                this.showtEmployees.push(item);
-                this.branches.push({ branchId: item.branchId, branch: item.branch });
-            })
-            //過濾重複的branchId項目
-            this.branches = this.branches.filter((item, index, self) => {
-                //findIndex找陣列物件裡的相同的id回傳物件的index
-                const firstIndex = self.findIndex(f => f.branchId === item.branchId);
-                //目前index與findIndex相同  回傳true
-                return index === firstIndex;
-            })
-            //排列部門順序(id小至大)
-            this.branches.sort((a, b) => a.branchId - b.branchId);
-        },
-        methods: {
-            allowAccount(eid) {
-                fetch('@Url.Action("allow", "employee")')
-                    .then(res => {
-                        return res.json();
-                    })
-                    .then(result => {
-                        console.log(result);
-                    })
-            },
-            formatDate(date) {
-                moment.locale('zh-tw');
-                return moment(date).format('l');
-            },
-        },
-        watch: {
-            selectBranchId(newValue, oldValue) {
-                let isAll = newValue.indexOf(0);
-                if (!isAll) {
-                    this.selectBranch = ['全部'];
-                    this.showtEmployees = this.source;
-                    return;
-                }
-                //重新渲染所選取的Branch名單
-                let selectBranches = this.branches.filter(item => {
-                    return newValue.some(id => id === item.branchId);
+                this.selectBranch.push({ color: 'badge-secondary', branch: '全部' });
+                this.source.forEach(item => {
+                    //權限選擇初始化
+                    this.$set(item, 'adminChecked', item.jobRank === 0);
+                    this.$set(item, 'manageChecked', item.jobRank === 2);
+                    //如果開啟admin權限 , 主管權限自動跟著開啟
+                    if (item.adminChecked) {
+                        item.manageChecked = item.adminChecked;
+                    }
+                    //branches存入所有單位
+                    this.branches.push({ branchId: item.branchId, branch: item.branch });
                 })
-                console.log(selectBranches);
-                //重新渲染所選取的employees名單
-                this.showtEmployees = this.source.filter(item => {
-                   return newValue.some(id => id === item.branchId);
+                //過濾branches重複的單位
+                this.branches = this.branches.filter((item, index, self) => {
+                    //findIndex找陣列物件裡的相同的id回傳物件的index
+                    const firstIndex = self.findIndex(f => f.branchId === item.branchId);
+                    //目前index與findIndex相同  回傳true
+                    return index === firstIndex;
                 })
+                //排列部門順序(id小至大)
+                this.branches.sort((a, b) => a.branchId - b.branchId);
+            },
+            computed: {
+                //重新渲染員工清單
+                showEmps() {
+                    if (this.selectBranchId.some(id => id === 0))
+                        return this.source;
 
-                //fetch('http://localhost:51010/api/EmpList', {
-                //    method: 'POST',
-                //    headers: {
-                //        'Content-Type': 'application/json'
-                //    },
-                //    body: JSON.stringify(newValue)
-                //}).then(res => {
-                //    if (res.ok)
-                //        return res.json();
-                //    else
-                //        throw new Error('請求錯誤', res.status);
-                //}).then(result => {
-                //    let self = this;
-                //    let data = JSON.parse(result);
-                //    this.showtEmployees = [];
-                //    setTimeout(function () {
-                //        data.forEach(item => {
-                //            self.showtEmployees.push(item);
-                //        })
-                //    }, 500)
-                //}).catch(error => {
-                //    console.log(error);
-                //})
+                    return this.source.filter(item => {
+                        //員工屬於所選部門就列入 , 以branchId作為比對條件
+                        return this.selectBranchId.some(id => id === item.branchId)
+                    })
+                }
+            },
+            methods: {
+                formatDate(date) {
+                    moment.locale('zh-tw');
+                    return moment(date).format('l');
+                },
+                //處理admin權限checked
+                handleAdmin(data) {
+                    //開啟admin等於開啟主管
+                    if (data.adminChecked) {
+                        data.jobRank = 0;
+                        data.manageChecked = true;
+                    }
+                    else
+                        data.jobRank = 2;
+                    this.editStatus(data);
+                },
+                //處理主管權限checked
+                handleManage(data) {
+                    if (data.manageChecked)
+                        data.jobRank = 2;
+                    else {
+                        //關閉主管等於關閉admin
+                        data.adminChecked = false;
+                        data.jobRank = 1;
+                    }
+                    this.editStatus(data);
+                },
+                //處理帳號是否開通
+                handleAllow(data) {
+                    data.allow = !data.allow;
+                    this.editStatus(data);
+                },
+                //儲存被編輯的員工資料
+                editStatus(data) {
+                    //判斷被修改過的員工資料再加入editEmps
+                    if (this.editEmps.length > 0) {
+                        let index = this.editEmps.findIndex(emp => emp.eId === data.eId);
+                        if (index > -1) {
+                            //如果editEmps已存在被修改的員工資料就先刪除
+                            this.editEmps.splice(index, 1);
+                        }
+                    }
+                    //editEmps加入被修改的員工資料
+                    this.editEmps.push(data);
+                },
+                //處理Save的動作
+                handleSave() {
+                    let data = this.editEmps
+                    let count = data.length;
+                    //$('body').loading();
+                    fetch('http://localhost:51010/api/apiAccount', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }).then(res => {
+                        if (res.ok) {
+                            sAlert(`${count}筆資料已被修改`);
+                            $(Swal.getConfirmButton()).click(function () {
+                                $('body').loading();
+                                setTimeout(function () {
+                                    location.href = location.href;
+                                }, 500)
+                            })
+                        }
+                        else {
+                            throw new Error({ msg: '請求錯誤', status: res.status });
+                        }
+                    }).catch(error => {
+                        eAlert(error.msg)
+                        console.log(error.status);
+                    })
+                },
+            },
+            watch: {
+                selectBranchId(newValue, oldValue) {
+                    //是否檢視全部單位
+                    let isAll = newValue.indexOf(0);
+                    if (!isAll) {
+                        this.selectBranch = [{ color: 'badge-secondary', branch: '全部' }];
+                        return;
+                    }
+                    //重新渲染所選取的Branch名單
+                    this.selectBranch = [];
+                    let obj = { color: '', branch: '' };
+                    let selectBranches = this.branches.filter(item => {
+                        return newValue.some(id => id === item.branchId);
+                    })
+                    //設定單位顏色
+                    let colorCount = 0;
+                    selectBranches.forEach((item, index) => {
+                        if (colorCount == color.length)
+                            colorCount = 0;
+                        obj = { color: `badge-${this.color[index]}`, branch: item.branch };
+                        this.selectBranch.push(obj);
+                        colorCount++;
+                    })
+                }
+
             }
-        }
-    })
+        })
     </script>
 }
 
@@ -172,11 +248,6 @@
     @*<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">*@
     <link href="~/Content/Multi-Column-Select/Multi-Column-Select.css" rel="stylesheet" />
     <style>
-        #app {
-            /*border: 1px solid black;*/
-            /*box-shadow: 5px 5px 5px rgba(0,0,0,0.5);*/
-        }
-
         li[class="list-group-item"] {
             padding: 0px;
             margin: 0px;
@@ -211,6 +282,10 @@
             border: 3px solid red;
         }
 
+        .closeBorderColor {
+            border: 3px solid #808080;
+        }
+
         .block {
             transition: 0.5s;
             cursor: pointer;
@@ -223,12 +298,11 @@
         }
 
             .block:hover {
-                background-color: aquamarine;
+                background-color: #ddedf2;
             }
 
                 .block:hover img {
                     box-shadow: 2px 2px 2px black;
-                    border-color: white;
                 }
 
         .name {
@@ -236,7 +310,7 @@
         }
 
         .block:hover .name {
-            background-color: aquamarine;
+            background-color: #ddedf2;
             color: black;
         }
 

@@ -10,7 +10,7 @@ using UCOMProject.Interfaces;
 
 namespace UCOMProject.Roles
 {
-    public class Admin : RoleManage, IHolidayReviewer, IAccountReviewer, IEmployeeList
+    public class Admin : RoleManage, IHolidayReviewer, IAccountReviewer
     {
         public Admin(RoleType role) : base(role) { }
 
@@ -24,11 +24,6 @@ namespace UCOMProject.Roles
             return await EmployeeUtility.GetEmployees();
         }
 
-        public async Task<List<EmployeeViewModel>> GetEmployeesByBranch(List<int> branchId)
-        {
-            return await EmployeeUtility.GetEmployees(branchId);
-        }
-
         public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
         {
             return await HolidayUtility.GetHolidayDetails();
@@ -39,16 +34,20 @@ namespace UCOMProject.Roles
             return await HolidayUtility.EditHolidayDetailsState(data, state, CurrentUser);
         }
 
-        public async Task<bool> ReviewEmployeeAccount(string eid)
+        public async Task SetAccountRole(List<EmployeeViewModel> emps)
         {
-            return await EmployeeUtility.ReviewEmployeeAccount(eid);
+            try
+            {
+                foreach (EmployeeViewModel emp in emps)
+                {
+                    await EmployeeUtility.UpdateEmpInfo(emp);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-
-        public async Task<bool> ReviewEmployeeAccount(List<string> eid)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }
 
