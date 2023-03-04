@@ -32,8 +32,16 @@ namespace UCOMProject.Controllers
         public async Task<IHttpActionResult> PostAsync([FromBody] List<EmployeeViewModel> emps)
         {
             Admin admin = new Admin(RoleType.Admin);
-            await admin.SetAccountRole(emps);
-            return Ok();
+            try
+            {
+                await admin.SetAccountRole(emps);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound();
+            }
             //Admin admin = new Admin(RoleType.Admin);
             //List<EmployeeViewModel> result = null;
             ////前端過來為"全選"
