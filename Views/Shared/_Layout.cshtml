@@ -25,7 +25,13 @@
     <link href="~/Content/Site.css" rel="stylesheet" />
     <!--main-->
     <link href="~/Content/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    @RenderSection("Style", false)
     <style>
+        html, body {
+            font-family: Arial !important;
+            font-size: 16px !important;
+        }
+
         .bg-gradient-light {
             background-color: #f8f9fc;
             background-image: linear-gradient(180deg, #0719aa 50%, #c2cbe5 100%);
@@ -38,7 +44,6 @@
             background-size: cover;
         }
     </style>
-    @RenderSection("Style", false)
 </head>
 
 <body id="page-top">
@@ -85,9 +90,9 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Holiday System</h6>
-                        <a class="collapse-item" href="@Url.Action("apply","holiday")">休假申請</a>
+                        <a class="collapse-item" href="@Url.Action("apply","holiday" , new { eid = employee.EId , shift = employee.Shift})">休假申請</a>
                         <a class="collapse-item" href="@Url.Action("index","holiday")">休假審核進度</a>
-                        <a class="collapse-item" href="@Url.Action("record","holiday")" )">歷史紀錄</a>
+                        <a class="collapse-item" href="@Url.Action("record","holiday")">歷史紀錄</a>
                     </div>
                 </div>
                 
@@ -362,9 +367,9 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="@Url.Action("detail" , "employee" , new { eid = employee.EId})">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    個人資訊
                                 </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>

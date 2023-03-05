@@ -22,12 +22,6 @@ namespace UCOMProject.Controllers
             return View();
         }
 
-        // GET: Employee/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         /// <summary>
         /// 建立員工資訊
         /// </summary>
@@ -105,8 +99,6 @@ namespace UCOMProject.Controllers
         {
             try
             {
-                // TODO: Add update logic here
-
                 return RedirectToAction("Index");
             }
             catch

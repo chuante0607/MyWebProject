@@ -19,9 +19,9 @@ namespace UCOMProject.Models
 
     public class ApplyViewModel
     {
-        public Employee Employee { get; set; }
+        public EmployeeViewModel Employee { get; set; }
         public List<HolidayViewModel> Holidays { get; set; }
-        public List<List<ShiftWork>> WorkDayOfYearByMonth { get; set; }
+        public List<List<ShiftViewModel>> WorkDayOfYearByMonth { get; set; }
 
         [Required]
         public string EId { get; set; }

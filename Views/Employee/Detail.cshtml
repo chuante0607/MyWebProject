@@ -1,146 +1,171 @@
 ﻿@model UCOMProject.Models.EmployeeViewModel
 
 @{
-    ViewBag.Title = "Detail";
+    ViewBag.Title = "員工資料";
 }
 
-<h2>Detail</h2>
 
-<div>
-    <h4>EmployeeViewModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.EId)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.EId)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+<div class="w3-light-grey">
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+    <!-- Page Container -->
+    <div class="w3-content w3-margin-top" style="max-width:1400px;">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.EnglishName)
-        </dt>
+        <!-- The Grid -->
+        <div class="w3-row-padding">
 
-        <dd>
-            @Html.DisplayFor(model => model.EnglishName)
-        </dd>
+            <!-- Left Column -->
+            <div class="w3-third">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
+                <div class="w3-white w3-text-grey w3-card-4">
+                    <div class="w3-display-container">
+                        <img src="~/img/@Model.Image" style="width:100%" alt="Avatar">
+                        <div class="w3-display-bottomleft w3-container w3-text-black">
+                            <p class="badge badge-light" style="font-size:1.5rem">
+                                @Model.Name
+                                <small>@Model.EnglishName</small>
+                            </p>
+                        </div>
+                    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Password)
-        </dd>
+                    <div class="w3-container">
+                        <hr />
+                        <p class="w3-large"><b><i class="fa fa-info-circle fa-fw w3-margin-right w3-text-teal"></i>基本資訊</b></p>
+                        <p>
+                            <i class="fa fa-power-off fa-fw w3-margin-right w3-large w3-text-teal"></i>
+                            @switch (Model.JobRank)
+                            {
+                                case 0:
+                                    <span class="badge badge-danger">Administrator</span>
+                                    break;
+                                case 1:
+                                    <span class="badge badge-success">Employee</span>
+                                    break;
+                                case 2:
+                                    <span class="badge badge-primary">Manager</span>
+                                    break;
+                            }
+                        </p>
+                        @if (Model.SexType)
+                        {
+                            <p><i class="fa fa-male fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.Sex</p>
+                        }
+                        else
+                        {
+                            <p><i class="fa fa-female fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.Sex</p>
+                        }
+                        <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.Email</p>
+                        <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.Phone</p>
+                        <hr>
+                        <p class="w3-large"><b><i class="fa fa-asterisk fa-fw w3-margin-right w3-text-teal"></i>單位資訊</b></p>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
+                        <p><i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.Branch</p>
+                        <p><i class="fa fa-leaf fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.JobTitle</p>
+                        <p><i class="fa fa-share fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.ShiftType</p>
+                        <p><i class="fa fa-empire fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.EId</p>
+                        <p><i class="fa fa-vcard fa-fw w3-margin-right w3-large w3-text-teal"></i>@Model.Password</p>
 
-        <dd>
-            @Html.DisplayFor(model => model.Image)
-        </dd>
+                        @*<p>Adobe Photoshop</p>
+                            <div class="w3-light-grey w3-round-xlarge w3-small">
+                                <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">90%</div>
+                            </div>
+                            <p>Photography</p>
+                            <div class="w3-light-grey w3-round-xlarge w3-small">
+                                <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:80%">
+                                    <div class="w3-center w3-text-white">80%</div>
+                                </div>
+                            </div>
+                            <p>Illustrator</p>
+                            <div class="w3-light-grey w3-round-xlarge w3-small">
+                                <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:75%">75%</div>
+                            </div>
+                            <p>Media</p>
+                            <div class="w3-light-grey w3-round-xlarge w3-small">
+                                <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:50%">50%</div>
+                            </div>*@
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Shift)
-        </dt>
+                        <br>
+                        <p class="w3-large w3-text-theme"><b><i class="fa fa-globe fa-fw w3-margin-right w3-text-teal"></i>語言能力</b></p>
+                        <p>英文 / English</p>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-round-xlarge w3-teal" style="height:24px;width:85%"></div>
+                        </div>
+                        <p>日文 / Japan</p>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-round-xlarge w3-teal" style="height:24px;width:55%"></div>
+                        </div>
+                        <p>中文 / Chinese</p>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-round-xlarge w3-teal" style="height:24px;width:100%"></div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <br>
 
-        <dd>
-            @Html.DisplayFor(model => model.Shift)
-        </dd>
+                <!-- End Left Column -->
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Branch)
-        </dt>
+            <!-- Right Column -->
+            <div class="w3-twothird">
 
-        <dd>
-            @Html.DisplayFor(model => model.Branch)
-        </dd>
+                <div class="w3-container w3-card w3-white w3-margin-bottom">
+                    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-suitcase fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>工作經驗</h2>
+                    <div class="w3-container">
+                        <h5 class="w3-opacity"><b>@Model.JobTitle</b></h5>
+                        <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>@Model.StartDate.Year / @Model.StartDate.Month  - <span class="w3-tag w3-teal w3-round">Current</span></h6>
+                        <hr>
+                    </div>
+                    <div class="w3-container">
+                        <h5 class="w3-opacity"><b>後端工程師 / something.com</b></h5>
+                        <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2013 / 4  - 2023 / 2</h6>
+                        <p>Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic. Nulla tempora soluta ea et odio, unde doloremque repellendus iure, iste.</p>
+                        <hr>
+                    </div>
+                    <div class="w3-container">
+                        <h5 class="w3-opacity"><b>服務員 / Waiter.com</b></h5>
+                        <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2009 / 1 - 2012 / 11</h6>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. </p><br>
+                    </div>
+                </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.BranchId)
-        </dt>
+                <div class="w3-container w3-card w3-white">
+                    <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>個人喜好</h2>
+                    <div class="w3-container">
+                        <h5 class="w3-opacity"><b>運動</b></h5>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>打籃球</h6>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>游泳</h6>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>跆拳道</h6>
+                        <hr>
+                    </div>
+                    <div class="w3-container">
+                        <h5 class="w3-opacity"><b>音樂</b></h5>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>古風曲</h6>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>西洋曲</h6>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>古典</h6>
+                        <hr>
+                    </div>
+                    <div class="w3-container">
+                        <h5 class="w3-opacity"><b>學習</b></h5>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>程式語言</h6>
+                        <h6 class="w3-text-teal"><i class="fa fa-grav fa-fw w3-margin-right"></i>英文</h6>
+                        <hr>
+                    </div>
+                </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.BranchId)
-        </dd>
+                <!-- End Right Column -->
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.JobRank)
-        </dt>
+            <!-- End Grid -->
+        </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.JobRank)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.JobTitle)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.JobTitle)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.SexType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.SexType)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Sex)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Sex)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Allow)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Allow)
-        </dd>
-
-    </dl>
+        <!-- End Page Container -->
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+@section Style{
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+}

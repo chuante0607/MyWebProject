@@ -50,6 +50,11 @@ namespace UCOMProject.Roles
                 return false;
             }
         }
+
+        public override async Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid)
+        {
+            return await HolidayUtility.GetHolidayInfosByEmp(eid);
+        }
     }
 }
 

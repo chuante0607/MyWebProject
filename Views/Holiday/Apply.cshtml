@@ -101,12 +101,13 @@
             </div>
         </div>
 
-        <!--拖放區-->
         <div class="col-lg-4">
+            <!--放置區-->
             <div id="target" class="block text-center">
                 <span class="h4" id="point">請將假別拖曳至此</span>
             </div>
             <hr />
+
             <!--假別儀錶板-->
             <div class="row" id="source_container">
                 <div :id="'h' + holiday.hId" class="col-xl-6 mb-3 ad" draggable="true" v-for="holiday in holidays" :key="holiday.id">
@@ -341,12 +342,9 @@
                 //datepicker的beforeShowDay初始化日期fun，員工的工作日時才可選擇，非工作日不能選(做2休2)
                 settingWorkDays(date) {
                     let matchMonth = this.workDayOfYearByMonth[date.getMonth()];
-                    //some只要一找到相符的值就跳出
-                    let isWork = matchMonth.some(item => {
-                        let workDate = new Date(item.workDate);
-                        return workDate.valueOf() === date.valueOf() && item.shift === this.employee.shift;
-                    })
-                    return [isWork, '', ''];
+                    //find找到相符的屬性回傳該物件
+                    let obj = matchMonth.find(item => new Date(item.checkDate).valueOf() === date.valueOf());
+                    return [obj.isWork, '', ''];
                 },
                 //取得休假證明上傳資料
                 handleFile(e) {

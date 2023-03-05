@@ -137,7 +137,7 @@ namespace UCOMProject.Methods
                     Branch = vm.Branch,
                     BranchId = vm.BranchId,
                     JobTitle = vm.JobTitle,
-                    JobRank = vm.JobRank,
+                    JobRank = 1,
                     Email = vm.Email,
                     Phone = vm.Phone,
                     Shift = vm.Shift.ToString(),

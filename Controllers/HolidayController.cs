@@ -9,6 +9,9 @@ using UCOMProject.Interfaces;
 using UCOMProject.Methods;
 using UCOMProject.Models;
 using UCOMProject.Roles;
+using System.Text;
+using System.Globalization;
+using UCOMProject.Extension;
 
 namespace UCOMProject.Controllers
 {
@@ -18,17 +21,31 @@ namespace UCOMProject.Controllers
         HolidayDetailTableViewModel vmTable = new HolidayDetailTableViewModel();
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
+
+
+
+        [HttpGet]
         /// <summary>
         /// 休假申請
         /// </summary>
         /// <returns></returns>
-        public async Task<ActionResult> Apply()
+        public async Task<ActionResult> Apply(string eid, string shift)
         {
 
             ApplyViewModel vm = new ApplyViewModel();
-            vm.Employee = SessionEmp.CurrentEmp;
-            vm.Holidays = await HolidayUtility.GetHolidayInfos(vm.Employee.EId);
-            vm.WorkDayOfYearByMonth = HolidayUtility.GetWorkDayOfYearByMonth(DateTime.Now.Year);
+            RoleManage user = ConfirmIdentity();
+
+            vm.Employee = await user.GetUser();
+            vm.Holidays = await user.GetHolidayInfosByEmp(eid);
+            if (shift.xTranShiftEnum() == ShiftType.常日班)
+            {
+                string[] file = System.IO.File.ReadAllLines(Server.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
+                vm.WorkDayOfYearByMonth = user.GetWorkDayOfYearByMonth(file, DateTime.Now.Year);
+            }
+            else
+            {
+                vm.WorkDayOfYearByMonth = user.GetWorkDayOfYearByMonth(shift.xTranShiftEnum(), DateTime.Now.Year);
+            }
             ViewBag.vm = JsonConvert.SerializeObject(vm, camelSetting);
             return View(vm);
         }

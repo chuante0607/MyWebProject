@@ -21,7 +21,7 @@ namespace UCOMProject.Controllers
             year = year == null ? DateTime.Now.Year : year;
             vm.Employee = SessionEmp.CurrentEmp;
             if (vm.Employee.EId == "admin") RedirectToAction("login", "admin");
-            vm.Holidays = await HolidayUtility.GetHolidayInfos(vm.Employee.EId);
+            vm.Holidays = await HolidayUtility.GetHolidayInfosByEmp(vm.Employee.EId);
             vm.ChartInfos = await HolidayUtility.GetchartInfos(vm.Employee.EId, (int)year);
             try
             {

@@ -61,13 +61,30 @@ namespace UCOMProject.Roles
         public abstract Task<List<HolidayDetailViewModel>> GetHolidayDetails();
 
         /// <summary>
+        /// 查詢員工的休假天數資訊
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns></returns>
+        public abstract Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid);
+
+        /// <summary>
         /// 刪除員工自己待審核的休假申請
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<bool> DelHolidayDetails(List<int> id)
         {
-            return await HolidayUtility.DelHolidayDetails(id , CurrentUser.EId);
+            return await HolidayUtility.DelHolidayDetails(id, CurrentUser.EId);
+        }
+
+        public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
+        {
+            return HolidayUtility.GetWorkDayOfYearByMonth(shift, year);
+        }
+
+        public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(string[] file, int year)
+        {
+            return HolidayUtility.GetWorkDayOfYearByMonth(file , year);
         }
     }
 }

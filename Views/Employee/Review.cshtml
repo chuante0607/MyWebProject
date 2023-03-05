@@ -6,32 +6,42 @@
 
 <div id="app" v-cloak>
     <h1 class="text-center">帳號權限設定</h1>
-    <div class="container">
-        <select v-model="selectBranchId" multiple>
-            <option v-for="b in branches"
-                    :key="b.branchId"
-                    :value="b.branchId">
-                {{b.branch}}
-            </option>
-        </select>
-        <div>
-            總人數:{{source.length}}人
+    <div class="container" style="position:relative">
+        <div class="row viewSelect">
+            <select v-model="selectBranchId" multiple class="col">
+                <option v-for="b in branches"
+                        :key="b.branchId"
+                        :value="b.branchId">
+                    {{b.branch}}
+                </option>
+            </select>
+            <div class="col">
+                <div class="row">
+                    <div class="col selectItem selectA">
+                        <p>檢視人數</p>
+                        <span>{{showEmps.length}}人</span>
+                    </div>
+                    <div class="col selectItem selectB">
+                        <p>總人數</p>
+                        <span>{{source.length}}人</span>
+                    </div>
+                </div>
+                <div class="row viewSelect">
+                    <div class="col selectItem ">
+                        <p>檢視單位</p>
+                        <span :class="'badge ' + b.color" v-for="(b , index) in selectBranch" :key="index">
+                            {{b.branch}}
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-            檢視人數:{{showEmps.length}}人
-        </div>
-        <div>
-            檢視單位:
-            <span :class="'badge ' + b.color" v-for="(b , index) in selectBranch" :key="index">
-                {{b.branch}}
-            </span>
-        </div>
-        <button class="btn btn-danger" v-on:click="handleSave" v-show="editEmps.length">Save</button>
+        <button class="btn btn-sm btn-danger saveBtn" v-on:click="handleSave" v-show="editEmps.length">Save</button>
     </div>
 
 
 
-    <div class="row" style="margin:0px;">
+    <div class="row mt-5" style="margin:0px;">
         <div class="col-12 col-xl-4 block" v-for="(data , index) in showEmps" :key="data.eid">
             <div class="col-2">
                 <a v-bind:href="'@Url.Action("detail")?eid=' + data.eId" :title="data.name">
@@ -340,6 +350,58 @@
 
         .block > [class="col-10"] {
             padding: 0px;
+        }
+
+
+        .viewSelect {
+            align-items: center;
+        }
+
+            .viewSelect select {
+                border: 2px solid black;
+            }
+
+        .selectItem {
+            display: flex;
+            align-items: center;
+        }
+            .selectItem p {
+                font-size: 1.5rem;
+                font-weight: bold;
+                margin: 0;
+                margin-right: 10px;
+            }
+
+            .selectItem span {
+                border: 2px solid #ddedf2;
+                box-sizing: border-box;
+                display: inline-block;
+                text-align: center;
+                font-weight: bold;
+            }
+
+        .selectA span {
+            border-radius: 100%;
+            background-color: #5ce066;
+            color: #0a0a09;
+            width: 60px;
+            height: 60px;
+            line-height: 3rem;
+            font-size: 1.6rem;
+        }
+        .selectB span {
+            border-radius: 100%;
+            background-color: darkblue;
+            color: aliceblue;
+            width: 60px;
+            height: 60px;
+            line-height: 3rem;
+            font-size: 1.6rem;
+        }
+        .saveBtn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
         }
     </style>
 }

@@ -39,6 +39,17 @@ namespace UCOMProject.Roles
         {
             return await HolidayUtility.GetHolidayDetails(CurrentUser.EId);
         }
-
+        public override async Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid)
+        {
+            //員工只能查自己的假別
+            if (CurrentUser.EId == eid)
+            {
+                return await HolidayUtility.GetHolidayInfosByEmp(eid);
+            }
+            else
+            {
+                return new List<HolidayViewModel>();
+            }
+        }
     }
 }
