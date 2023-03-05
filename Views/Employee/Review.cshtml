@@ -103,29 +103,7 @@
                 editEmps:[],
             },
             mounted() {
-                //setting branches
-                this.branches.push({ branchId: 0, branch: '全部' })
-                this.selectBranch.push({ color: 'badge-secondary', branch: '全部' });
-                this.source.forEach(item => {
-                    //權限選擇初始化
-                    this.$set(item, 'adminChecked', item.jobRank === 0);
-                    this.$set(item, 'manageChecked', item.jobRank === 2);
-                    //如果開啟admin權限 , 主管權限自動跟著開啟
-                    if (item.adminChecked) {
-                        item.manageChecked = item.adminChecked;
-                    }
-                    //branches存入所有單位
-                    this.branches.push({ branchId: item.branchId, branch: item.branch });
-                })
-                //過濾branches重複的單位
-                this.branches = this.branches.filter((item, index, self) => {
-                    //findIndex找陣列物件裡的相同的id回傳物件的index
-                    const firstIndex = self.findIndex(f => f.branchId === item.branchId);
-                    //目前index與findIndex相同  回傳true
-                    return index === firstIndex;
-                })
-                //排列部門順序(id小至大)
-                this.branches.sort((a, b) => a.branchId - b.branchId);
+                this.initial();
             },
             computed: {
                 //重新渲染員工清單
@@ -140,6 +118,33 @@
                 }
             },
             methods: {
+                //data初始化
+                initial() {
+                    //setting branches
+                    this.branches.push({ branchId: 0, branch: '全部' })
+                    this.selectBranch.push({ color: 'badge-secondary', branch: '全部' });
+                    this.source.forEach(item => {
+                        //權限選擇初始化
+                        this.$set(item, 'adminChecked', item.jobRank === 0);
+                        this.$set(item, 'manageChecked', item.jobRank === 2);
+                        //如果開啟admin權限 , 主管權限自動跟著開啟
+                        if (item.adminChecked) {
+                            item.manageChecked = item.adminChecked;
+                        }
+                        //branches存入所有單位
+                        this.branches.push({ branchId: item.branchId, branch: item.branch });
+                    })
+                    //過濾branches重複的單位
+                    this.branches = this.branches.filter((item, index, self) => {
+                        //findIndex找陣列物件裡的相同的id回傳物件的index
+                        const firstIndex = self.findIndex(f => f.branchId === item.branchId);
+                        //目前index與findIndex相同  回傳true
+                        return index === firstIndex;
+                    })
+                    //排列部門順序(id小至大)
+                    this.branches.sort((a, b) => a.branchId - b.branchId);
+                },
+                //格式化日期
                 formatDate(date) {
                     moment.locale('zh-tw');
                     return moment(date).format('l');
@@ -197,23 +202,29 @@
                         body: JSON.stringify(data)
                     }).then(res => {
                         if (res.ok) {
-                            $('body').loading();
-                            setTimeout(function () {
-                                sAlert(`${count}筆資料修改成功!`);
-                                $(Swal.getConfirmButton()).click(function () {
-                                    location.href = location.href;
-                                })
-                            } , 1000)
-                        }
-                        else {
+                            return res.json();
+                        }else {
                             throw new Error(`發生${res.status} , ${res.statusText}`);
                         }
+                    }).then(result => {
+                        //$('body').loading();
+                        let self = this;
+                        let data = JSON.parse(result);
+                        sAlert(`${count}筆資料修改成功!`);
+                        $(Swal.getConfirmButton()).click(function () {
+                            self.source = data;
+                            self.editEmps = [];
+                            self.selectBranchId = [0];
+                            self.selectBranch = [];
+                            self.initial();
+                        })
                     }).catch(error => {
                         eAlert(error)
                     })
                 },
             },
             watch: {
+                //監控選擇單位
                 selectBranchId(newValue, oldValue) {
                     //是否檢視全部單位
                     let isAll = newValue.indexOf(0);
@@ -237,7 +248,6 @@
                         colorCount++;
                     })
                 }
-
             }
         })
     </script>

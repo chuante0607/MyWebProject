@@ -34,7 +34,8 @@ namespace UCOMProject.Controllers
             Admin admin = new Admin(RoleType.Admin);
             if (await admin.SetAccountRole(emps))
             {
-                return Ok();
+                List<EmployeeViewModel> vm = await admin.GetEmployees();
+                return Ok(JsonConvert.SerializeObject(vm, camelSetting));
             }
             else
             {
