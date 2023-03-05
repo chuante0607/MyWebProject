@@ -79,10 +79,18 @@ namespace UCOMProject.Controllers
         }
 
         [HttpGet]
+        public async Task<ActionResult> Detail(string eid)
+        {
+            RoleManage user = ConfirmIdentity();
+            EmployeeViewModel emp = await user.GetEmployeeById(eid);
+            return View(emp);
+        }
+
+        [HttpGet]
         public async Task<JsonResult> Allow(string eid)
         {
-            
-            return Json(JsonConvert.SerializeObject(null , camelSetting)) ; ;
+
+            return Json(JsonConvert.SerializeObject(null, camelSetting)); ;
         }
 
         // GET: Employee/Edit/5
@@ -128,5 +136,24 @@ namespace UCOMProject.Controllers
                 return View();
             }
         }
+
+        private RoleManage ConfirmIdentity()
+        {
+            RoleManage user = null;
+            switch (SessionEmp.CurrentEmp.JobRank)
+            {
+                case 0:
+                    user = new Admin(RoleType.Admin);
+                    break;
+                case 1:
+                    user = new User(RoleType.User);
+                    break;
+                case 2:
+                    user = new Manager(RoleType.Manager);
+                    break;
+            }
+            return user;
+        }
+
     }
 }

@@ -2500,6 +2500,7 @@
     <Content Include="Views\Holiday\Apply.cshtml" />
     <Content Include="Views\Shared\_LayoutSuper.cshtml" />
     <Content Include="Views\Holiday\Record.cshtml" />
+    <Content Include="Views\Employee\Detail.cshtml" />
     <None Include="Views\Holiday\Review.cshtml" />
     <Content Include="Views\Account\AdminLogin.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />

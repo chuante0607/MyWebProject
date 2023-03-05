@@ -32,14 +32,12 @@ namespace UCOMProject.Controllers
         public async Task<IHttpActionResult> PostAsync([FromBody] List<EmployeeViewModel> emps)
         {
             Admin admin = new Admin(RoleType.Admin);
-            try
+            if (await admin.SetAccountRole(emps))
             {
-                await admin.SetAccountRole(emps);
                 return Ok();
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
                 return NotFound();
             }
             //Admin admin = new Admin(RoleType.Admin);

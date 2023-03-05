@@ -34,7 +34,7 @@ namespace UCOMProject.Roles
             return await HolidayUtility.EditHolidayDetailsState(data, state, CurrentUser);
         }
 
-        public async Task SetAccountRole(List<EmployeeViewModel> emps)
+        public async Task<bool> SetAccountRole(List<EmployeeViewModel> emps)
         {
             try
             {
@@ -42,10 +42,12 @@ namespace UCOMProject.Roles
                 {
                     await EmployeeUtility.UpdateEmpInfo(emp);
                 }
+                return true;
             }
             catch (Exception ex)
             {
-                throw ex;
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
     }

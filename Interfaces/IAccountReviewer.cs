@@ -9,6 +9,6 @@ namespace UCOMProject.Interfaces
 {
     interface IAccountReviewer
     {
-        Task SetAccountRole(List<EmployeeViewModel> emps);
+        Task<bool> SetAccountRole(List<EmployeeViewModel> emps);
     }
 }

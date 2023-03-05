@@ -34,7 +34,7 @@
     <div class="row" style="margin:0px;">
         <div class="col-12 col-xl-4 block" v-for="(data , index) in showEmps" :key="data.eid">
             <div class="col-2">
-                <a href="#" :title="data.name">
+                <a v-bind:href="'@Url.Action("detail")?eid=' + data.eId" :title="data.name">
                     <img :src="'/img/' + data.image" :class="'img-fluid headImg ' + imgBorderColor[data.jobRank]" :alt="data.eid" v-if="data.allow" />
                     <img :src="'/img/' + data.image" class="img-fluid headImg closeBorderColor" :alt="data.eid" v-else />
                 </a>
@@ -197,20 +197,19 @@
                         body: JSON.stringify(data)
                     }).then(res => {
                         if (res.ok) {
-                            sAlert(`${count}筆資料已被修改`);
-                            $(Swal.getConfirmButton()).click(function () {
-                                $('body').loading();
-                                setTimeout(function () {
+                            $('body').loading();
+                            setTimeout(function () {
+                                sAlert(`${count}筆資料修改成功!`);
+                                $(Swal.getConfirmButton()).click(function () {
                                     location.href = location.href;
-                                }, 500)
-                            })
+                                })
+                            } , 1000)
                         }
                         else {
-                            throw new Error({ msg: '請求錯誤', status: res.status });
+                            throw new Error(`發生${res.status} , ${res.statusText}`);
                         }
                     }).catch(error => {
-                        eAlert(error.msg)
-                        console.log(error.status);
+                        eAlert(error)
                     })
                 },
             },
