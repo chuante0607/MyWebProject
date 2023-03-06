@@ -14,10 +14,6 @@ namespace UCOMProject.Models
             CheckDate = data;
             IsWork = isWork;
         }
-        public ShiftViewModel(DateTime data, bool isWork)
-        {
-            CheckDate = data;
-            IsWork = isWork;
-        }
+       
     }
 }

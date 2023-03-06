@@ -31,7 +31,6 @@ namespace UCOMProject.Controllers
         /// <returns></returns>
         public async Task<ActionResult> Apply(string eid, string shift)
         {
-
             ApplyViewModel vm = new ApplyViewModel();
             RoleManage user = ConfirmIdentity();
 

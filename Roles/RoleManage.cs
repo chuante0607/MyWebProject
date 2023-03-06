@@ -15,10 +15,16 @@ namespace UCOMProject.Roles
     public abstract class RoleManage
     {
         protected Employee CurrentUser { get { return SessionEmp.CurrentEmp; } }
-        protected BranchType BranchType { get { return CurrentUser.Branch.xTranBranchEnum(); } }
+        protected BranchType BranchType { get; set; }
         public RoleType Role { get; set; }
         public RoleManage(RoleType role)
         {
+            Role = role;
+        }
+
+        public RoleManage(RoleType role , BranchType branch)
+        {
+            BranchType = branch;
             Role = role;
         }
         /// <summary>
@@ -60,11 +66,11 @@ namespace UCOMProject.Roles
         /// <returns></returns>
         public abstract Task<List<HolidayDetailViewModel>> GetHolidayDetails();
 
-        /// <summary>
-        /// 查詢員工的休假天數資訊
-        /// </summary>
-        /// <param name="eid"></param>
-        /// <returns></returns>
+       /// <summary>
+       /// 查詢員工休假資訊
+       /// </summary>
+       /// <param name="eid"></param>
+       /// <returns></returns>
         public abstract Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid);
 
         /// <summary>
@@ -77,11 +83,23 @@ namespace UCOMProject.Roles
             return await HolidayUtility.DelHolidayDetails(id, CurrentUser.EId);
         }
 
+        /// <summary>
+        /// 依4班2輪類型取得年度工作日
+        /// </summary>
+        /// <param name="shift"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
         public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
         {
             return HolidayUtility.GetWorkDayOfYearByMonth(shift, year);
         }
 
+        /// <summary>
+        /// 常日班取得年度工作日
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
         public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(string[] file, int year)
         {
             return HolidayUtility.GetWorkDayOfYearByMonth(file , year);

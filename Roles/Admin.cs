@@ -50,7 +50,12 @@ namespace UCOMProject.Roles
                 return false;
             }
         }
-
+        
+        /// <summary>
+        /// 查詢所有員工的休假天數
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns></returns>
         public override async Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid)
         {
             return await HolidayUtility.GetHolidayInfosByEmp(eid);

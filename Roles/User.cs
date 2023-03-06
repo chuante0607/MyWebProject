@@ -39,6 +39,12 @@ namespace UCOMProject.Roles
         {
             return await HolidayUtility.GetHolidayDetails(CurrentUser.EId);
         }
+
+        /// <summary>
+        /// 查詢自己的休假天數資訊
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns></returns>
         public override async Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid)
         {
             //員工只能查自己的假別

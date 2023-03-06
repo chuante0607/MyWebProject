@@ -147,7 +147,8 @@
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
-    <Compile Include="Controllers\NationalHolidayController.cs" />
+    <Compile Include="Controllers\NotFoundController.cs" />
+    <Compile Include="Controllers\ProductionController.cs" />
     <Compile Include="Extension\DateExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />
     <Compile Include="Global.asax.cs">
@@ -2505,9 +2506,11 @@
     <Content Include="Views\Employee\Create.cshtml" />
     <Content Include="Views\Employee\Review.cshtml" />
     <Content Include="Uploads\112年中華民國政府行政機關辦公日曆表.csv" />
+    <Content Include="Views\NotFound\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Production\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

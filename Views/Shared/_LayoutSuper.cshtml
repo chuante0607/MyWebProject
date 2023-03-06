@@ -80,13 +80,13 @@
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-cog"></i>
-                    <span>個人功能</span>
+                    <span>個人相關</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Holiday System</h6>
-                        <a class="collapse-item" href="@Url.Action("apply","holiday" , new { eid = employee.EId , shift = employee.Shift})">休假申請</a>
-                        <a class="collapse-item" href="@Url.Action("index","holiday")">休假審核進度</a>
+                        <h6 class="collapse-header">休假系統</h6>
+                        <a class="collapse-item" href="@Url.Action("apply","holiday" , new { eid = employee.EId , shift = employee.Shift})">申請</a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday")">審核進度</a>
                         <a class="collapse-item" href="@Url.Action("record","holiday")">歷史紀錄</a>
                     </div>
                 </div>
@@ -99,15 +99,14 @@
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                            aria-expanded="true" aria-controls="collapsePages">
                             <i class="fas fa-fw fa-folder"></i>
-                            <span>主管功能</span>
+                            <span>主管相關</span>
                         </a>
                         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
-                                <h6 class="collapse-header">Holiday System</h6>
-                                <a class="collapse-item" href="@Url.Action("Review","holiday")">休假申請審核</a>
-                                <h6 class="collapse-header">Employee System</h6>
+                                <h6 class="collapse-header">審核系統</h6>
+                                <a class="collapse-item" href="@Url.Action("Review","holiday")">休假審核</a>
                                 <a class="collapse-item" href="@Url.Action("create" , "employee")">建立員工檔案</a>
-                                <a class="collapse-item" href="@Url.Action("account" , "employee")">帳號開通狀態</a>
+                                <a class="collapse-item" href="@Url.Action("review" , "employee")">員工權限設定</a>
                             </div>
                         </div>
                     </div>
@@ -121,12 +120,10 @@
                         </a>
                         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
-                                <h6 class="collapse-header">Holiday System</h6>
-                                <a class="collapse-item" href="@Url.Action("review","holiday")">休假申請審核</a>
-                                <h6 class="collapse-header">Employee System</h6>
+                                <h6 class="collapse-header">審核系統</h6>
+                                <a class="collapse-item" href="@Url.Action("review","holiday")">休假審核</a>
                                 <a class="collapse-item" href="@Url.Action("create" , "employee")">建立員工檔案</a>
-                                <a class="collapse-item" href="@Url.Action("review" , "employee")">帳號權限設定</a>
-                                <a class="collapse-item" href="@Url.Action("account" , "employee")">帳號開通狀態</a>
+                                <a class="collapse-item" href="@Url.Action("review" , "employee")">員工權限設定</a>
                             </div>
                         </div>
                     </div>

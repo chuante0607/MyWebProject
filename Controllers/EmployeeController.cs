@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using UCOMProject.Methods;
 using UCOMProject.Models;
 using UCOMProject.Roles;
+using System.Diagnostics;
+using UCOMProject.Extension;
 
 namespace UCOMProject.Controllers
 {
@@ -66,18 +68,34 @@ namespace UCOMProject.Controllers
 
         public async Task<ActionResult> Review()
         {
-            RoleManage user = new Admin(RoleType.Admin);
-            var emps = await user.GetEmployees();
-            ViewBag.Source = JsonConvert.SerializeObject(emps, camelSetting);
-            return View(emps);
+            RoleManage user = ConfirmIdentity();
+            try
+            {
+                var emps = await user.GetEmployees();
+                ViewBag.Source = JsonConvert.SerializeObject(emps, camelSetting);
+                return View(emps);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return RedirectToAction("index", "NotFound");
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Detail(string eid)
         {
             RoleManage user = ConfirmIdentity();
-            EmployeeViewModel emp = await user.GetEmployeeById(eid);
-            return View(emp);
+            try
+            {
+                EmployeeViewModel emp = await user.GetEmployeeById(eid);
+                return View(emp);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return RedirectToAction("index", "NotFound");
+            }
         }
 
         [HttpGet]
@@ -141,7 +159,7 @@ namespace UCOMProject.Controllers
                     user = new User(RoleType.User);
                     break;
                 case 2:
-                    user = new Manager(RoleType.Manager);
+                    user = new Manager(RoleType.Manager ,SessionEmp.CurrentEmp.Branch.xTranBranchEnum());
                     break;
             }
             return user;

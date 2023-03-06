@@ -163,9 +163,9 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="data in allowBack" :key="data.id">
-                                        <td>
-                                            <a class="btn btn-outline-info">修改</a>
-                                            <a class="btn btn-danger" v-on:click="delBackCheck(data.id)">刪除</a>
+                                        <td style="white-space:nowrap">
+                                            <a class="btn btn-sm btn-outline-info">修改</a>
+                                            <a class="btn btn-sm btn-danger" v-on:click="delBackCheck(data.id)">刪除</a>
                                         </td>
                                         <td class="text-danger font-weight-bold">{{data.reason}}</td>
                                         <td>h00{{data.id}}</td>

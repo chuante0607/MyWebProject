@@ -10,12 +10,12 @@
         <div @@click="handleCanUse" style="width:100%">
             <template v-if="canUse">
                 <a href="#" class="d-none d-sm-inline-block btn shadow-sm" v-bind:class="'btn-outline-' + color[1]" style="width:100%">
-                    <i class="fas fa-download fa-sm text-bg-dark"></i> 可用
+                    <i class="fas fa-house-user fa-sm text-bg-dark"></i> 可用
                 </a>
             </template>
             <template v-else="canUse">
                 <a href="#" class="d-none d-sm-inline-block btn shadow-sm" v-bind:class="'btn-outline-' + color[3]" style="width:100%">
-                    <i class="fas fa-upload fa-sm text-bg-dark"></i> 已使用
+                    <i class="fas fa-hospital-user fa-sm text-bg-dark"></i> 已使用
                 </a>
             </template>
         </div>

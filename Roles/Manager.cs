@@ -11,10 +11,10 @@ using UCOMProject.Extension;
 
 namespace UCOMProject.Roles
 {
-    public class Manager : RoleManage, IHolidayReviewer
+    public class Manager : RoleManage, IHolidayReviewer , IAccountReviewer
     {
         public Manager(RoleType role) : base(role) { }
-
+        public Manager(RoleType role , BranchType branch) : base(role , branch) { }
         public override RoleManage GetRole()
         {
             return new Manager(RoleType.Manager);
@@ -54,6 +54,11 @@ namespace UCOMProject.Roles
             return await HolidayUtility.EditHolidayDetailsState(data, state, CurrentUser);
         }
 
+        /// <summary>
+        /// 查詢自己所屬部門員工的休假天數資訊
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns></returns>
         public override async Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid)
         {
             //主管只能查自己部門員工的假別
@@ -68,6 +73,23 @@ namespace UCOMProject.Roles
                 {
                     return new List<HolidayViewModel>();
                 }
+            }
+        }
+
+        public async Task<bool> SetAccountRole(List<EmployeeViewModel> emps)
+        {
+            try
+            {
+                foreach (EmployeeViewModel emp in emps)
+                {
+                    await EmployeeUtility.UpdateEmpInfo(emp);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
     }

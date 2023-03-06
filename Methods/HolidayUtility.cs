@@ -13,20 +13,6 @@ namespace UCOMProject.Methods
 {
     public static class HolidayUtility
     {
-        public class NationalHoliday
-        {
-            public NationalHoliday(DateTime date, bool isWork, string remark)
-            {
-                Date = date;
-                IsWorkDay = isWork;
-                Remark = remark;
-            }
-            public DateTime Date { get; set; }
-            public bool IsWorkDay { get; set; }
-            public string Remark { get; set; }
-        }
-
-        const int WorkCycle = 4;
 
         /// <summary>
         /// 員工今年度休假天數總覽
@@ -119,6 +105,7 @@ namespace UCOMProject.Methods
         /// </summary>
         public static List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
         {
+            const int WorkCycle = 4;
             List<List<ShiftViewModel>> workDayByMonth = new List<List<ShiftViewModel>>();
             //to do:
             //計算做2休2的週期
@@ -168,18 +155,13 @@ namespace UCOMProject.Methods
                 List<string> str = line.Split(',').ToList();
                 if (DateTime.TryParseExact(str[0], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
                 {
-                    if (str[2] != "2")
-                    {
-
-                        ShiftViewModels.Add(new ShiftViewModel(date, true));
-                    }
+                    if (str[2] == "2")
+                        ShiftViewModels.Add(new ShiftViewModel(ShiftType.常日班, date, false));
                     else
-                    {
-                        ShiftViewModels.Add(new ShiftViewModel(date, false));
-                    }
+                        ShiftViewModels.Add(new ShiftViewModel(ShiftType.常日班, date, true));
                 }
             }
-            workDayByMonth = ShiftViewModels.GroupBy(g => g.CheckDate.Month, g => new ShiftViewModel(g.CheckDate, g.IsWork)).Select(g => g.ToList()).ToList();
+            workDayByMonth = ShiftViewModels.GroupBy(g => g.CheckDate.Month).Select(s => s.ToList()).ToList();
             return workDayByMonth;
         }
 

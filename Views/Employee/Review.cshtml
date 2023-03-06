@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<UCOMProject.Models.EmployeeViewModel>
-
+@using UCOMProject.Methods
 @{
     ViewBag.Title = "帳號權限設定";
 }
@@ -42,7 +42,7 @@
 
 
     <div class="row mt-5" style="margin:0px;">
-        <div class="col-12 col-xl-4 block" v-for="(data , index) in showEmps" :key="data.eid">
+        <div class="col-12 col-xl-6 block" v-for="(data , index) in showEmps" :key="data.eid">
             <div class="col-2">
                 <a v-bind:href="'@Url.Action("detail")?eid=' + data.eId" :title="data.name">
                     <img :src="'/img/' + data.image" :class="'img-fluid headImg ' + imgBorderColor[data.jobRank]" :alt="data.eid" v-if="data.allow" />
@@ -66,22 +66,44 @@
                         </div>
                     </div>
                     <hr style="margin-top:3px;" />
-                    <input type="checkbox"
-                           name="name"
-                           value=""
-                           :id="'manage' + data.eId"
-                           v-model="data.manageChecked"
-                           v-on:change="handleManage(data)"
-                           v-bind:disabled="!data.allow" />
-                    <label :for="'manage' + data.eId">主管權限</label>
-                    <input type="checkbox"
-                           name="name"
-                           value=""
-                           :id="'admin' + data.eId"
-                           v-model="data.adminChecked"
-                           v-on:change="handleAdmin(data)"
-                           v-bind:disabled="!data.allow" />
-                    <label :for="'admin' + data.eId">管理員權限</label>
+                    <template v-if="data.jobRank === 0">
+                        <input type="checkbox"
+                               name="name"
+                               value=""
+                               :id="'manage' + data.eId"
+                               v-model="data.manageChecked"
+                               v-on:change="handleManage(data)"
+                               v-bind:disabled="!data.allow" />
+                        <label :for="'manage' + data.eId">主管權限</label>
+                        <input type="checkbox"
+                               name="name"
+                               value=""
+                               :id="'admin' + data.eId"
+                               v-model="data.adminChecked"
+                               v-on:change="handleAdmin(data)"
+                               v-bind:disabled="!data.allow" />
+                        <label :for="'admin' + data.eId">管理員權限</label>
+                    </template>
+
+                    <template v-else>
+                        <input type="checkbox"
+                               name="name"
+                               value=""
+                               :id="'manage' + data.eId"
+                               v-model="data.manageChecked"
+                               v-on:change="handleManage(data)"
+                               v-bind:disabled="!data.allow" />
+                        <label :for="'manage' + data.eId">主管權限</label>
+                        <input type="checkbox"
+                               name="name"
+                               value=""
+                               :id="'admin' + data.eId"
+                               v-model="data.adminChecked"
+                               v-on:change="handleAdmin(data)"
+                               v-bind:disabled="!data.allow"
+                               disabled />
+                        <label :for="'admin' + data.eId">管理員權限</label>
+                    </template>
                 </div>
             </div>
         </div>
@@ -201,10 +223,12 @@
                 },
                 //處理Save的動作
                 handleSave() {
-                    let data = this.editEmps
+                    let data = this.editEmps;
                     let count = data.length;
-                    //$('body').loading();
-                    fetch('http://localhost:51010/api/apiAccount', {
+                    fetch('http://localhost:51010/api/apiAccount?' +
+                        'rank=' + '@SessionEmp.CurrentEmp.JobRank' + '&' +
+                        'branch=' + '@SessionEmp.CurrentEmp.Branch',
+                        {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -217,7 +241,6 @@
                             throw new Error(`發生${res.status} , ${res.statusText}`);
                         }
                     }).then(result => {
-                        //$('body').loading();
                         let self = this;
                         let data = JSON.parse(result);
                         sAlert(`${count}筆資料修改成功!`);
@@ -229,7 +252,7 @@
                             self.initial();
                         })
                     }).catch(error => {
-                        eAlert(error)
+                        eAlert(error);
                     })
                 },
             },
@@ -365,6 +388,7 @@
             display: flex;
             align-items: center;
         }
+
             .selectItem p {
                 font-size: 1.5rem;
                 font-weight: bold;
@@ -389,6 +413,7 @@
             line-height: 3rem;
             font-size: 1.6rem;
         }
+
         .selectB span {
             border-radius: 100%;
             background-color: darkblue;
@@ -398,6 +423,7 @@
             line-height: 3rem;
             font-size: 1.6rem;
         }
+
         .saveBtn {
             position: absolute;
             bottom: 0;
