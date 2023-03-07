@@ -66,15 +66,16 @@
                         </div>
                     </div>
                     <hr style="margin-top:3px;" />
-                    <template v-if="data.jobRank === 0">
-                        <input type="checkbox"
-                               name="name"
-                               value=""
-                               :id="'manage' + data.eId"
-                               v-model="data.manageChecked"
-                               v-on:change="handleManage(data)"
-                               v-bind:disabled="!data.allow" />
-                        <label :for="'manage' + data.eId">主管權限</label>
+                    <input type="checkbox"
+                           name="name"
+                           value=""
+                           :id="'manage' + data.eId"
+                           v-model="data.manageChecked"
+                           v-on:change="handleManage(data)"
+                           v-bind:disabled="!data.allow" />
+                    <label :for="'manage' + data.eId">主管權限</label>
+                    @if (SessionEmp.CurrentEmp.JobRank == 0)
+                    {
                         <input type="checkbox"
                                name="name"
                                value=""
@@ -83,27 +84,7 @@
                                v-on:change="handleAdmin(data)"
                                v-bind:disabled="!data.allow" />
                         <label :for="'admin' + data.eId">管理員權限</label>
-                    </template>
-
-                    <template v-else>
-                        <input type="checkbox"
-                               name="name"
-                               value=""
-                               :id="'manage' + data.eId"
-                               v-model="data.manageChecked"
-                               v-on:change="handleManage(data)"
-                               v-bind:disabled="!data.allow" />
-                        <label :for="'manage' + data.eId">主管權限</label>
-                        <input type="checkbox"
-                               name="name"
-                               value=""
-                               :id="'admin' + data.eId"
-                               v-model="data.adminChecked"
-                               v-on:change="handleAdmin(data)"
-                               v-bind:disabled="!data.allow"
-                               disabled />
-                        <label :for="'admin' + data.eId">管理員權限</label>
-                    </template>
+                    }
                 </div>
             </div>
         </div>
@@ -126,6 +107,7 @@
             el: '#app',
             data: {
                 source:@Html.Raw(ViewBag.Source),
+                currentUser: {},
                 branches: [],//可選的部門名單
                 selectBranchId: [0],//select v-model value
                 selectBranch: [],//select 的部門名稱
@@ -408,9 +390,9 @@
             border-radius: 100%;
             background-color: #5ce066;
             color: #0a0a09;
-            width: 60px;
-            height: 60px;
-            line-height: 3rem;
+            width: 100px;
+            /*height: 60px;*/
+            line-height: 4rem;
             font-size: 1.6rem;
         }
 
@@ -418,9 +400,9 @@
             border-radius: 100%;
             background-color: darkblue;
             color: aliceblue;
-            width: 60px;
-            height: 60px;
-            line-height: 3rem;
+            width: 100px;
+            /*height: 60px;*/
+            line-height: 4rem;
             font-size: 1.6rem;
         }
 

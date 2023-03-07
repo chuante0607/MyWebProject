@@ -144,11 +144,12 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\apiAccountController.cs" />
+    <Compile Include="Controllers\apiScheduleController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
     <Compile Include="Controllers\NotFoundController.cs" />
-    <Compile Include="Controllers\ProductionController.cs" />
+    <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Extension\DateExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />
     <Compile Include="Global.asax.cs">
@@ -156,7 +157,11 @@
     </Compile>
     <Compile Include="Interfaces\IAccountReviewer.cs" />
     <Compile Include="Interfaces\IHolidayReviewer.cs" />
+    <Compile Include="Methods\ScheduleUtility.cs" />
     <Compile Include="Models\ReviewType.cs" />
+    <Compile Include="Models\Schedule.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Roles\Admin.cs" />
     <Compile Include="Methods\Common.cs" />
     <Compile Include="Roles\RoleManage.cs" />
@@ -209,6 +214,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\HolidayViewModel.cs" />
+    <Compile Include="ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ViewModels\SummaryViewModel.cs" />
     <Compile Include="ViewModels\ShiftViewModel.cs" />
   </ItemGroup>
@@ -2507,10 +2513,11 @@
     <Content Include="Views\Employee\Review.cshtml" />
     <Content Include="Uploads\112年中華民國政府行政機關辦公日曆表.csv" />
     <Content Include="Views\NotFound\Index.cshtml" />
+    <Content Include="Views\Schedule\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Production\" />
+    <Folder Include="Views\apiSchedule\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

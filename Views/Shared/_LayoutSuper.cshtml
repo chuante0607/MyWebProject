@@ -65,12 +65,27 @@
             <span class="badge badge-light">
                 @SessionEmp.CurrentEmp.Branch
             </span>
-            <span class="badge badge-info">
-                @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name (@SessionEmp.CurrentEmp.EnglishName)
-                <span class="badge badge-danger">
-                    @SessionEmp.CurrentEmp.JobTitle
-                </span>
-            </span>
+            @switch (SessionEmp.CurrentEmp.JobRank)
+            {
+                case 0:
+                    <span class="badge badge-info">
+                        @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name (@SessionEmp.CurrentEmp.EnglishName)
+                        <span class="badge badge-danger">
+                            @SessionEmp.CurrentEmp.JobTitle
+                        </span>
+                    </span>
+                    break;
+                case 2:
+                    <span class="badge badge-info">
+                        @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name (@SessionEmp.CurrentEmp.EnglishName)
+                        <span class="badge badge-primary">
+                            @SessionEmp.CurrentEmp.JobTitle
+                        </span>
+                    </span>
+                    break;
+                default:
+                    break;
+            }
             <hr class="sidebar-divider my-0">
             <hr class="sidebar-divider">
             @*<div class="sidebar-heading">
@@ -79,7 +94,7 @@
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-person-booth"></i>
                     <span>個人相關</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -91,14 +106,28 @@
                     </div>
                 </div>
             </div>
-
+            <div class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
+                   aria-expanded="true" aria-controls="collapse3">
+                    <i class="fas fa-calendar"></i>
+                    <span>生產相關</span>
+                </a>
+                <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">排班系統</h6>
+                        <a class="collapse-item" href="#">排程查詢</a>
+                        <a class="collapse-item" href="#">人力通知</a>
+                        <a class="collapse-item" href="#">歷史紀錄</a>
+                    </div>
+                </div>
+            </div>
             @switch (SessionEmp.CurrentEmp.JobRank)
             {
                 case (int)RoleType.Manager:
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                            aria-expanded="true" aria-controls="collapsePages">
-                            <i class="fas fa-fw fa-folder"></i>
+                            <i class="fas fa-address-book"></i>
                             <span>主管相關</span>
                         </a>
                         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -115,8 +144,8 @@
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                            aria-expanded="true" aria-controls="collapsePages">
-                            <i class="fas fa-fw fa-folder"></i>
-                            <span>管理員功能</span>
+                            <i class="fas fa-gavel"></i>
+                            <span>管理員相關</span>
                         </a>
                         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">

@@ -61,6 +61,14 @@
           <Property Name="ProveType" Type="bit" Nullable="false" />
           <Property Name="AnyOne" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="Schedules">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="WorkDay" Type="date" Nullable="false" />
+        </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -107,11 +115,24 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Schedules_Employees">
+          <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+          <End Role="Schedules" Type="Self.Schedules" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="EId" />
+            </Principal>
+            <Dependent Role="Schedules">
+              <PropertyRef Name="EId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="MyDBModelStoreContainer">
           <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HolidayDetails" EntityType="Self.HolidayDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Employees_Branch1" Association="Self.FK_Employees_Branch1">
             <End Role="Branch" EntitySet="Branch" />
@@ -124,6 +145,10 @@
           <AssociationSet Name="FK_HolidayDetails_Holidays1" Association="Self.FK_HolidayDetails_Holidays1">
             <End Role="Holidays" EntitySet="Holidays" />
             <End Role="HolidayDetails" EntitySet="HolidayDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Schedules_Employees" Association="Self.FK_Schedules_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="Schedules" EntitySet="Schedules" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -147,6 +172,11 @@
           <AssociationSet Name="FK_HolidayDetails_Holidays1" Association="MyDBModel.FK_HolidayDetails_Holidays1">
             <End Role="Holiday" EntitySet="Holidays" />
             <End Role="HolidayDetail" EntitySet="HolidayDetails" />
+          </AssociationSet>
+          <EntitySet Name="Schedules" EntityType="MyDBModel.Schedule" />
+          <AssociationSet Name="FK_Schedules_Employees" Association="MyDBModel.FK_Schedules_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Schedule" EntitySet="Schedules" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Holiday">
@@ -200,6 +230,7 @@
           <Property Name="BranchId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Branch1" Relationship="MyDBModel.FK_Employees_Branch1" FromRole="Employee" ToRole="Branch" />
           <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="Employee" ToRole="HolidayDetail" />
+          <NavigationProperty Name="Schedules" Relationship="MyDBModel.FK_Schedules_Employees" FromRole="Employee" ToRole="Schedule" />
         </EntityType>
         <EntityType Name="HolidayDetail">
           <Key>
@@ -254,6 +285,27 @@
             </Principal>
             <Dependent Role="HolidayDetail">
               <PropertyRef Name="HId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WorkDay" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_Schedules_Employees" FromRole="Schedule" ToRole="Employee" />
+        </EntityType>
+        <Association Name="FK_Schedules_Employees">
+          <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="MyDBModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EId" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="EId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -329,6 +381,15 @@
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="BeginDate" ColumnName="BeginDate" />
                 <ScalarProperty Name="HId" ColumnName="HId" />
+                <ScalarProperty Name="EId" ColumnName="EId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Schedules">
+            <EntityTypeMapping TypeName="MyDBModel.Schedule">
+              <MappingFragment StoreEntitySet="Schedules">
+                <ScalarProperty Name="WorkDay" ColumnName="WorkDay" />
                 <ScalarProperty Name="EId" ColumnName="EId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

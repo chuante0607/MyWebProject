@@ -1,0 +1,67 @@
+﻿@model IEnumerable<UCOMProject.Models.Schedule>
+@{
+    ViewBag.Title = "Index";
+    string eid = Model.Select(s => s.EId).FirstOrDefault();
+}
+<div class="container">
+    <h2>Index</h2>
+    <h1>@eid</h1>
+
+    <ul>
+        @foreach (var item in Model)
+        {
+
+            <li>@item.WorkDay.ToShortDateString()</li>
+        }
+
+    </ul>
+    <div id="calendar"></div>
+</div>
+
+@section Script{
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next,today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                titleFormat: { year: 'numeric', month: 'short' },
+                buttonText: {
+                    today: '今天',
+                    month: '月',
+                    week: '周',
+                    day: '天',
+                    list: '清單'
+                },
+                eventSources: [
+                    {
+                        url: 'http://localhost:51010/api/apiSchedule', 
+                        color: 'yellow',   
+                        textColor: 'black',
+                        success: function (result) {
+
+                        }
+                    }
+                ],
+                eventSourceSuccess: function (content, response) {
+                    console.log(content);
+                },
+                events: {
+                    
+                }
+            });
+            calendar.render();
+        });
+    </script>
+
+}
+
+@section Style{
+
+}

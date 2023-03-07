@@ -56,6 +56,14 @@
     <Property Name="ProveType" Type="bit" Nullable="false" />
     <Property Name="AnyOne" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="Schedules">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="WorkDay" Type="date" Nullable="false" />
+  </EntityType>
   <EntityType Name="sysdiagrams">
     <Key>
       <PropertyRef Name="diagram_id" />
@@ -102,11 +110,24 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Schedules_Employees">
+    <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+    <End Role="Schedules" Type="Self.Schedules" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employees">
+        <PropertyRef Name="EId" />
+      </Principal>
+      <Dependent Role="Schedules">
+        <PropertyRef Name="EId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="MyDBModelStoreContainer">
     <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="HolidayDetails" EntityType="Self.HolidayDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_Employees_Branch1" Association="Self.FK_Employees_Branch1">
       <End Role="Branch" EntitySet="Branch" />
@@ -119,6 +140,10 @@
     <AssociationSet Name="FK_HolidayDetails_Holidays1" Association="Self.FK_HolidayDetails_Holidays1">
       <End Role="Holidays" EntitySet="Holidays" />
       <End Role="HolidayDetails" EntitySet="HolidayDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Schedules_Employees" Association="Self.FK_Schedules_Employees">
+      <End Role="Employees" EntitySet="Employees" />
+      <End Role="Schedules" EntitySet="Schedules" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

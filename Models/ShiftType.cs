@@ -9,5 +9,6 @@ namespace UCOMProject.Models
     {
         請選擇 = 0,
         常日班, A班, B班
+
     }
 }

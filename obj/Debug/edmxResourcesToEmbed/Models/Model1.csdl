@@ -18,6 +18,11 @@
       <End Role="Holiday" EntitySet="Holidays" />
       <End Role="HolidayDetail" EntitySet="HolidayDetails" />
     </AssociationSet>
+    <EntitySet Name="Schedules" EntityType="MyDBModel.Schedule" />
+    <AssociationSet Name="FK_Schedules_Employees" Association="MyDBModel.FK_Schedules_Employees">
+      <End Role="Employee" EntitySet="Employees" />
+      <End Role="Schedule" EntitySet="Schedules" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="Holiday">
     <Key>
@@ -70,6 +75,7 @@
     <Property Name="BranchId" Type="Int32" Nullable="false" />
     <NavigationProperty Name="Branch1" Relationship="MyDBModel.FK_Employees_Branch1" FromRole="Employee" ToRole="Branch" />
     <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="Employee" ToRole="HolidayDetail" />
+    <NavigationProperty Name="Schedules" Relationship="MyDBModel.FK_Schedules_Employees" FromRole="Employee" ToRole="Schedule" />
   </EntityType>
   <EntityType Name="HolidayDetail">
     <Key>
@@ -124,6 +130,27 @@
       </Principal>
       <Dependent Role="HolidayDetail">
         <PropertyRef Name="HId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Schedule">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkDay" Type="DateTime" Nullable="false" Precision="0" />
+    <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_Schedules_Employees" FromRole="Schedule" ToRole="Employee" />
+  </EntityType>
+  <Association Name="FK_Schedules_Employees">
+    <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="1" />
+    <End Type="MyDBModel.Schedule" Role="Schedule" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employee">
+        <PropertyRef Name="EId" />
+      </Principal>
+      <Dependent Role="Schedule">
+        <PropertyRef Name="EId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
