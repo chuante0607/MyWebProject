@@ -11,18 +11,14 @@ using UCOMProject.Models;
 using UCOMProject.Roles;
 using System.Diagnostics;
 using UCOMProject.Extension;
+using System.ComponentModel.DataAnnotations;
 
 namespace UCOMProject.Controllers
 {
     [AuthorizationFilter]
     public class EmployeeController : Controller
     {
-        // GET: Employee
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         /// <summary>
         /// 建立員工資訊
@@ -85,11 +81,24 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<ActionResult> Detail(string eid)
         {
-            RoleManage user = ConfirmIdentity();
             try
             {
-                EmployeeViewModel emp = await user.GetEmployeeById(eid);
-                return View(emp);
+                RoleManage user = ConfirmIdentity();
+                if (user.GetRole() == RoleType.User)
+                {
+                    return View(await user.GetUser());
+                }
+                else
+                {
+                    if (eid == null)
+                    {
+                        return View(await user.GetUser());
+                    }
+                    else
+                    {
+                        return View(await user.GetEmployeeById(eid));
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -105,47 +114,46 @@ namespace UCOMProject.Controllers
             return Json(JsonConvert.SerializeObject(null, camelSetting)); ;
         }
 
-        // GET: Employee/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit()
         {
+            ViewBag.Result = ViewBag.Result = JsonConvert.SerializeObject(new ApplyResult(), camelSetting);
+            RoleManage user = ConfirmIdentity();
+            return View(await user.GetUser());
+        }
+
+
+
+        [HttpPost]
+        public async Task<ActionResult> Edit(EditEmployeeViewModel editEmp)
+        {
+            ApplyResult result = new ApplyResult();
+            result.isPass = false;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    RoleManage user = ConfirmIdentity();
+                    result = await user.EditUserInfo(editEmp);
+                    if (result.isPass)
+                    {
+                        string path = Server.MapPath($@"\img\{result.FileName}");
+                        editEmp.ImageFile.SaveAs(path);
+                        ViewBag.Result = JsonConvert.SerializeObject(result, camelSetting);
+                        return View();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.msg = ex.Message;
+                    ViewBag.Result = JsonConvert.SerializeObject(result, camelSetting);
+                    return View();
+                }
+            }
+            result.msg = "資料填寫不完整";
+            ViewBag.Result = JsonConvert.SerializeObject(result, camelSetting);
             return View();
         }
 
-        // POST: Employee/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Employee/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Employee/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
         private RoleManage ConfirmIdentity()
         {
@@ -159,7 +167,7 @@ namespace UCOMProject.Controllers
                     user = new User(RoleType.User);
                     break;
                 case 2:
-                    user = new Manager(RoleType.Manager ,SessionEmp.CurrentEmp.Branch.xTranBranchEnum());
+                    user = new Manager(RoleType.Manager, SessionEmp.CurrentEmp.Branch.xTranBranchEnum());
                     break;
             }
             return user;

@@ -1,67 +1,131 @@
-﻿@model IEnumerable<UCOMProject.Models.Schedule>
+﻿@using UCOMProject.Models
+@using UCOMProject.Methods
 @{
     ViewBag.Title = "Index";
-    string eid = Model.Select(s => s.EId).FirstOrDefault();
+    Employee emp = SessionEmp.CurrentEmp;
 }
-<div class="container">
-    <h2>Index</h2>
-    <h1>@eid</h1>
 
-    <ul>
-        @foreach (var item in Model)
-        {
 
-            <li>@item.WorkDay.ToShortDateString()</li>
-        }
+<div class="row mt-5" style="padding:0px 70px">
+    <div id='external-events' class="col-2">
+        <h4>Draggable Events</h4>
+        <div id='external-events-list'>
+            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                <div class='fc-event-main'>My Event 1</div>
+            </div>
+            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                <div class='fc-event-main'>My Event 2</div>
+            </div>
+            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                <div class='fc-event-main'>My Event 3</div>
+            </div>
+            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                <div class='fc-event-main'>My Event 4</div>
+            </div>
+            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+                <div class='fc-event-main'>My Event 5</div>
+            </div>
+        </div>
+        <p>
+            <input type='checkbox' id='drop-remove' />
+            <label for='drop-remove'>remove after drop</label>
+        </p>
+    </div>
 
-    </ul>
-    <div id="calendar"></div>
+
+    <div id="calendar" class="col-10"></div>
 </div>
 
 @section Script{
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>
+    @*<script>
+            async function myHttpGet(url, parms) {
+                let header = {
+                    "ROLE_CODE":["admin","admin-leader"]
+                };
+                let resp = await fetch(url, parms, header);
+                return resp.result;
+            }
+
+        </script>*@
+    @*<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>*@
+    <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
     <script>
-
         document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next,today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                titleFormat: { year: 'numeric', month: 'short' },
-                buttonText: {
-                    today: '今天',
-                    month: '月',
-                    week: '周',
-                    day: '天',
-                    list: '清單'
-                },
-                eventSources: [
-                    {
-                        url: 'http://localhost:51010/api/apiSchedule', 
-                        color: 'yellow',   
-                        textColor: 'black',
-                        success: function (result) {
-
-                        }
-                    }
-                ],
-                eventSourceSuccess: function (content, response) {
-                    console.log(content);
-                },
-                events: {
-                    
+          
+            fetch('http://localhost:51010/api/apiSchedule', {
+                headers: {
+                    "ROLE_CODE": ["admin", "admin-leader"]
                 }
+            }).then(res => res.json()).then(result => {
+                var myData = JSON.parse(result);
+
+                var containerEl = document.getElementById('external-events-list');
+                new FullCalendar.Draggable(containerEl, {
+                    itemSelector: '.fc-event',
+                    eventData: function (eventEl) {
+                        return {
+                            title: eventEl.innerText.trim()
+                        }
+                    },
+                    draggable: true,
+                });
+
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'prev,next,today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    titleFormat: { year: 'numeric', month: 'short' },
+                    buttonText: {
+                        today: '今天',
+                        month: '月',
+                        week: '周',
+                        day: '天',
+                        list: '清單'
+                    },
+                    aspectRatio: 2.2,
+                    dayMaxEvents: true,
+                    events: myData.calendars,
+                    dayCellClassNames: function (arg) {
+                        let date = new Date(arg.date);
+                        let result = myData.shifts[date.getMonth()].find(item => {
+                            let check = new Date(item.checkDate).toLocaleDateString();
+                            return check === date.toLocaleDateString();
+                        })
+                        if (result && result.isWork)
+                            return 'shiftA';
+                        else
+                            return '';
+                    },
+                    //eventClick: function (info) {
+                    //    alert('Event: ' + info.event.title);
+                    //    alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+                    //    alert('View: ' + info.view.type);
+
+                    //    // change the border color just for fun
+                    //    info.el.style.borderColor = 'red';
+                    //},
+                    initialView: 'dayGridMonth',
+                    selectable: true
+                });
+                calendar.render();
             });
-            calendar.render();
         });
     </script>
 
 }
 
 @section Style{
+    <style>
+        .shiftA {
+            background-color: #d6e7f3;
+        }
 
+        .shiftB {
+            /*background-color:antiquewhite;*/
+        }
+    </style>
 }

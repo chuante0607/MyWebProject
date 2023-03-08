@@ -16,13 +16,12 @@ namespace UCOMProject.Controllers
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
         // GET: Production
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var query = await ScheduleUtility.GetSchedulesByEmp("E001");
-            return View(query);
+            return View();
         }
 
-        public ActionResult Planning()
+        public ActionResult Plan()
         {
             return View();
         }

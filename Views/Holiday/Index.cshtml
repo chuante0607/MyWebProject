@@ -131,6 +131,7 @@
                                                 {{data.head.branch}}主管
                                             </span>
                                             {{data.head.name}}({{data.head.englishName}})
+                                            <a v-bind:href="'@Url.Action("Review")?rank=' +  data.head.jobRank">審核</a>
                                         </td>
                                     </tr>
                                 </tbody>

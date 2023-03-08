@@ -12,6 +12,10 @@ namespace UCOMProject.Methods
         {
             get
             {
+                if (HttpContext.Current.Session == null)
+                    return null;
+                if (HttpContext.Current.Session["emp"] == null)
+                    return null;
                 return HttpContext.Current.Session["emp"] as Employee;
             }
         }

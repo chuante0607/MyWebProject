@@ -167,6 +167,7 @@
             target.addEventListener('dragover', myDragover);
             target.addEventListener('dragleave', myDragleave);
             var activeObj = null;
+
             //拖曳物件進入範圍時觸發
             function myDragenter(e) {
                 mycancelDefault(e);
@@ -269,6 +270,7 @@
         const vm = new Vue({
             el: '#app',
             data: {
+                source: {},
                 employee: {},
                 holidays: {},
                 startDate: '',
@@ -284,6 +286,7 @@
                 color,
             },
             mounted() {
+                this.source = @Html.Raw(ViewBag.vm);
                 let data = @Html.Raw(ViewBag.vm);
                 this.employee = data.employee;
                 this.holidays = data.holidays;
@@ -341,7 +344,6 @@
             methods: {
                 //datepicker的beforeShowDay初始化日期fun，員工的工作日時才可選擇，非工作日不能選(做2休2)
                 settingWorkDays(date) {
-                    console.log(date);
                     let matchMonth = this.workDayOfYearByMonth[date.getMonth()];
                     //find找到相符的屬性回傳該物件
                     let obj = matchMonth.find(item => new Date(item.checkDate).valueOf() === date.valueOf());

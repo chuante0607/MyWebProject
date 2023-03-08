@@ -22,16 +22,16 @@ namespace UCOMProject.Roles
             Role = role;
         }
 
-        public RoleManage(RoleType role , BranchType branch)
+        public RoleManage(RoleType role, BranchType branch)
         {
             BranchType = branch;
             Role = role;
         }
         /// <summary>
-        /// 取得目前使用者的權限物件
+        /// 取得目前使用者身分
         /// </summary>
         /// <returns></returns>
-        public abstract RoleManage GetRole();
+        public abstract RoleType GetRole();
 
         /// <summary>
         /// 取得目前使用者的資訊
@@ -40,6 +40,24 @@ namespace UCOMProject.Roles
         public async Task<EmployeeViewModel> GetUser()
         {
             return await EmployeeUtility.GetEmpById(CurrentUser.EId);
+        }
+
+        /// <summary>
+        /// 員工修改自己的資訊
+        /// </summary>
+        /// <param name="edit"></param>
+        /// <returns></returns>
+        public async Task<ApplyResult> EditUserInfo(EditEmployeeViewModel edit)
+        {
+            try
+            {
+                ApplyResult result = await EmployeeUtility.UpdateSelfInfo(edit);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -60,17 +78,19 @@ namespace UCOMProject.Roles
         /// <returns></returns>
         public abstract Task<List<EmployeeViewModel>> GetEmployees();
 
+
+
         /// <summary>
         /// 取得休假資訊
         /// </summary>
         /// <returns></returns>
         public abstract Task<List<HolidayDetailViewModel>> GetHolidayDetails();
 
-       /// <summary>
-       /// 查詢員工休假資訊
-       /// </summary>
-       /// <param name="eid"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// 查詢員工休假資訊
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns></returns>
         public abstract Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid);
 
         /// <summary>
@@ -102,7 +122,8 @@ namespace UCOMProject.Roles
         /// <returns></returns>
         public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(string[] file, int year)
         {
-            return HolidayUtility.GetWorkDayOfYearByMonth(file , year);
+            return HolidayUtility.GetWorkDayOfYearByMonth(file, year);
         }
+
     }
 }

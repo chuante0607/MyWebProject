@@ -15,11 +15,18 @@ namespace UCOMProject.Roles
     {
         public Manager(RoleType role) : base(role) { }
         public Manager(RoleType role , BranchType branch) : base(role , branch) { }
-        public override RoleManage GetRole()
+
+        
+        public override RoleType GetRole()
         {
-            return new Manager(RoleType.Manager);
+            return RoleType.Manager;
         }
 
+        /// <summary>
+        /// 獲取部門的員工資訊
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <returns>EmployeeViewModel</returns>
         public override async Task<EmployeeViewModel> GetEmployeeById(string eid)
         {
             //主管只能查自己部門員工的假別
@@ -39,16 +46,30 @@ namespace UCOMProject.Roles
          
         }
 
+        /// <summary>
+        /// 獲取部門的所有員工資訊
+        /// </summary>
+        /// <returns>EmployeeViewModel集合</returns>
         public override async Task<List<EmployeeViewModel>> GetEmployees()
         {
             return await EmployeeUtility.GetEmployees(new List<int> { (int)BranchType });
         }
 
+        /// <summary>
+        /// 獲取部門的休假紀錄
+        /// </summary>
+        /// <returns>HolidayDetailViewModel集合</returns>
         public override async Task<List<HolidayDetailViewModel>> GetHolidayDetails()
         {
             return await HolidayUtility.GetHolidayDetails(BranchType);
         }
 
+        /// <summary>
+        /// 審核部門的休假單
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="state"></param>
+        /// <returns>bool</returns>
         public async Task<bool> ReviewHolidayApply(List<HolidayDetailViewModel> data, ReviewType state)
         {
             return await HolidayUtility.EditHolidayDetailsState(data, state, CurrentUser);
@@ -58,7 +79,7 @@ namespace UCOMProject.Roles
         /// 查詢自己所屬部門員工的休假天數資訊
         /// </summary>
         /// <param name="eid"></param>
-        /// <returns></returns>
+        /// <returns>HolidayViewModel集合</returns>
         public override async Task<List<HolidayViewModel>> GetHolidayInfosByEmp(string eid)
         {
             //主管只能查自己部門員工的假別
@@ -76,6 +97,11 @@ namespace UCOMProject.Roles
             }
         }
 
+        /// <summary>
+        /// 設定部門的權限
+        /// </summary>
+        /// <param name="emps"></param>
+        /// <returns>bool</returns>
         public async Task<bool> SetAccountRole(List<EmployeeViewModel> emps)
         {
             try

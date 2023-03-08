@@ -2,6 +2,7 @@
 @using UCOMProject.Methods
 @{
     ViewBag.Title = "帳號權限設定";
+    int rank = SessionEmp.CurrentEmp.JobRank;
 }
 
 <div id="app" v-cloak>
@@ -44,7 +45,7 @@
     <div class="row mt-5" style="margin:0px;">
         <div class="col-12 col-xl-6 block" v-for="(data , index) in showEmps" :key="data.eid">
             <div class="col-2">
-                <a v-bind:href="'@Url.Action("detail")?eid=' + data.eId" :title="data.name">
+                <a :title="data.name" :href="'@Url.Action("detail")?eid=' + data.eId">
                     <img :src="'/img/' + data.image" :class="'img-fluid headImg ' + imgBorderColor[data.jobRank]" :alt="data.eid" v-if="data.allow" />
                     <img :src="'/img/' + data.image" class="img-fluid headImg closeBorderColor" :alt="data.eid" v-else />
                 </a>

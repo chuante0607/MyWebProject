@@ -169,7 +169,7 @@ namespace UCOMProject.Methods
                 Employee emp = await db.Employees.FindAsync(vm.EId);
                 if (emp == null)
                 {
-                    throw new Exception();
+                    throw new Exception($"找不到工號{vm.EId}員工資訊");
                 }
                 emp.Password = vm.Password;
                 emp.Name = vm.Name;
@@ -186,6 +186,35 @@ namespace UCOMProject.Methods
                 emp.Image = vm.Image;
                 emp.Allow = vm.Allow;
                 await db.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
+        /// 修改自己的資訊
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns></returns>
+        public static async Task<ApplyResult> UpdateSelfInfo(EditEmployeeViewModel vm)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                ApplyResult result = new ApplyResult();
+                Employee emp = await db.Employees.FindAsync(vm.EId);
+                if (emp == null)
+                {
+                    throw new Exception($"找不到工號{vm.EId}員工資訊");
+                }
+                string fileName = $"{DateTime.Now.Ticks}{vm.ImageFile.FileName}";
+                emp.Name = vm.Name;
+                emp.EnglishName = vm.EnglishName;
+                emp.Email = vm.Email;
+                emp.Phone = vm.Phone;
+                emp.Image = fileName;
+                await db.SaveChangesAsync();
+                result.isPass = true;
+                result.msg = "資料修改成功!";
+                result.FileName = fileName;
+                return result;
             }
         }
     }

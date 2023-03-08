@@ -1,0 +1,265 @@
+﻿@model UCOMProject.Models.EmployeeViewModel
+
+@{
+    ViewBag.Title = "修改員工檔案";
+}
+
+
+@using (Html.BeginForm("edit", "employee", FormMethod.Post, new { enctype = "multipart/form-data", @class = "container mt-5", id = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <h4 class="col text-center">修改員工檔案</h4>
+    <div class="form-horizontal">
+        <hr />
+        <div class="input-group mb-3" style="justify-content: space-between;">
+            <button type="submit" class="btn btn-primary">修改</button>
+            <a href="@Url.Action("index" , "home")" class="btn btn-outline-warning">
+                <i class="fi fi-rr-left">返回</i>
+            </a>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.EId, "", new { @class = "text-danger"})
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rs-users-alt"></i></span>
+            </div>
+            @Html.EditorFor(model => model.EId, new { htmlAttributes = new { @class = "form-control", placeholder = "工號", @readonly = "readonly " } })
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-id-badge"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "身分證字號" ,  @readonly = "readonly "} })
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-user"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", placeholder = "中文姓名" } })
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.EnglishName, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-sr-user"></i></span>
+            </div>
+            @Html.EditorFor(model => model.EnglishName, new { htmlAttributes = new { @class = "form-control", placeholder = "英文名" } })
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"> <i class="fi fi-rr-phone-call"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "聯絡方式" } })
+            <div class="input-group-prepend">
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-envelope"></i></span>
+            </div>
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "信箱" } })
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-cloud-upload"></i></span>
+            </div>
+            @Html.TextBoxFor(model => model.ImageFile, new { @class = "form-control form-control-file", type = "file", placeholder = "請上傳員工大頭照" })
+
+        </div>
+    </div>
+}
+
+
+
+@section Script{
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <script src="~/Content/Multi-Column-Select/Multi-Column-Select.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("#ImageFile").change(function () {
+                var reader = new FileReader();
+
+                reader.onload = function (event) {
+                    $("#img").attr("src", event.target.result);
+                };
+                reader.readAsDataURL(this.files[0]);
+            });
+
+
+            let result = @Html.Raw(ViewBag.Result);
+                if (result.msg) {
+                      if (result.isPass) {
+                      sAlert(result.msg);
+                        $(Swal.getConfirmButton()).click(function () {
+                            $('body').loading();
+                            setTimeout(function () {
+                                window.location.href = '@Url.Action("index","home")';
+                            }, 1500)
+                        })
+                }
+                else {
+                    eAlert(result.msg);
+                }
+            }
+
+
+            //$('#SexType').bootstrapToggle({
+            //        on: '男',
+            //        onstyle: 'primary',
+            //        off: '女',
+            //        offstyle: 'danger',
+            //    }).change((e) => {
+            //});
+        })
+
+        //$('.Shift').MultiColumnSelect({
+        //    // Single or Multiple Select
+        //    multiple: false,
+        //    // Use text from option. Use false if you plan to use images
+        //    useOptionText: true,
+        //    // Hide Original Select Control
+        //    hideselect: true,
+        //    // Toggle Open Button Class
+        //    openmenuClass: 'mcs-open',
+        //    // Text for button
+        //    openmenuText: '選擇班別',
+        //    // Class added to Toggle button on open
+        //    openclass: 'open',
+        //    // Class of parent container
+        //    containerClass: 'mcs-container',
+        //    // Class of menu items
+        //    itemClass: 'mcs-item',
+        //    // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
+        //    idprefix: null,
+        //    // Toggle Height duration
+        //    duration: 200,
+        //    //Callbacks
+        //    onOpen: null,
+        //    onClose: null,
+        //    onItemSelect: null,
+        //});
+
+        //$('.Branch').MultiColumnSelect({
+        //    // Single or Multiple Select
+        //    multiple: false,
+        //    // Use text from option. Use false if you plan to use images
+        //    useOptionText: true,
+        //    // Hide Original Select Control
+        //    hideselect: true,
+        //    // Toggle Open Button Class
+        //    openmenuClass: 'mcs-open',
+        //    // Text for button
+        //    openmenuText: '所屬單位',
+        //    // Class added to Toggle button on open
+        //    openclass: 'open',
+        //    // Class of parent container
+        //    containerClass: 'mcs-container',
+        //    // Class of menu items
+        //    itemClass: 'mcs-item',
+        //    // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
+        //    idprefix: null,
+        //    // Toggle Height duration
+        //    duration: 200,
+        //    //Callbacks
+        //    onOpen: null,
+        //    onClose: null,
+        //    onItemSelect: null,
+        //});
+
+        //$('.JobTitle').MultiColumnSelect({
+
+        //    // Single or Multiple Select
+        //    multiple: false,
+
+        //    // Use text from option. Use false if you plan to use images
+        //    useOptionText: true,
+
+        //    // Hide Original Select Control
+        //    hideselect: true,
+
+        //    // Toggle Open Button Class
+        //    openmenuClass: 'mcs-open',
+
+        //    // Text for button
+        //    openmenuText: '職稱',
+
+        //    // Class added to Toggle button on open
+        //    openclass: 'open',
+
+        //    // Class of parent container
+        //    containerClass: 'mcs-container',
+
+        //    // Class of menu items
+        //    itemClass: 'mcs-item',
+
+        //    // Assign as ID to items eg 'item-' = #item-1, #item-2, #item-3...
+        //    idprefix: null,
+
+        //    // Toggle Height duration
+        //    duration: 200,
+
+        //    //Callbacks
+        //    onOpen: null,
+        //    onClose: null,
+        //    onItemSelect: null,
+
+        //});
+
+
+        //$("#StartDate").datepicker({
+        //    changeMonth: true,
+        //    changeYear: true,
+        //    dateFormat: "yy-mm-dd",
+        //    dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"],
+        //    monthNamesShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+        //    yearRange: `2000:${new Date().getFullYear()}`,
+        //    showAnim: "fade",
+        //}).change(function () {
+        //    let start = $(this).datepicker("getDate");
+        //    let end = $("#endDatepicker").datepicker("option", "minDate", start).datepicker("getDate");
+        //})
+
+    </script>
+}
+
+@section Style{
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <link href="~/Content/Multi-Column-Select/Multi-Column-Select.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-thin-straight/css/uicons-thin-straight.css'>
+    <style>
+        input[type="radio"] {
+            padding: 50px;
+        }
+
+        .demo {
+            width: 100%;
+            padding: 0px 12px;
+        }
+
+        .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+            border-radius: 20rem;
+        }
+
+            .toggle.ios .toggle-handle {
+                border-radius: 20rem;
+            }
+
+        .preview {
+            background: #888888;
+            width: 550px;
+            height: auto;
+            text-align: center;
+        }
+
+            .preview img {
+                height: 320px;
+                order: 1;
+                vertical-align: middle;
+            }
+    </style>
+
+}

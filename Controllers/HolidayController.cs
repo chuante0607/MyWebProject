@@ -160,12 +160,29 @@ namespace UCOMProject.Controllers
         /// <param name="eid"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult> Review()
+        public async Task<ActionResult> Review(int? rank)
         {
-            RoleManage user = ConfirmIdentity();
-            if (user.Role == RoleType.User)
-                return RedirectToAction(nameof(Index));
-
+            RoleManage user = null;
+            if (rank == null)
+            {
+                user = ConfirmIdentity();
+                if (user.Role == RoleType.User)
+                    return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                switch ((int)rank)
+                {
+                    case 0:
+                        user = new Admin(RoleType.Admin);
+                        break;
+                    case 2:
+                        user = new Admin(RoleType.Manager);
+                        break;
+                    default:
+                        break;
+                }
+            }
             vmTable.Employee = await user.GetUser();
             var query = await user.GetHolidayDetails();
             vmTable.Details = query.Where(w => w.State == (int)ReviewType.Wait).ToList();
@@ -235,7 +252,7 @@ namespace UCOMProject.Controllers
                     user = new User(RoleType.User);
                     break;
                 case 2:
-                    user = new Manager(RoleType.Manager);
+                    user = new Manager(RoleType.Manager, SessionEmp.CurrentEmp.Branch.xTranBranchEnum());
                     break;
             }
             return user;
