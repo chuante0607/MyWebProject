@@ -18,6 +18,8 @@ namespace UCOMProject.Controllers
     public class apiScheduleController : ApiController
     {
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+        List<DateTime> EvenDaysList = new List<DateTime>();
+        Dictionary<DateTime, int> DateCount = new Dictionary<DateTime, int>();
         [HttpGet]
         /// <summary>
         ///設定calendar A B班顏色
@@ -32,11 +34,12 @@ namespace UCOMProject.Controllers
             ScheduleViewModel schedule = new ScheduleViewModel();
             schedule.Shifts = HolidayUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
             schedule.Calendars = await GetCalendars();
+            schedule.LeaveNums = DateCount;
             return Json(JsonConvert.SerializeObject(schedule, camelSetting));
         }
 
         [HttpGet]
-        public IHttpActionResult Get(string eid)
+        public IHttpActionResult Get(string branch)
         {
             var req = Request;
 
@@ -54,48 +57,98 @@ namespace UCOMProject.Controllers
             public string TextColor { get; set; }
             public bool AllDay { get; set; }
         }
+        public class CalendarleavePeopleViewModel
+        {
+            public DateTime StartLeave { get; set; }
+            public int PeopleNum { get; set; }
+        }
 
         public class ScheduleViewModel
         {
             public List<CalendarViewModel> Calendars { get; set; }
             public List<List<ShiftViewModel>> Shifts { get; set; }
+            public List<CalendarleavePeopleViewModel> PeopleNums { get; set; }
+            public Dictionary<DateTime, int> LeaveNums { get; set; }
         }
 
         private async Task<List<CalendarViewModel>> GetCalendars()
         {
             List<HolidayDetailViewModel> holidayDetails = await HolidayUtility.GetHolidayDetails();
             List<CalendarViewModel> calendars = new List<CalendarViewModel>();
-            foreach (var item in holidayDetails)
+            foreach (HolidayDetailViewModel item in holidayDetails)
             {
                 if (item.State != 2)
                     continue;
                 string color = "";
+                string txtColor = "";
                 switch (item.Shift.xTranShiftEnum())
                 {
                     case ShiftType.常日班:
-                        color = "#dc3545";
+                        color = "#F5B6E5";
+                        txtColor = "black";
                         break;
                     case ShiftType.A班:
                         color = "#17a2b8";
+                        txtColor = "white";
                         break;
                     case ShiftType.B班:
                         color = "#6c757d";
+                        txtColor = "white";
                         break;
                     default:
                         break;
                 }
-                calendars.Add(new CalendarViewModel
+                foreach (DateTime date in item.RangDate)
                 {
-                    Id = item.Id.ToString(),
-                    Title = $"{item.Shift}-{item.Name}-{item.Title}({item.UsedDays}天)",
-                    Start = item.BeginDate,
-                    End = item.EndDate.AddDays(1),
-                    Color = color,
-                    TextColor = "white",
-                    AllDay = true,
-                });
+                    //統計請假人數
+                    if (DateCount.ContainsKey(date))
+                    {
+                        DateCount[date]++;
+                    }
+                    else
+                    {
+                        DateCount.Add(date, 1);
+                    }
+
+                    ////每個新的日期就先判斷EvenDaysList有無符合?符合表示為連續日期
+                    //if (EvenDaysList.Count > 0 && EvenDaysList.Any(a => a == date))
+                    //    continue;
+                    ////沒有符合表示為新的一個日期
+                    //EvenDaysList = new List<DateTime>();
+                    ////在使用遞迴檢查是否為連續請假日
+                    //DateTime endDate = EvenDays(item.RangDate, date);
+                    calendars.Add(new CalendarViewModel
+                    {
+                        Id = item.Id.ToString(),
+                        Title = $"{item.Shift}-{item.Name}-{item.Title}({EvenDaysList.Count + 1}天)",
+                        Start = date,
+                        End = date.AddDays(1),
+                        Color = color,
+                        TextColor = txtColor,
+                        AllDay = true,
+                    });
+                }
             }
             return calendars;
+        }
+        /// <summary>
+        /// 連續請假天數
+        /// </summary>
+        /// <param name="days"></param>
+        /// <param name="currentDate"></param>
+        /// <returns></returns>
+        private DateTime EvenDays(List<DateTime> days, DateTime currentDate)
+        {
+            DateTime endDate = currentDate.AddDays(1);
+            bool even = days.Any(a => a == endDate);
+            if (even)
+            {
+                //連續的日期存入EvenDaysList
+                EvenDaysList.Add(endDate);
+                //重複呼叫自己
+                endDate = EvenDays(days, endDate);
+            }
+            return endDate;
         }
 
         private RoleManage ConfirmIdentity(int rank, BranchType branch)

@@ -242,9 +242,10 @@ namespace UCOMProject.Methods
                     Prove = fileStr,
                     State = (int)ReviewType.Wait,
                 };
+                string rangStr = string.Join(",", payload.RangeDateString);
+                holidayDetail.RangeDate = rangStr;
                 db.HolidayDetails.Add(holidayDetail);
                 db.SaveChanges();
-
                 applyMsg = $"申請已送出！\r\n" +
                            $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
                            $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
@@ -264,9 +265,9 @@ namespace UCOMProject.Methods
                 List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
                 var details = await db.HolidayDetails.Where(w => w.EId == eid).OrderByDescending(o => o.Id).ToListAsync();
                 var emp = await db.Employees.FindAsync(eid);
-                foreach (var detail in details)
+                foreach (var data in details)
                 {
-                    vmList.Add(await SetDetailViewModelData(detail, emp));
+                    vmList.Add(await SetDetailViewModelData(data, emp));
                 }
                 return vmList;
             }
@@ -285,9 +286,9 @@ namespace UCOMProject.Methods
                 var emps = await db.Employees.Where(e => e.Branch == type.ToString()).ToListAsync();
                 foreach (var emp in emps)
                 {
-                    foreach (var detail in emp.HolidayDetails)
+                    foreach (var data in emp.HolidayDetails)
                     {
-                        vmList.Add(await SetDetailViewModelData(detail, emp));
+                        vmList.Add(await SetDetailViewModelData(data, emp));
                     }
                 }
                 return vmList;
@@ -307,9 +308,9 @@ namespace UCOMProject.Methods
                 var emps = await db.Employees.ToListAsync();
                 foreach (var emp in emps)
                 {
-                    foreach (var detail in emp.HolidayDetails)
+                    foreach (var data in emp.HolidayDetails)
                     {
-                        vmList.Add(await SetDetailViewModelData(detail, emp));
+                        vmList.Add(await SetDetailViewModelData(data, emp));
                     }
                 }
                 return vmList;
@@ -343,6 +344,7 @@ namespace UCOMProject.Methods
             vm.Reason = data.Reason;
             if (data.AllowManager != null)
                 vm.AllowManager = await EmployeeUtility.GetEmpById(data.AllowManager);
+            vm.RangDate = data.RangeDate.Split(',').Select(s => s.ToDatetime()).OrderBy(o => o).ToList();
             return vm;
         }
 

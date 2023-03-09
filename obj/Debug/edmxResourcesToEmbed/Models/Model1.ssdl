@@ -45,6 +45,7 @@
     <Property Name="ApplyDate" Type="date" Nullable="false" />
     <Property Name="Reason" Type="nvarchar(max)" />
     <Property Name="AllowManager" Type="nvarchar" MaxLength="50" />
+    <Property Name="RangeDate" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="Holidays">
     <Key>

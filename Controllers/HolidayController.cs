@@ -177,7 +177,7 @@ namespace UCOMProject.Controllers
                         user = new Admin(RoleType.Admin);
                         break;
                     case 2:
-                        user = new Admin(RoleType.Manager);
+                        user = new Manager(RoleType.Manager, SessionEmp.CurrentEmp.Branch.xTranBranchEnum());
                         break;
                     default:
                         break;

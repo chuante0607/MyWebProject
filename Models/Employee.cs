@@ -18,8 +18,8 @@ namespace UCOMProject.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Employee()
         {
-            this.HolidayDetails = new HashSet<HolidayDetail>();
             this.Schedules = new HashSet<Schedule>();
+            this.HolidayDetails = new HashSet<HolidayDetail>();
         }
     
         public string EId { get; set; }
@@ -37,14 +37,13 @@ namespace UCOMProject.Models
         public System.DateTime StartDate { get; set; }
         public bool Allow { get; set; }
         public int BranchId { get; set; }
-
         [JsonIgnore]
         public virtual Branch Branch1 { get; set; }
         [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<HolidayDetail> HolidayDetails { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
         [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<HolidayDetail> HolidayDetails { get; set; }
     }
 }

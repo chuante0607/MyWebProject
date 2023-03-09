@@ -22,6 +22,7 @@ namespace UCOMProject.Models
         public DateTime ApplyDate { get; set; }
         public DateTime BeginDate { get; set; }
         public DateTime EndDate { get; set; }
+        public List<DateTime> RangDate { get; set; }
         public int State { get; set; }
         public string Remark { get; set; }
         public int UsedDays { get; set; }

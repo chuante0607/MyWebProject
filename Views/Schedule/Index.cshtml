@@ -6,8 +6,7 @@
 }
 
 
-<div class="row mt-5" style="padding:0px 70px">
-    <div id='external-events' class="col-2">
+    @*<div id='external-events' class="col-2">
         <h4>Draggable Events</h4>
         <div id='external-events-list'>
             <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
@@ -30,11 +29,10 @@
             <input type='checkbox' id='drop-remove' />
             <label for='drop-remove'>remove after drop</label>
         </p>
-    </div>
+    </div>*@
 
 
-    <div id="calendar" class="col-10"></div>
-</div>
+    <div id="calendar" class=""></div>
 
 @section Script{
     @*<script>
@@ -51,25 +49,32 @@
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-          
+
             fetch('http://localhost:51010/api/apiSchedule', {
                 headers: {
                     "ROLE_CODE": ["admin", "admin-leader"]
                 }
             }).then(res => res.json()).then(result => {
                 var myData = JSON.parse(result);
+                var leaveCount = [];
+                for (let key in myData.leaveNums) {
+                    leaveCount.push({ dateCount: key, count: myData.leaveNums[key] });
+                }
 
-                var containerEl = document.getElementById('external-events-list');
-                new FullCalendar.Draggable(containerEl, {
-                    itemSelector: '.fc-event',
-                    eventData: function (eventEl) {
-                        return {
-                            title: eventEl.innerText.trim()
-                        }
-                    },
-                    draggable: true,
-                });
 
+                //var containerEl = document.getElementById('external-events-list');
+                //new FullCalendar.Draggable(containerEl, {
+                //    itemSelector: '.fc-event',
+                //    eventData: function (eventEl) {
+                //        return {
+                //            title: eventEl.innerText.trim()
+                //        }
+                //    },
+                //    draggable: true,
+                //});
+
+                //統計休假人數by日期
+           
                 var calendarEl = document.getElementById('calendar');
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
@@ -86,7 +91,7 @@
                         day: '天',
                         list: '清單'
                     },
-                    aspectRatio: 2.2,
+                    aspectRatio: 2,
                     dayMaxEvents: true,
                     events: myData.calendars,
                     dayCellClassNames: function (arg) {
@@ -108,10 +113,40 @@
                     //    // change the border color just for fun
                     //    info.el.style.borderColor = 'red';
                     //},
-                    initialView: 'dayGridMonth',
-                    selectable: true
+                    dayCellContent: function (arg) {
+                        let leaveShow = leaveCount.find(item => {
+                            let checkDate = new Date(arg.date).toLocaleDateString();
+                            let leaveDate = new Date(item.dateCount).toLocaleDateString();
+                            return checkDate === leaveDate;
+                        })
+                        let needTotal = 1;
+                        let div = document.createElement('div');
+                        div.classList.add('calendarFlex');
+                        let p = document.createElement('p');
+                        if (leaveShow) {
+                            let total = needTotal - leaveShow.count < 0 ? `需求${needTotal - leaveShow.count}人` : '';
+                            p.innerHTML = `<small class="badge badge-danger">${total}</small>`;
+                        } else {
+                            p.innerHTML = '';
+                        }
+                      
+                        let day = document.createElement('p');
+                        day.innerHTML = arg.dayNumberText;
+                        //day.classList.add('calendarDayTxt');
+                        div.append(p);
+                        div.append(day);
+                        let arrayOfDomNodes = [div];
+                        return { domNodes: arrayOfDomNodes };
+                    },
+                    eventDataTransform: function (eventData) {
+                        getLeaveNum();
+                    },
                 });
                 calendar.render();
+                function getLeaveNum(checkDate) {
+                    let num = 0;
+                    return num
+                }
             });
         });
     </script>
@@ -119,6 +154,8 @@
 }
 
 @section Style{
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <style>
         .shiftA {
             background-color: #d6e7f3;
@@ -126,6 +163,22 @@
 
         .shiftB {
             /*background-color:antiquewhite;*/
+        }
+
+        .calendarFlex {
+            display: flex;
+            min-width: 100px;
+            /*background-color: red;*/
+            justify-content: space-between;
+        }
+
+        .calendarDayTxt{
+            font-size:1rem;
+            font-weight:800;
+            box-shadow:2px 2px 5px rgba(0,0,0,0.2);
+            padding:5px;
+            border-radius:50%;
+            color:black;
         }
     </style>
 }

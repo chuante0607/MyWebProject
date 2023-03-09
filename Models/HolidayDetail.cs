@@ -28,6 +28,7 @@ namespace UCOMProject.Models
         public System.DateTime ApplyDate { get; set; }
         public string Reason { get; set; }
         public string AllowManager { get; set; }
+        public string RangeDate { get; set; }
         [JsonIgnore]
         public virtual Employee Employee { get; set; }
         [JsonIgnore]

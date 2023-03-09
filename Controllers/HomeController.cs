@@ -18,6 +18,9 @@ namespace UCOMProject.Controllers
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
         public async Task<ActionResult> Index(int? year)
         {
+            Guid g = Guid.NewGuid();
+            string guid = g.ToString();
+
             year = year == null ? DateTime.Now.Year : year;
             vm.Employee = SessionEmp.CurrentEmp;
             if (vm.Employee.EId == "admin") RedirectToAction("login", "admin");
