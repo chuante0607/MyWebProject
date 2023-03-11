@@ -1,55 +1,24 @@
 ﻿@using UCOMProject.Models
 @using UCOMProject.Methods
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "出勤總覽";
     Employee emp = SessionEmp.CurrentEmp;
 }
 
-
-    @*<div id='external-events' class="col-2">
-        <h4>Draggable Events</h4>
-        <div id='external-events-list'>
-            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                <div class='fc-event-main'>My Event 1</div>
-            </div>
-            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                <div class='fc-event-main'>My Event 2</div>
-            </div>
-            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                <div class='fc-event-main'>My Event 3</div>
-            </div>
-            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                <div class='fc-event-main'>My Event 4</div>
-            </div>
-            <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
-                <div class='fc-event-main'>My Event 5</div>
-            </div>
-        </div>
-        <p>
-            <input type='checkbox' id='drop-remove' />
-            <label for='drop-remove'>remove after drop</label>
-        </p>
-    </div>*@
-
-
+<h2 class="text-center">出勤總覽</h2>
+<div class="mt-5">
+    <div class="block">
+        <div class="shift_block shiftA"></div><span>A班</span>&nbsp;&nbsp;&nbsp;
+        <div class="shift_block"></div><span>B班</span>
+    </div>
     <div id="calendar" class=""></div>
+</div>
+
 
 @section Script{
-    @*<script>
-            async function myHttpGet(url, parms) {
-                let header = {
-                    "ROLE_CODE":["admin","admin-leader"]
-                };
-                let resp = await fetch(url, parms, header);
-                return resp.result;
-            }
-
-        </script>*@
-    @*<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>*@
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
             fetch('http://localhost:51010/api/apiSchedule', {
                 headers: {
                     "ROLE_CODE": ["admin", "admin-leader"]
@@ -60,24 +29,18 @@
                 for (let key in myData.leaveNums) {
                     leaveCount.push({ dateCount: key, count: myData.leaveNums[key] });
                 }
-
-
-                //var containerEl = document.getElementById('external-events-list');
-                //new FullCalendar.Draggable(containerEl, {
-                //    itemSelector: '.fc-event',
-                //    eventData: function (eventEl) {
-                //        return {
-                //            title: eventEl.innerText.trim()
-                //        }
-                //    },
-                //    draggable: true,
-                //});
-
-                //統計休假人數by日期
-           
+                console.log(myData.calendars);
                 var calendarEl = document.getElementById('calendar');
                 var calendar = new FullCalendar.Calendar(calendarEl, {
+                    eventSources: [
+                        {
+                            events: myData.calendars,//初始化events
+                            defaultAllDay: true,
+                            className: 'text-center badge badge-primary event_backColor',
+                        }
+                    ],
                     initialView: 'dayGridMonth',
+                    height: 800,
                     headerToolbar: {
                         left: 'prev,next,today',
                         center: 'title',
@@ -93,7 +56,6 @@
                     },
                     aspectRatio: 2,
                     dayMaxEvents: true,
-                    events: myData.calendars,
                     dayCellClassNames: function (arg) {
                         let date = new Date(arg.date);
                         let result = myData.shifts[date.getMonth()].find(item => {
@@ -105,38 +67,30 @@
                         else
                             return '';
                     },
-                    //eventClick: function (info) {
-                    //    alert('Event: ' + info.event.title);
-                    //    alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-                    //    alert('View: ' + info.view.type);
-
-                    //    // change the border color just for fun
-                    //    info.el.style.borderColor = 'red';
-                    //},
                     dayCellContent: function (arg) {
-                        let leaveShow = leaveCount.find(item => {
-                            let checkDate = new Date(arg.date).toLocaleDateString();
-                            let leaveDate = new Date(item.dateCount).toLocaleDateString();
-                            return checkDate === leaveDate;
-                        })
-                        let needTotal = 1;
-                        let div = document.createElement('div');
-                        div.classList.add('calendarFlex');
-                        let p = document.createElement('p');
-                        if (leaveShow) {
-                            let total = needTotal - leaveShow.count < 0 ? `需求${needTotal - leaveShow.count}人` : '';
-                            p.innerHTML = `<small class="badge badge-danger">${total}</small>`;
-                        } else {
-                            p.innerHTML = '';
-                        }
-                      
-                        let day = document.createElement('p');
-                        day.innerHTML = arg.dayNumberText;
-                        //day.classList.add('calendarDayTxt');
-                        div.append(p);
-                        div.append(day);
-                        let arrayOfDomNodes = [div];
-                        return { domNodes: arrayOfDomNodes };
+                        //let leaveShow = leaveCount.find(item => {
+                        //    let checkDate = new Date(arg.date).toLocaleDateString();
+                        //    let leaveDate = new Date(item.dateCount).toLocaleDateString();
+                        //    return checkDate === leaveDate;
+                        //})
+                        //let needTotal = 1;
+                        //let div = document.createElement('div');
+                        //div.classList.add('calendarFlex');
+                        //let p = document.createElement('p');
+                        //if (leaveShow) {
+                        //    let total = needTotal - leaveShow.count < 0 ? `需求${needTotal - leaveShow.count}人` : '';
+                        //    p.innerHTML = `<small class="badge badge-danger">${total}</small>`;
+                        //} else {
+                        //    p.innerHTML = '';
+                        //}
+
+                        //let day = document.createElement('p');
+                        //day.innerHTML = arg.dayNumberText;
+                        ////day.classList.add('calendarDayTxt');
+                        //div.append(p);
+                        //div.append(day);
+                        //let arrayOfDomNodes = [div];
+                        //return { domNodes: arrayOfDomNodes };
                     },
                     eventDataTransform: function (eventData) {
                         getLeaveNum();
@@ -153,18 +107,11 @@
 
 }
 
+
 @section Style{
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
     <style>
-        .shiftA {
-            background-color: #d6e7f3;
-        }
-
-        .shiftB {
-            /*background-color:antiquewhite;*/
-        }
-
         .calendarFlex {
             display: flex;
             min-width: 100px;
@@ -172,13 +119,27 @@
             justify-content: space-between;
         }
 
-        .calendarDayTxt{
-            font-size:1rem;
-            font-weight:800;
-            box-shadow:2px 2px 5px rgba(0,0,0,0.2);
-            padding:5px;
-            border-radius:50%;
-            color:black;
+        .calendarDayTxt {
+            font-size: 1rem;
+            font-weight: 800;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            padding: 5px;
+            border-radius: 50%;
+            color: black;
+        }
+        .event_backColor{
+            background-size:contain;
+            background-repeat:no-repeat;
+            background-position-x:5px;
+        }
+        .event_shiftA {
+            background-image: url(/images/a.png);
+        }
+        .event_shiftB {
+            background-image: url(/images/b.png);
+        }
+        .event_shiftW {
+            background-image: url(/images/w.png);
         }
     </style>
 }

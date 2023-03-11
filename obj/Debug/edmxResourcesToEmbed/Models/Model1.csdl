@@ -23,6 +23,7 @@
       <End Role="Holiday" EntitySet="Holidays" />
       <End Role="HolidayDetail" EntitySet="HolidayDetails" />
     </AssociationSet>
+    <EntitySet Name="Plans" EntityType="MyDBModel.Plan" />
   </EntityContainer>
   <EntityType Name="Holiday">
     <Key>
@@ -155,4 +156,13 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="Plan">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Guid" Nullable="false" />
+    <Property Name="PlanTitle" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
+  </EntityType>
 </Schema>

@@ -1,6 +1,6 @@
 ﻿body {
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 
@@ -10,11 +10,30 @@
 
 .loading {
     position: absolute;
-    top:0;
-    right:0;
+    top: 0;
+    right: 0;
     z-index: 9999;
     width: 100%;
     height: 100%;
     background-color: #808080;
-    opacity:0.4;
+    opacity: 0.4;
+}
+
+.shiftA {
+    background-color: #d6e7f3;
+}
+
+.block {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.shift_block {
+    border: 1px solid black;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 10px;
 }

@@ -144,6 +144,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\apiAccountController.cs" />
+    <Compile Include="Controllers\apiPlanController.cs" />
     <Compile Include="Controllers\apiScheduleController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -158,7 +159,9 @@
     <Compile Include="Interfaces\IAccountReviewer.cs" />
     <Compile Include="Interfaces\IHolidayReviewer.cs" />
     <Compile Include="Methods\ScheduleUtility.cs" />
-    <Compile Include="Models\jsonIgroneAttribute.cs" />
+    <Compile Include="Models\Plan.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\EditEmployeeViewModel.cs" />
     <Compile Include="Models\ReviewType.cs" />
     <Compile Include="Models\Schedule.cs">
@@ -2035,6 +2038,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="images\a.png" />
+    <Content Include="images\b.png" />
     <Content Include="images\ui-icons_217bc0_256x240.png" />
     <Content Include="images\ui-icons_2e83ff_256x240.png" />
     <Content Include="images\ui-icons_444444_256x240.png" />
@@ -2048,6 +2053,7 @@
     <Content Include="images\ui-icons_d8e7f3_256x240.png" />
     <Content Include="images\ui-icons_f9bd01_256x240.png" />
     <Content Include="images\ui-icons_ffffff_256x240.png" />
+    <Content Include="images\w.png" />
     <Content Include="img\123.jpg" />
     <Content Include="img\321.png" />
     <Content Include="img\638127396292489863123.jpg" />
@@ -2494,6 +2500,7 @@
     <Content Include="Uploads\112年中華民國政府行政機關辦公日曆表.csv" />
     <Content Include="Views\NotFound\Index.cshtml" />
     <Content Include="Views\Schedule\Index.cshtml" />
+    <Content Include="Views\Schedule\Plan.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

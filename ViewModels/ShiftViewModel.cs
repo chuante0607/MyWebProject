@@ -14,6 +14,5 @@ namespace UCOMProject.Models
             CheckDate = data;
             IsWork = isWork;
         }
-       
     }
 }

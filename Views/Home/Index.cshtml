@@ -112,7 +112,6 @@
     <!-- Charts -->
     <script src="~/Content/admin/vendor/chart.js/Chart.bundle.js"></script>
     <!--full calendar-->
-    <script src="~/Scripts/calendar/index.global.js"></script>
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
 
     <script type="text/javascript">
@@ -123,6 +122,9 @@
                     }
                 }).then(res => res.json()).then(result => {
                     var myData = JSON.parse(result);
+
+                    console.log(myData);
+
                     //統計休假人數by日期
                     for (let key in myData.leaveNums) {
                         vm.leaveCount.push({ dateCount: key, count: myData.leaveNums[key] });
@@ -180,10 +182,12 @@
         computed: {
             getleaveCount() {
                 let result = this.leaveCount.filter(item => {
+                    console.log(item);
                     let check = new Date(item.dateCount).toLocaleDateString();
                     let current = new Date().toLocaleDateString();
                     return check === current;
                 })[0];
+                console.log(result);
                 if(result)
                     return result.count
             },

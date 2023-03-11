@@ -1,0 +1,298 @@
+﻿
+@{
+    ViewBag.Title = "人力計畫";
+}
+<h2 class="text-center">人力計畫</h2>
+<div id="app" class="mt-5" style="padding:0px 150px" v-cloak>
+    <div class="block">
+        <div class="shift_block shiftA"></div><span>A班</span>&nbsp;&nbsp;&nbsp;
+        <div class="shift_block"></div><span>B班</span>
+    </div>
+    <div class="row">
+        <div id='external-events' class="col-2">
+            <div>
+                <input type="text"
+                       v-model.number="planTitle"
+                       v-on:keydown.enter="addPlan"
+                       placeholder="輸入需求人數"
+                       class="form-control" />
+                <span v-show="errorMsg" class="badge badge-danger">{{errorMsg}}</span>
+            </div>
+            <div id='external-events-list' class="mt-3">
+                <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event mb-3'
+                     style="position:relative;"
+                     v-for="p in planList"
+                     :key="p.id"
+                     :data-id="p.id">
+                    <div class='fc-event-main'>
+                        {{p.planTitle}}
+                    </div>
+                    <div class="btn btn-small cross" v-on:click="delPlan(p.id)"><i class="fi fi-bs-cross-small"></i></div>
+                </div>
+            </div>
+        </div>
+        <div id="calendar" class="col-10"></div>
+    </div>
+
+
+</div>
+
+
+@section Script{
+    <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let url = 'http://localhost:51010/api/apiPlan';
+            fetch(url).then(response => {
+                if (response.ok)
+                    return response.json()
+            }).then(res => {
+                let data = JSON.parse(res);
+                //eventsData初始化event需要的資料型態
+                let eventsData = [];
+                //定義event物件原型
+                function Event(id, title, start, end) {
+                    this.id = id;
+                    this.title = title;
+                    this.start = start;
+                    this.end = end;
+                }
+                //data資料來源
+                data.plans.forEach(p => {
+                    //vm playload儲存事件的data 之後需要post後端更新資料庫
+                    vm.payload.push(p);
+                    //初始化calendar event需要的資料型態{id , title , start , end}
+                    eventsData.push(new Event(p.id, p.planTitle, p.startDate, p.endDate));
+                })
+
+                //外部拖曳物件
+                var containerEl = document.getElementById('external-events-list');
+                new FullCalendar.Draggable(containerEl, {
+                    itemSelector: '.fc-event',
+                    eventData: function (eventEl) {
+                        return {
+                            title: eventEl.innerText,
+                            id: eventEl.getAttribute('data-id'),
+                            className: 'text-center badge badge-primary',
+                            overlap: false,//阻止event重疊
+                        }
+                    },
+                });
+
+                //calendar物件
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    eventSources: [
+                        {
+                            events: eventsData,//初始化events
+                            defaultAllDay: true,
+                            className: 'text-center badge badge-primary',
+                            overlap: false,//阻止event重疊
+                        }
+                    ],
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'prev,next,today',
+                        center: 'title',
+                        right: 'dayGridMonth'
+                    },
+                    titleFormat: { year: 'numeric', month: 'short' },
+                    buttonText: {
+                        today: '今天',
+                        month: '月',
+                        week: '周',
+                        day: '天',
+                        list: '清單'
+                    },
+                    eventMaxStack: 1,
+                    editable: true,
+                    droppable: true,
+                    height: 800,
+                    timeZone: 'UTC',
+                    drop: function (info) {
+                        vm.handleDrop(info);
+                    },
+                    eventDrop: function (info) {
+                        vm.handleEventDrop(info);
+                    },
+                    eventClick: function (info) {
+                        vm.handleEventClick(info);
+                    },
+                    eventResize: function (info) {
+                        vm.handleEventResize(info);
+                    },
+                    dayCellClassNames: function (arg) {
+                        let date = new Date(arg.date);
+                        let result = data.shifts[date.getMonth()].find(item => {
+                            let check = new Date(item.checkDate).toLocaleDateString();
+                            return check === date.toLocaleDateString();
+                        })
+                        if (result && result.isWork) {
+                            return ['shiftA'];
+                        }
+                        else
+                            return '';
+                    },
+                });
+                calendar.render();
+            })
+
+
+        });
+        //產生Guid
+        function guid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8)
+                return v.toString(16)
+            })
+        }
+
+        //定義一個Plan物件儲存event資訊到資料庫
+        function Plan(title) {
+            this.id = guid();
+            this.planTitle = title;
+            this.startDate = null;
+            this.endDate = null;
+        }
+
+        //開始日期+1天為結束日期(calendar event用)
+        function setEnd(start) {
+            // 创建开始日期
+            let startdate = new Date(start);
+            // 将开始日期加上一天
+            let endDate = new Date(startdate.getTime() + (24 * 60 * 60 * 1000));
+            return endDate;
+        }
+
+
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                planTitle: '',//v-model
+                planList: [],//planList
+                payload: [],//post data
+                errorMsg: '',
+            },
+            methods: {
+                //新增外部拖曳的plan
+                addPlan() {
+                    if (this.planTitle && this.planTitle > 0) {
+                        let title = this.planTitle;
+                        //new Plan物件
+                        let plan = new Plan(title);
+                        //planList加入Plan物件
+                        this.planList.unshift(plan);
+                        this.planTitle = '';
+                        this.errorMsg = '';
+                    } else {
+                        this.errorMsg = '請輸入有效數字';
+                    }
+                },
+                //刪除plan list 的plan物件
+                delPlan(id) {
+                    this.planList = this.planList.filter(p => p.id != id)
+                },
+                //拖曳結束重新產生一樣的plan 但是id重新生成
+                reviewPlan(plan) {
+                    //找到原始plan索引
+                    let index = this.planList.findIndex(p => p.id == plan.id);
+                    //一樣的位置new Plan物件  id要重新生成
+                    this.planList.splice(index, 1, new Plan(plan.planTitle));
+                },
+                //plan從list拖曳後放置時觸發
+                handleDrop(info) {
+                    let currentId = info.draggedEl.getAttribute('data-id');
+                    //找出plan物件並設定開始與結束日期
+                    let plan = this.planList.find(p => p.id == currentId);
+                    plan.startDate = info.date;
+                    plan.endDate = setEnd(info.date);
+                    //儲存被拖曳到calendar的plan物件
+                    this.payload.push(plan);
+                    //準備重新生成planlist與被拖曳plan一樣的物件 但是id不一樣(plan為目前被拖曳的物件)
+                    this.reviewPlan(plan);
+
+                    //**發送請求
+                    this.UpdateData();
+                },
+                //plan從calendar拖曳並放置時會觸發
+                handleEventDrop(info) {
+                    this.payload.forEach(plan => {
+                        if (plan.id == info.event.id) {
+                            plan.startDate = info.event.start;
+                            //沒有變更長度直接拖曳  , end會有null的情形 所以要對null特別處理
+                            plan.endDate = info.event.end ? info.event.end : setEnd(info.event.start);
+                        }
+                    })
+
+                    //**發送請求
+                    this.UpdateData();
+                },
+                //從calendar的plan被點擊後刪除
+                handleEventClick(info) {
+                    this.payload = this.payload.filter(plan => plan.id != info.event.id);
+                    info.event.remove();
+
+                    //**發送請求
+                    this.DeleteData(info.event.id);
+                },
+                //event變更長度
+                handleEventResize(info) {
+                    this.payload.forEach(plan => {
+                        if (plan.id == info.event.id) {
+                            plan.startDate = info.event.start;
+                            plan.endDate = info.event.end;
+                        }
+                    })
+
+                    //**發送請求
+                    this.UpdateData();
+                },
+                //post payload
+                UpdateData() {
+                    fetch('http://localhost:51010/api/apiPlan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.payload)
+                    }).then(res => {
+                        console.log(res);
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                },
+                //delete payload
+                DeleteData(id) {
+                    fetch('http://localhost:51010/api/apiPlan?id=' + id, {
+                        method: 'DELETE',
+                    }).then(res => {
+                        console.log(res);
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                },
+            },
+        })
+
+    </script>
+}
+
+@section Style{
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-straight/css/uicons-bold-straight.css'>
+    <style>
+        .cross {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 0;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+   
+    </style>
+}

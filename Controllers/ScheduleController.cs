@@ -11,6 +11,7 @@ using UCOMProject.Roles;
 
 namespace UCOMProject.Controllers
 {
+    [AuthorizationFilter]
     public class ScheduleController : Controller
     {
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };

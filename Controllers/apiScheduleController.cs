@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -20,11 +21,9 @@ namespace UCOMProject.Controllers
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
         List<DateTime> EvenDaysList = new List<DateTime>();
         Dictionary<DateTime, int> DateCount = new Dictionary<DateTime, int>();
+
+
         [HttpGet]
-        /// <summary>
-        ///設定calendar A B班顏色
-        /// </summary>
-        /// <returns></returns>
         public async Task<IHttpActionResult> Get()
         {
             var req = Request.Headers.Where(s => s.Key == "ROLE_CODE")
@@ -32,7 +31,7 @@ namespace UCOMProject.Controllers
                 .ToList();
 
             ScheduleViewModel schedule = new ScheduleViewModel();
-            schedule.Shifts = HolidayUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
+            schedule.Shifts = ScheduleUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
             schedule.Calendars = await GetCalendars();
             schedule.LeaveNums = DateCount;
             return Json(JsonConvert.SerializeObject(schedule, camelSetting));
@@ -53,9 +52,10 @@ namespace UCOMProject.Controllers
             public string Title { get; set; }
             public DateTime Start { get; set; }
             public DateTime End { get; set; }
-            public string Color { get; set; }
-            public string TextColor { get; set; }
-            public bool AllDay { get; set; }
+            public string ClassNames { get; set; }
+            //public string Color { get; set; }
+            //public string TextColor { get; set; }
+            //public bool AllDay { get; set; }
         }
         public class CalendarleavePeopleViewModel
         {
@@ -69,37 +69,35 @@ namespace UCOMProject.Controllers
             public List<List<ShiftViewModel>> Shifts { get; set; }
             public List<CalendarleavePeopleViewModel> PeopleNums { get; set; }
             public Dictionary<DateTime, int> LeaveNums { get; set; }
+            public List<Plan> plans { get; set; }
         }
 
         private async Task<List<CalendarViewModel>> GetCalendars()
         {
             List<HolidayDetailViewModel> holidayDetails = await HolidayUtility.GetHolidayDetails();
             List<CalendarViewModel> calendars = new List<CalendarViewModel>();
-            foreach (HolidayDetailViewModel item in holidayDetails)
+            foreach (HolidayDetailViewModel detail in holidayDetails)
             {
-                if (item.State != 2)
+                string className = "";
+                if (detail.State != 2)
                     continue;
-                string color = "";
-                string txtColor = "";
-                switch (item.Shift.xTranShiftEnum())
+                switch (detail.Shift.xTranShiftEnum())
                 {
                     case ShiftType.常日班:
-                        color = "#F5B6E5";
-                        txtColor = "black";
+                        className = "event_shiftW";
                         break;
                     case ShiftType.A班:
-                        color = "#17a2b8";
-                        txtColor = "white";
+                        className = "event_shiftA";
                         break;
                     case ShiftType.B班:
-                        color = "#6c757d";
-                        txtColor = "white";
+                        className = "event_shiftB";
                         break;
                     default:
                         break;
                 }
-                foreach (DateTime date in item.RangDate)
+                foreach (DateTime date in detail.RangDate)
                 {
+                    CalendarViewModel calendar = new CalendarViewModel();
                     //統計請假人數
                     if (DateCount.ContainsKey(date))
                     {
@@ -109,7 +107,12 @@ namespace UCOMProject.Controllers
                     {
                         DateCount.Add(date, 1);
                     }
-
+                    calendar.Id = detail.Id.ToString();
+                    calendar.Title = $"{detail.Name}-{detail.Title}({EvenDaysList.Count + 1}天)";
+                    calendar.Start = date;
+                    calendar.End = date.AddDays(1);
+                    calendar.ClassNames = className;
+                    calendars.Add(calendar);
                     ////每個新的日期就先判斷EvenDaysList有無符合?符合表示為連續日期
                     //if (EvenDaysList.Count > 0 && EvenDaysList.Any(a => a == date))
                     //    continue;
@@ -117,17 +120,8 @@ namespace UCOMProject.Controllers
                     //EvenDaysList = new List<DateTime>();
                     ////在使用遞迴檢查是否為連續請假日
                     //DateTime endDate = EvenDays(item.RangDate, date);
-                    calendars.Add(new CalendarViewModel
-                    {
-                        Id = item.Id.ToString(),
-                        Title = $"{item.Shift}-{item.Name}-{item.Title}({EvenDaysList.Count + 1}天)",
-                        Start = date,
-                        End = date.AddDays(1),
-                        Color = color,
-                        TextColor = txtColor,
-                        AllDay = true,
-                    });
                 }
+       
             }
             return calendars;
         }
@@ -168,10 +162,7 @@ namespace UCOMProject.Controllers
             }
             return user;
         }
-        // POST: api/apiSchedule
-        public void Post([FromBody] string value)
-        {
-        }
+
 
         // PUT: api/apiSchedule/5
         public void Put(int id, [FromBody] string value)

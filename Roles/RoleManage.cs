@@ -111,7 +111,7 @@ namespace UCOMProject.Roles
         /// <returns></returns>
         public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
         {
-            return HolidayUtility.GetWorkDayOfYearByMonth(shift, year);
+            return ScheduleUtility.GetWorkDayOfYearByMonth(shift, year);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace UCOMProject.Roles
         /// <returns></returns>
         public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(string[] file, int year)
         {
-            return HolidayUtility.GetWorkDayOfYearByMonth(file, year);
+            return ScheduleUtility.GetWorkDayOfYearByMonth(file, year);
         }
 
     }

@@ -31,5 +31,6 @@ namespace UCOMProject.Models
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<Schedule> Schedules { get; set; }
         public virtual DbSet<HolidayDetail> HolidayDetails { get; set; }
+        public virtual DbSet<Plan> Plans { get; set; }
     }
 }
