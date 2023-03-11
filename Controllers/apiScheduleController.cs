@@ -22,7 +22,6 @@ namespace UCOMProject.Controllers
         List<DateTime> EvenDaysList = new List<DateTime>();
         Dictionary<DateTime, int> DateCount = new Dictionary<DateTime, int>();
 
-
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
@@ -40,36 +39,7 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public IHttpActionResult Get(string branch)
         {
-            var req = Request;
-
-            var emp = SessionEmp.CurrentEmp;
             return Ok();
-        }
-
-        public class CalendarViewModel
-        {
-            public string Id { get; set; }
-            public string Title { get; set; }
-            public DateTime Start { get; set; }
-            public DateTime End { get; set; }
-            public string ClassNames { get; set; }
-            //public string Color { get; set; }
-            //public string TextColor { get; set; }
-            //public bool AllDay { get; set; }
-        }
-        public class CalendarleavePeopleViewModel
-        {
-            public DateTime StartLeave { get; set; }
-            public int PeopleNum { get; set; }
-        }
-
-        public class ScheduleViewModel
-        {
-            public List<CalendarViewModel> Calendars { get; set; }
-            public List<List<ShiftViewModel>> Shifts { get; set; }
-            public List<CalendarleavePeopleViewModel> PeopleNums { get; set; }
-            public Dictionary<DateTime, int> LeaveNums { get; set; }
-            public List<Plan> plans { get; set; }
         }
 
         private async Task<List<CalendarViewModel>> GetCalendars()
@@ -84,7 +54,6 @@ namespace UCOMProject.Controllers
                 switch (detail.Shift.xTranShiftEnum())
                 {
                     case ShiftType.常日班:
-                        className = "event_shiftW";
                         break;
                     case ShiftType.A班:
                         className = "event_shiftA";
@@ -121,8 +90,17 @@ namespace UCOMProject.Controllers
                     ////在使用遞迴檢查是否為連續請假日
                     //DateTime endDate = EvenDays(item.RangDate, date);
                 }
-       
             }
+
+            //foreach (Plan plan in await ScheduleUtility.GetPlans())
+            //{
+            //    CalendarViewModel calendar = new CalendarViewModel();
+            //    calendar.Id = plan.Id.ToString();
+            //    calendar.Title = plan.PlanTitle;
+            //    calendar.Start = plan.StartDate;
+            //    calendar.End = plan.EndDate;
+            //    calendars.Add(calendar);
+            //}
             return calendars;
         }
         /// <summary>

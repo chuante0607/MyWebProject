@@ -13,48 +13,88 @@ namespace UCOMProject.Methods
     public static class ScheduleUtility
     {
         /// <summary>
-        /// 設定AB的排班表
+        /// 取得Plans
         /// </summary>
-        public static void SetSchedule()
+        /// <returns></returns>
+        public static async Task<List<Plan>> GetPlans()
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                int month = DateTime.Now.Month;
-                List<Employee> employees = db.Employees.ToList();
-                foreach (Employee emp in employees)
+                return await db.Plans.ToListAsync();
+            }
+        }
+
+        /// <summary>
+        /// 新增與更新Plans人力計畫
+        /// </summary>
+        /// <param name="plans"></param>
+        /// <returns></returns>
+        public static async Task<ApplyResult> HandlePlans(List<Plan> plans)
+        {
+            try
+            {
+                using (MyDBEntities db = new MyDBEntities())
                 {
-                    ShiftType empShift = emp.Shift.xTranShiftEnum();
-                    if (empShift == ShiftType.A班 || empShift == ShiftType.B班)
+                    List<Plan> data = await db.Plans.ToListAsync();
+                    foreach (Plan p in plans)
                     {
-                        List<List<ShiftViewModel>> shifts = GetWorkDayOfYearByMonth(empShift, DateTime.Now.Year);
-                        List<ShiftViewModel> result = shifts[month - 1];
-                        List<Schedule> schedules = new List<Schedule>();
-                        foreach (ShiftViewModel shift in result)
+                        var hasData = data.FirstOrDefault(f => f.Id == p.Id);
+                        if (hasData == null)
                         {
-                            if (shift.IsWork)
+                            //沒存在就新增plan
+                            db.Plans.Add(new Plan
                             {
-                                Schedule schedule = new Schedule();
-                                schedule.EId = emp.EId;
-                                schedule.WorkDay = shift.CheckDate;
-                                schedules.Add(schedule);
-                            }
+                                Id = p.Id,
+                                StartDate = p.StartDate,
+                                EndDate = p.EndDate,
+                                PlanTitle = p.PlanTitle
+                            });
                         }
-                        db.Schedules.AddRange(schedules);
-                        db.SaveChanges();
+                        else
+                        {
+                            //有存在就更新plan
+                            hasData.StartDate = p.StartDate;
+                            hasData.EndDate = p.EndDate;
+                            hasData.PlanTitle = p.PlanTitle;
+                        }
                     }
+
+                    await db.SaveChangesAsync();
                 }
+                return new ApplyResult { isPass = true, msg = "資料更新成功" };
+            }
+            catch (Exception ex)
+            {
+                return new ApplyResult { isPass = false, msg = ex.Message };
             }
         }
 
-        public static async Task<List<Schedule>> GetSchedulesByEmp(string eid)
+        /// <summary>
+        /// 刪除Plan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static async Task<ApplyResult> DeletePlan(Guid id)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                return await db.Schedules.Where(w => w.EId == eid).ToListAsync();
+                try
+                {
+                    var plan = await db.Plans.FindAsync(id);
+                    if (plan != null)
+                    {
+                        db.Plans.Remove(plan);
+                        await db.SaveChangesAsync();
+                    }
+                    return new ApplyResult { isPass = true, msg = "刪除資料成功" };
+                }
+                catch (Exception ex)
+                {
+                    return new ApplyResult { isPass = false, msg = ex.Message };
+                }
+
             }
         }
-
-
 
         /// <summary>
         /// 取得A.B班的當年度的工作天(做2休2)
@@ -120,6 +160,7 @@ namespace UCOMProject.Methods
             workDayByMonth = ShiftViewModels.GroupBy(g => g.CheckDate.Month).Select(s => s.ToList()).ToList();
             return workDayByMonth;
         }
+
 
     }
 }

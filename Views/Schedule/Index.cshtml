@@ -5,13 +5,21 @@
     Employee emp = SessionEmp.CurrentEmp;
 }
 
-<h2 class="text-center">出勤總覽</h2>
-<div class="mt-5">
-    <div class="block">
-        <div class="shift_block shiftA"></div><span>A班</span>&nbsp;&nbsp;&nbsp;
-        <div class="shift_block"></div><span>B班</span>
+<h4 class="text-center">出勤總覽</h4>
+<div id="app" v-cloak>
+    <div class="mt-5">
+        <div class="block">
+            <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
+            <span>A班</span>&nbsp;&nbsp;&nbsp;
+            <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
+            <span>B班</span>&nbsp;&nbsp;&nbsp;
+            <div class="shift_block shiftW" data-toggle="tooltip" data-placement="top" id="titleW"></div>
+            <span>常日班</span>&nbsp;&nbsp;&nbsp;
+            <div class="all" data-toggle="tooltip" data-placement="top" id="titleAll"></div>
+            <span class="allContent">{{employees.length}}</span>
+        </div>
+        <div id="calendar" class=""></div>
     </div>
-    <div id="calendar" class=""></div>
 </div>
 
 
@@ -29,7 +37,6 @@
                 for (let key in myData.leaveNums) {
                     leaveCount.push({ dateCount: key, count: myData.leaveNums[key] });
                 }
-                console.log(myData.calendars);
                 var calendarEl = document.getElementById('calendar');
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     eventSources: [
@@ -39,8 +46,9 @@
                             className: 'text-center badge badge-primary event_backColor',
                         }
                     ],
+                    locale: 'zh-cn',
                     initialView: 'dayGridMonth',
-                    height: 800,
+                    height: 1000,
                     headerToolbar: {
                         left: 'prev,next,today',
                         center: 'title',
@@ -67,42 +75,82 @@
                         else
                             return '';
                     },
-                    dayCellContent: function (arg) {
-                        //let leaveShow = leaveCount.find(item => {
-                        //    let checkDate = new Date(arg.date).toLocaleDateString();
-                        //    let leaveDate = new Date(item.dateCount).toLocaleDateString();
-                        //    return checkDate === leaveDate;
-                        //})
-                        //let needTotal = 1;
-                        //let div = document.createElement('div');
-                        //div.classList.add('calendarFlex');
-                        //let p = document.createElement('p');
-                        //if (leaveShow) {
-                        //    let total = needTotal - leaveShow.count < 0 ? `需求${needTotal - leaveShow.count}人` : '';
-                        //    p.innerHTML = `<small class="badge badge-danger">${total}</small>`;
-                        //} else {
-                        //    p.innerHTML = '';
-                        //}
+                    //dayCellContent: function (arg) {
+                    //    //let leaveShow = leaveCount.find(item => {
+                    //    //    let checkDate = new Date(arg.date).toLocaleDateString();
+                    //    //    let leaveDate = new Date(item.dateCount).toLocaleDateString();
+                    //    //    return checkDate === leaveDate;
+                    //    //})
+                    //    //let needTotal = 1;
+                    //    //let div = document.createElement('div');
+                    //    //div.classList.add('calendarFlex');
+                    //    //let p = document.createElement('p');
+                    //    //if (leaveShow) {
+                    //    //    let total = needTotal - leaveShow.count < 0 ? `需求${needTotal - leaveShow.count}人` : '';
+                    //    //    p.innerHTML = `<small class="badge badge-danger">${total}</small>`;
+                    //    //} else {
+                    //    //    p.innerHTML = '';
+                    //    //}
 
-                        //let day = document.createElement('p');
-                        //day.innerHTML = arg.dayNumberText;
-                        ////day.classList.add('calendarDayTxt');
-                        //div.append(p);
-                        //div.append(day);
-                        //let arrayOfDomNodes = [div];
-                        //return { domNodes: arrayOfDomNodes };
-                    },
+                    //    //let day = document.createElement('p');
+                    //    //day.innerHTML = arg.dayNumberText;
+                    //    ////day.classList.add('calendarDayTxt');
+                    //    //div.append(p);
+                    //    //div.append(day);
+                    //    //let arrayOfDomNodes = [div];
+                    //    //return { domNodes: arrayOfDomNodes };
+                    //},
                     eventDataTransform: function (eventData) {
-                        getLeaveNum();
+
                     },
                 });
                 calendar.render();
-                function getLeaveNum(checkDate) {
-                    let num = 0;
-                    return num
-                }
+
             });
         });
+
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                employees:[],
+            },
+            mounted() {
+                this.initialTooltip();
+            },
+            computed: {
+                empsA() {
+                    return this.employees.filter(emp => emp.shift === "A班");
+                },
+                empsB() {
+                    return this.employees.filter(emp => emp.shift === 'B班');
+                },
+                empsW() {
+                    return this.employees.filter(emp => emp.shift === '常日班');
+                },
+            },
+            methods: {
+                //初始化班別資訊tooltip
+                initialTooltip() {
+                    this.employees = @Html.Raw(ViewBag.Source);
+                    $('#titleA').tooltip({
+                        title: 'A班人力：' + this.empsA.length,
+                        html: true,
+                    })
+                    $('#titleB').tooltip({
+                        title: 'B班人力：' + this.empsB.length,
+                        html: true,
+                    })
+                    $('#titleW').tooltip({
+                        title: '常日班人力：' + this.empsW.length,
+                        html: true,
+                    })
+                    $('#titleAll').tooltip({
+                        title: '總人力',
+                        html: true,
+                    })
+                },
+            }
+        })
     </script>
 
 }
@@ -115,7 +163,6 @@
         .calendarFlex {
             display: flex;
             min-width: 100px;
-            /*background-color: red;*/
             justify-content: space-between;
         }
 
@@ -127,19 +174,23 @@
             border-radius: 50%;
             color: black;
         }
-        .event_backColor{
-            background-size:contain;
-            background-repeat:no-repeat;
-            background-position-x:5px;
+
+        .event_backColor {
+            background-size: contain;
+            background-repeat: no-repeat;
         }
+
         .event_shiftA {
             background-image: url(/images/a.png);
         }
+
         .event_shiftB {
             background-image: url(/images/b.png);
         }
+
         .event_shiftW {
             background-image: url(/images/w.png);
         }
+
     </style>
 }

@@ -23,6 +23,17 @@
     background-color: #d6e7f3;
 }
 
+.shiftW {
+    background-color: #ffe93a;
+}
+.shift_block {
+    border: 1px solid black;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
 .block {
     display: flex;
     justify-content: center;
@@ -30,10 +41,16 @@
     align-items: center;
 }
 
-.shift_block {
-    border: 1px solid black;
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    margin-right: 10px;
+
+.all {
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url(/images/all.png);
 }
+
+.allContent {
+    font-size: 2rem;
+}
+

@@ -2,14 +2,9 @@
 @{
     ViewBag.Title = "人力計畫";
 }
-<h2 class="text-center">人力計畫</h2>
-<div id="app" class="mt-5" style="padding:0px 150px" v-cloak>
-    <div class="block">
-        <div class="shift_block shiftA"></div><span>A班</span>&nbsp;&nbsp;&nbsp;
-        <div class="shift_block"></div><span>B班</span>
-    </div>
+<div id="app" style="padding:0px 150px" v-cloak>
     <div class="row">
-        <div id='external-events' class="col-2">
+        <div id='external-events' class="col-1" style="margin-top:197px">
             <div>
                 <input type="text"
                        v-model.number="planTitle"
@@ -31,7 +26,21 @@
                 </div>
             </div>
         </div>
-        <div id="calendar" class="col-10"></div>
+        <div class="col">
+            <h4 class="text-center">人力計畫</h4>
+            <div class="block mt-5">
+                <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
+                <span>A班</span>&nbsp;&nbsp;&nbsp;
+                <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
+                <span>B班</span>&nbsp;&nbsp;&nbsp;
+                <div class="shift_block shiftW" data-toggle="tooltip" data-placement="top" id="titleW"></div>
+                <span>常日班</span>&nbsp;&nbsp;&nbsp;
+                <div class="all" data-toggle="tooltip" data-placement="top" id="titleAll"></div>
+                <span class="allContent">{{employees.length}}</span>
+            </div>
+            <div id="calendar"></div>
+
+        </div>
     </div>
 
 
@@ -91,6 +100,7 @@
                             overlap: false,//阻止event重疊
                         }
                     ],
+                    locale: 'zh-cn',
                     initialView: 'dayGridMonth',
                     headerToolbar: {
                         left: 'prev,next,today',
@@ -136,6 +146,8 @@
                     },
                 });
                 calendar.render();
+            }).catch(error => {
+                console.log(error);
             })
 
 
@@ -170,12 +182,63 @@
         const vm = new Vue({
             el: '#app',
             data: {
+                employees: [],
                 planTitle: '',//v-model
                 planList: [],//planList
                 payload: [],//post data
                 errorMsg: '',
             },
+            mounted() {
+                this.initialTooltip();
+            },
+            computed: {
+                empsA() {
+                    return this.employees.filter(emp => emp.shift === "A班");
+                },
+                empsB() {
+                    return this.employees.filter(emp => emp.shift === 'B班');
+                },
+                empsW() {
+                    return this.employees.filter(emp => emp.shift === '常日班');
+                },
+            },
             methods: {
+                //初始化班別資訊tooltip
+                initialTooltip() {
+                    this.employees = @Html.Raw(ViewBag.Source);
+                    let empInfo = '';
+                    this.empsA.forEach(emp => {
+                        empInfo += emp.name + ',';
+                    })
+                    let templateA = `<div>A班人力：${this.empsA.length}<br>${empInfo}</div>`;
+                    $('#titleA').tooltip({
+                        title: templateA,
+                        html: true,
+                    })
+                    empInfo = '';
+                    this.empsB.forEach(emp => {
+                        empInfo += emp.name + ',';
+                    })
+                    let templateB = `B班人力：${this.empsB.length}<br>${empInfo}</div>`;
+                    $('#titleB').tooltip({
+                        title: templateB,
+                        html: true,
+                    })
+                    empInfo = '';
+                    this.empsW.forEach(emp => {
+                        empInfo += emp.name + ',';
+                    })
+                    let templateW = `常日班人力：${this.empsW.length}<br>${empInfo}</div>`;
+                    $('#titleW').tooltip({
+                        title: templateW,
+                        html: true,
+                    })
+
+                    $('#titleAll').tooltip({
+                        title: '總人力',
+                        html: true,
+                    })
+                },
                 //新增外部拖曳的plan
                 addPlan() {
                     if (this.planTitle && this.planTitle > 0) {
@@ -258,9 +321,13 @@
                         },
                         body: JSON.stringify(this.payload)
                     }).then(res => {
-                        console.log(res);
+                        return res.json();
+                    }).then(result => {
+                        if (!result.isPass)
+                            console.log(result.msg);
                     }).catch(error => {
-                        console.log(error);
+                        if (!error.isPass)
+                            console.log(error.msg);
                     })
                 },
                 //delete payload
@@ -293,6 +360,8 @@
             z-index: 100;
         }
 
-   
+        .event_shiftW {
+            background-image: url(/images/w.png);
+        }
     </style>
 }

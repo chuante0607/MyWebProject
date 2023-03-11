@@ -17,13 +17,16 @@ namespace UCOMProject.Controllers
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
         // GET: Production
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            
+            ViewBag.Source = JsonConvert.SerializeObject(await EmployeeUtility.GetEmployees(), camelSetting);
             return View();
         }
 
-        public ActionResult Plan()
+        public async Task<ActionResult> Plan()
         {
+            ViewBag.Source = JsonConvert.SerializeObject(await EmployeeUtility.GetEmployees(), camelSetting);
             return View();
         }
     }
