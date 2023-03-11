@@ -188,6 +188,18 @@ namespace UCOMProject.Methods
             }
         }
 
+        public static async Task<HolidayDetailViewModel> GetHolidayDetail(int id)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                HolidayDetail detail = await db.HolidayDetails.FirstOrDefaultAsync(d => d.Id == id);
+                if (detail != null)
+                    return await SetDetailViewModelData(detail, detail.Employee);
+                else
+                    return null;
+            }
+        }
+
         /// <summary>
         /// 依員工資訊查詢全部休假紀錄
         /// </summary>

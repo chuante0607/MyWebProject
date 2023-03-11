@@ -37,7 +37,7 @@ namespace UCOMProject.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult Get(string branch)
+        public IHttpActionResult Get(string id)
         {
             return Ok();
         }
@@ -91,16 +91,6 @@ namespace UCOMProject.Controllers
                     //DateTime endDate = EvenDays(item.RangDate, date);
                 }
             }
-
-            //foreach (Plan plan in await ScheduleUtility.GetPlans())
-            //{
-            //    CalendarViewModel calendar = new CalendarViewModel();
-            //    calendar.Id = plan.Id.ToString();
-            //    calendar.Title = plan.PlanTitle;
-            //    calendar.Start = plan.StartDate;
-            //    calendar.End = plan.EndDate;
-            //    calendars.Add(calendar);
-            //}
             return calendars;
         }
         /// <summary>

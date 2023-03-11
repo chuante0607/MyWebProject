@@ -143,11 +143,22 @@ namespace UCOMProject.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Record()
+        [HttpGet]
+        public async Task<ActionResult> Record(string id)
         {
-            RoleManage user = new User(RoleType.User);
-            var query = await user.GetHolidayDetails();
-            List<HolidayDetailViewModel> holidayDetails = query.Where(w => w.State == (int)ReviewType.Pass).ToList();
+            RoleManage user = ConfirmIdentity();
+            List<HolidayDetailViewModel> holidays = new List<HolidayDetailViewModel>();
+            if (id != null && user.GetRole() != RoleType.User)
+            {
+                bool isId = int.TryParse(id, out int detailId);
+                if (isId)
+                    holidays.Add(await HolidayUtility.GetHolidayDetail(detailId));
+            }
+            else
+            {
+                holidays = await user.GetHolidayDetails();
+            }
+            List<HolidayDetailViewModel> holidayDetails = holidays.Where(w => w.State == (int)ReviewType.Pass).ToList();
             ViewBag.Source = JsonConvert.SerializeObject(holidayDetails, camelSetting);
             return View();
         }

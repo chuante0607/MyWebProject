@@ -43,7 +43,7 @@
                         {
                             events: myData.calendars,//初始化events
                             defaultAllDay: true,
-                            className: 'text-center badge badge-primary event_backColor',
+                            className: 'text-center badge badge-primary event_backImg',
                         }
                     ],
                     locale: 'zh-cn',
@@ -75,34 +75,8 @@
                         else
                             return '';
                     },
-                    //dayCellContent: function (arg) {
-                    //    //let leaveShow = leaveCount.find(item => {
-                    //    //    let checkDate = new Date(arg.date).toLocaleDateString();
-                    //    //    let leaveDate = new Date(item.dateCount).toLocaleDateString();
-                    //    //    return checkDate === leaveDate;
-                    //    //})
-                    //    //let needTotal = 1;
-                    //    //let div = document.createElement('div');
-                    //    //div.classList.add('calendarFlex');
-                    //    //let p = document.createElement('p');
-                    //    //if (leaveShow) {
-                    //    //    let total = needTotal - leaveShow.count < 0 ? `需求${needTotal - leaveShow.count}人` : '';
-                    //    //    p.innerHTML = `<small class="badge badge-danger">${total}</small>`;
-                    //    //} else {
-                    //    //    p.innerHTML = '';
-                    //    //}
-
-                    //    //let day = document.createElement('p');
-                    //    //day.innerHTML = arg.dayNumberText;
-                    //    ////day.classList.add('calendarDayTxt');
-                    //    //div.append(p);
-                    //    //div.append(day);
-                    //    //let arrayOfDomNodes = [div];
-                    //    //return { domNodes: arrayOfDomNodes };
-                    //},
-                    eventDataTransform: function (eventData) {
-
-                    },
+                    dayCellClassNames: vm.handledayCellClassNames,
+                    eventClick: vm.handleEventClick,
                 });
                 calendar.render();
 
@@ -112,9 +86,13 @@
         const vm = new Vue({
             el: '#app',
             data: {
-                employees:[],
+                employees: [],
+                plans:[],
             },
             mounted() {
+                let source = @Html.Raw(ViewBag.Source);
+                this.employees = source.employees;
+                this.plans = source.plans;
                 this.initialTooltip();
             },
             computed: {
@@ -131,7 +109,6 @@
             methods: {
                 //初始化班別資訊tooltip
                 initialTooltip() {
-                    this.employees = @Html.Raw(ViewBag.Source);
                     $('#titleA').tooltip({
                         title: 'A班人力：' + this.empsA.length,
                         html: true,
@@ -149,6 +126,12 @@
                         html: true,
                     })
                 },
+                handledayCellClassNames(arg) {
+                    return 'cellBack';
+                },
+                handleEventClick(info) {
+                    location.href = '@Url.Action("Record", "Holiday")?id=' + info.event.id;
+                }
             }
         })
     </script>
@@ -175,7 +158,7 @@
             color: black;
         }
 
-        .event_backColor {
+        .event_backImg {
             background-size: contain;
             background-repeat: no-repeat;
         }
@@ -192,5 +175,8 @@
             background-image: url(/images/w.png);
         }
 
+        .cellBack{
+            background-color:yellow;
+        }
     </style>
 }

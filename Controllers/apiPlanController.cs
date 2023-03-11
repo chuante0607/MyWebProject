@@ -27,7 +27,7 @@ namespace UCOMProject.Controllers
         {
             ScheduleViewModel schedule = new ScheduleViewModel();
             schedule.Shifts = ScheduleUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
-            schedule.plans = await ScheduleUtility.GetPlans();
+            schedule.Plans = await ScheduleUtility.GetPlans();
             schedule.Employees = await EmployeeUtility.GetEmployees();
             return Json(JsonConvert.SerializeObject(schedule, camelSetting));
         }
