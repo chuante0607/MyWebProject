@@ -56,8 +56,8 @@
             fetch(url).then(response => {
                 if (response.ok)
                     return response.json()
-            }).then(res => {
-                let data = JSON.parse(res);
+            }).then(result => {
+                let myData = JSON.parse(result);
                 //eventsData初始化event需要的資料型態
                 let eventsData = [];
                 //定義event物件原型
@@ -68,13 +68,12 @@
                     this.end = end;
                 }
                 //data資料來源
-                data.plans.forEach(p => {
+                myData.plans.forEach(p => {
                     //vm playload儲存事件的data 之後需要post後端更新資料庫
                     vm.payload.push(p);
                     //初始化calendar event需要的資料型態{id , title , start , end}
                     eventsData.push(new Event(p.id, p.planTitle, p.startDate, p.endDate));
                 })
-
                 //外部拖曳物件
                 var containerEl = document.getElementById('external-events-list');
                 new FullCalendar.Draggable(containerEl, {
@@ -134,12 +133,12 @@
                     },
                     dayCellClassNames: function (arg) {
                         let date = new Date(arg.date);
-                        let result = data.shifts[date.getMonth()].find(item => {
-                            let check = new Date(item.checkDate).toLocaleDateString();
+                        let shift = myData.shifts[date.getMonth()].find(s => {
+                            let check = new Date(s.checkDate).toLocaleDateString();
                             return check === date.toLocaleDateString();
                         })
-                        if (result && result.isWork) {
-                            return ['shiftA'];
+                        if (shift && shift.isWork) {
+                            return 'shiftA';
                         }
                         else
                             return '';
@@ -362,6 +361,14 @@
 
         .event_shiftW {
             background-image: url(/images/w.png);
+        }
+
+        .shiftA {
+            background-color: #d6e7f3;
+        }
+
+        .shiftW {
+            background-color: #ffe93a;
         }
     </style>
 }

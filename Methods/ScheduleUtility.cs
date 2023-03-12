@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using UCOMProject.API;
 using UCOMProject.Extension;
 using UCOMProject.Models;
 
@@ -12,6 +13,8 @@ namespace UCOMProject.Methods
 {
     public static class ScheduleUtility
     {
+        public static Dictionary<DateTime, int> LeaveCount = new Dictionary<DateTime, int>();
+
         /// <summary>
         /// 取得Plans
         /// </summary>
@@ -97,6 +100,30 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
+        /// 取得每天的plans人力計畫
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<Plan>> GetPlansByDay()
+        {
+            List<Plan> list = new List<Plan>();
+            List<Plan> plans = await GetPlans();
+            //(統計"每天"需求人力)
+            foreach (Plan p in plans)
+            {
+                //plan只有start跟end 所以要轉成每天的人力所有-1天表示當天
+                p.EndDate = p.EndDate.AddDays(-1);
+                TimeSpan span = p.EndDate.Subtract(p.StartDate);
+                int day = span.Days;
+                for (int i = 0; i <= day; i++)
+                {
+                    list.Add(new Plan { Id = p.Id, PlanTitle = p.PlanTitle, StartDate = p.StartDate.AddDays(i), EndDate = p.StartDate.AddDays(i) });
+                }
+            }
+            return list.OrderBy(o => o.StartDate).ToList();
+
+        }
+
+        /// <summary>
         /// 取得A.B班的當年度的工作天(做2休2)
         /// </summary>
         public static List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
@@ -161,6 +188,63 @@ namespace UCOMProject.Methods
             return workDayByMonth;
         }
 
-
+        /// <summary>
+        /// 取得Calendars所展示的資訊
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<CalendarApiModel>> GetCalendars()
+        {
+            List<HolidayDetailViewModel> holidayDetails = await HolidayUtility.GetHolidayDetails();
+            List<CalendarApiModel> calendars = new List<CalendarApiModel>();
+            LeaveCount = new Dictionary<DateTime, int>();
+            //統計每天的請假人數
+            var rang = holidayDetails.Select(h => h.RangDate);
+            foreach (var days in rang)
+            {
+                foreach (var d in days)
+                {
+                    //統計請假人數
+                    if (LeaveCount.ContainsKey(d))
+                    {
+                        LeaveCount[d]++;
+                    }
+                    else
+                    {
+                        LeaveCount.Add(d, 1);
+                    }
+                }
+            }
+            foreach (HolidayDetailViewModel detail in holidayDetails)
+            {
+                string className = "";
+                if (detail.State != 2)
+                    continue;
+                switch (detail.Shift.xTranShiftEnum())
+                {
+                    case ShiftType.常日班:
+                        break;
+                    case ShiftType.A班:
+                        className = "event_shiftA";
+                        break;
+                    case ShiftType.B班:
+                        className = "event_shiftB";
+                        break;
+                    default:
+                        break;
+                }
+                foreach (DateTime date in detail.RangDate)
+                {
+                    CalendarApiModel calendar = new CalendarApiModel();
+                    calendar.id = detail.Id.ToString();
+                    calendar.title = $"{detail.Name}";
+                    calendar.start = date;
+                    calendar.end = date.AddDays(1);
+                    calendar.classNames = className;
+                    calendar.remark = $"{ detail.Title} {detail.UsedDays}天：{detail.BeginDate.ToString("M/d")} - {detail.EndDate.ToString("M/d")}";
+                    calendars.Add(calendar);
+                }
+            }
+            return calendars;
+        }
     }
 }

@@ -26,87 +26,93 @@
 @section Script{
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('http://localhost:51010/api/apiSchedule', {
-                headers: {
-                    "ROLE_CODE": ["admin", "admin-leader"]
-                }
-            }).then(res => res.json()).then(result => {
-                var myData = JSON.parse(result);
-                var leaveCount = [];
-                for (let key in myData.leaveNums) {
-                    leaveCount.push({ dateCount: key, count: myData.leaveNums[key] });
-                }
-                var calendarEl = document.getElementById('calendar');
-                var calendar = new FullCalendar.Calendar(calendarEl, {
-                    eventSources: [
-                        {
-                            events: myData.calendars,//初始化events
-                            defaultAllDay: true,
-                            className: 'text-center badge badge-primary event_backImg',
-                        }
-                    ],
-                    locale: 'zh-cn',
-                    initialView: 'dayGridMonth',
-                    height: 1000,
-                    headerToolbar: {
-                        left: 'prev,next,today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    },
-                    titleFormat: { year: 'numeric', month: 'short' },
-                    buttonText: {
-                        today: '今天',
-                        month: '月',
-                        week: '周',
-                        day: '天',
-                        list: '清單'
-                    },
-                    aspectRatio: 2,
-                    dayMaxEvents: true,
-                    dayCellClassNames: function (arg) {
-                        let date = new Date(arg.date);
-                        let result = myData.shifts[date.getMonth()].find(item => {
-                            let check = new Date(item.checkDate).toLocaleDateString();
-                            return check === date.toLocaleDateString();
-                        })
-                        if (result && result.isWork)
-                            return 'shiftA';
-                        else
-                            return '';
-                    },
-                    dayCellClassNames: vm.handledayCellClassNames,
-                    eventClick: vm.handleEventClick,
-                });
-                calendar.render();
 
-            });
-        });
+
+
+
+
+
 
         const vm = new Vue({
             el: '#app',
             data: {
                 employees: [],
-                plans:[],
+                calendars: [],
+                plans: [],
+                shifts: [],
+                leaveCount: [],
+                empsA:[],
+                empsB:[],
+                empsW:[],
             },
             mounted() {
-                let source = @Html.Raw(ViewBag.Source);
-                this.employees = source.employees;
-                this.plans = source.plans;
-                this.initialTooltip();
+                fetch('http://localhost:51010/api/apiSchedule').then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                }).then(result => {
+                    this.calendars = result.calendars;
+                    this.employees = result.employees;
+                    this.shifts = result.shifts;
+                    this.plans = result.plans;
+                    let leaves = result.leaveCount;
+                    for (let key in leaves) {
+                        let newKey = new Date(key);
+                        let leaveObj = { date: newKey, count: leaves[key] };
+                        this.leaveCount.push(leaveObj);
+                    }
+                    document.addEventListener('DOMContentLoaded', this.initialCalendar())
+                })
             },
-            computed: {
-                empsA() {
-                    return this.employees.filter(emp => emp.shift === "A班");
-                },
-                empsB() {
-                    return this.employees.filter(emp => emp.shift === 'B班');
-                },
-                empsW() {
-                    return this.employees.filter(emp => emp.shift === '常日班');
-                },
+            watch: {
+                //employees為非同步取得 使用watch可監測employees取得值的變化,再渲染tooltip
+                employees: {
+                    handler(newValue, oldValue) {
+                        this.empsA = newValue.filter(emp => emp.Shift === "A班");
+                        this.empsB = newValue.filter(emp => emp.Shift === "B班");
+                        this.empsW = newValue.filter(emp => emp.Shift === "常日班");
+                        this.initialTooltip();
+                    }
+                }
             },
             methods: {
+                //初始化calendar
+                initialCalendar() {
+                    let self = this;
+                    var calendarEl = document.getElementById('calendar');
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        eventSources: [
+                            {
+                                events: this.calendars,//初始化events
+                                defaultAllDay: true,
+                                className: 'text-center badge badge-primary event_backImg',
+                            }
+                        ],
+                        locale: 'zh-cn',
+                        initialView: 'dayGridMonth',
+                        height: 1000,
+                        headerToolbar: {
+                            left: 'prev,next,today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        titleFormat: { year: 'numeric', month: 'short' },
+                        buttonText: {
+                            today: '今天',
+                            month: '月',
+                            week: '周',
+                            day: '天',
+                            list: '清單'
+                        },
+                        aspectRatio: 2,
+                        dayMaxEvents: true,
+                        eventClick: self.handleEventClick,
+                        eventDidMount: self.handleEventDidMount,
+                        dayCellClassNames: self.handleDayCellClassNames,
+                        dayCellContent: self.handleDayCellContent,
+                    });
+                    calendar.render();
+                },
                 //初始化班別資訊tooltip
                 initialTooltip() {
                     $('#titleA').tooltip({
@@ -126,14 +132,134 @@
                         html: true,
                     })
                 },
-                handledayCellClassNames(arg) {
-                    return 'cellBack';
-                },
+                //event點擊跳到員工請假detail
                 handleEventClick(info) {
                     location.href = '@Url.Action("Record", "Holiday")?id=' + info.event.id;
-                }
+                },
+                handleEventDidMount(arg) {
+                    arg.el.setAttribute('data-toggle', 'eventTooltip');
+                    arg.el.setAttribute('data-placement', 'top');
+                    let id = arg.event.id;
+                    let event = this.calendars.find(e => e.id == id);
+                    setEventToolTip(event.remark);
+                },
+                //cell的AB班顏色 class name
+                handleDayCellClassNames(arg) {
+                    let date = arg.date;
+                    let shift = this.shifts[date.getMonth()].find(s => {
+                        let check = new Date(s.CheckDate).toLocaleDateString();
+                        return check === date.toLocaleDateString();
+                    })
+                    if (shift && shift.IsWork) {
+                        return 'shiftA';
+                    } else {
+                        return '';
+                    }
+                },
+                handleDayCellContent(arg) {
+                    let date = arg.date;
+                    //計算每天的需求人力
+                    let actual = this.plans.find(p => {
+                        let checkDate = new Date(p.StartDate);
+                        return date.toLocaleDateString() === checkDate.toLocaleDateString();
+                    })
+                    let actualCount = '';
+                    if (actual) {
+                        actualCount = actual.PlanTitle;
+                    }
+
+                    //計算請假人數
+                    let leave = this.leaveCount.find(l => {
+                        return l.date.toLocaleDateString() === date.toLocaleDateString();
+                    })
+                    let leaveCount = '';
+                    if (leave) {
+                        leaveCount = leave.count;
+                    }
+
+                    //計算每班的實際人數
+                    //this.plans.forEach(p => {
+                    //    let count = this.leaveCount[p.StartDate];
+
+                    //    if (count) {
+                    //        let shiftACount = this.empsA.length;
+                    //        let shiftBCount = this.empsB.length;
+                    //        let date = p.StartDate;
+                    //        let actualCount = 10;
+                    //        let requiredCount = p.PlanTitle;
+                    //        let leaveCount = count;
+                    //        let subCount = requiredCount - actualCount - leaveCount;
+                    //        let alarm = '';
+                    //        if (subCount < 0) {
+                    //            alarm = '人不夠';
+                    //        } else {
+                    //            alarm = '';
+                    //        }
+                    //    }
+                    //})
+                    let htmlStr = `<div class="row">
+                                      <div class="col badge badge-danger">${actualCount}-${leaveCount}</div>
+                                      <div class="col">
+                                         <i>${arg.dayNumberText}</i>
+                                      </div>
+                                   </div>`
+                    return { html: htmlStr };
+                },
             }
         })
+
+
+        function setEventToolTip(title) {
+            $('[data-toggle="eventTooltip"]').tooltip({
+                title: title,
+                html: true,
+            });
+        }
+
+        //document.addEventListener('DOMContentLoaded', function () {
+        //    var calendarEl = document.getElementById('calendar');
+        //    var calendar = new FullCalendar.Calendar(calendarEl, {
+        //        eventSources: [
+        //            {
+        //                events: result.calendars,//初始化events
+        //                defaultAllDay: true,
+        //                className: 'text-center badge badge-primary event_backImg',
+        //            }
+        //        ],
+        //        locale: 'zh-cn',
+        //        initialView: 'dayGridMonth',
+        //        height: 1000,
+        //        headerToolbar: {
+        //            left: 'prev,next,today',
+        //            center: 'title',
+        //            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        //        },
+        //        titleFormat: { year: 'numeric', month: 'short' },
+        //        buttonText: {
+        //            today: '今天',
+        //            month: '月',
+        //            week: '周',
+        //            day: '天',
+        //            list: '清單'
+        //        },
+        //        aspectRatio: 2,
+        //        dayMaxEvents: true,
+        //        //eventDidMount: function (arg) {
+        //        //    arg.el.setAttribute('data-toggle', 'eventTooltip');
+        //        //    arg.el.setAttribute('data-placement', 'top');
+        //        //    let id = arg.event.id;
+        //        //    let event = myData.calendars.find(e => e.id == id);
+        //        //    setEventToolTip(event.remark);
+
+        //        //},
+        //        //eventClick: vm.handleEventClick,
+        //        //dayCellClassNames: vm.handleDayCellClassNames,
+        //    });
+        //    calendar.render();
+        //});
+
+
+
     </script>
 
 }
@@ -158,6 +284,10 @@
             color: black;
         }
 
+        .shiftA {
+            background-color: #d6e7f3;
+        }
+
         .event_backImg {
             background-size: contain;
             background-repeat: no-repeat;
@@ -175,8 +305,8 @@
             background-image: url(/images/w.png);
         }
 
-        .cellBack{
-            background-color:yellow;
+        .cellBack {
+            background-color: yellow;
         }
     </style>
 }

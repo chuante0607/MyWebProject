@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using UCOMProject.API;
 using UCOMProject.Methods;
 using UCOMProject.Models;
 using static UCOMProject.Controllers.apiScheduleController;
@@ -17,7 +18,6 @@ namespace UCOMProject.Controllers
     public class apiPlanController : ApiController
     {
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-
         /// <summary>
         /// 查詢Plan schedule
         /// </summary>
@@ -25,10 +25,10 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            ScheduleViewModel schedule = new ScheduleViewModel();
-            schedule.Shifts = ScheduleUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
-            schedule.Plans = await ScheduleUtility.GetPlans();
-            schedule.Employees = await EmployeeUtility.GetEmployees();
+            ScheduleApiModel schedule = new ScheduleApiModel();
+            schedule.shifts = ScheduleUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
+            schedule.plans = await ScheduleUtility.GetPlans();
+            schedule.employees = await EmployeeUtility.GetEmployees();
             return Json(JsonConvert.SerializeObject(schedule, camelSetting));
         }
 

@@ -18,13 +18,12 @@ namespace UCOMProject.Controllers
     public class apiAccountController : ApiController
     {
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-        // GET: api/apiAccount
+
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET: api/apiAccount/5s
         public IHttpActionResult Get(List<int> ids)
         {
             return Ok();
