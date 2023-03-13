@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Evnet";
+}
+
+<div id='calendar'></div>
+
+@section Script{
+    <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events:'http://localhost:51010/api/apiEvent',
+            });
+            calendar.render();
+        });
+    </script>
+}

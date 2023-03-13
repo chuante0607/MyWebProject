@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using UCOMProject.API;
@@ -19,21 +20,10 @@ namespace UCOMProject.Controllers
 {
     public class apiScheduleController : ApiController
     {
-        List<DateTime> EvenDaysList = new List<DateTime>();
-
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            var req = Request.Headers.Where(s => s.Key == "ROLE_CODE")
-                .Select(s => s.Value)
-                .ToList();
-
-            ScheduleApiModel schedule = new ScheduleApiModel();
-            schedule.calendars = await ScheduleUtility.GetCalendars();
-            schedule.employees = await EmployeeUtility.GetEmployees();
-            schedule.plans = await ScheduleUtility.GetPlansByDay();
-            schedule.shifts = ScheduleUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
-            schedule.leaveCount = ScheduleUtility.LeaveCount;
+            ScheduleApiModel schedule = await ScheduleUtility.GetSchedule();
             return Json(schedule);
         }
 

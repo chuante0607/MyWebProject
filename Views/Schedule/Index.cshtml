@@ -26,24 +26,16 @@
 @section Script{
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
     <script>
-
-
-
-
-
-
-
         const vm = new Vue({
             el: '#app',
             data: {
-                employees: [],
-                calendars: [],
-                plans: [],
-                shifts: [],
-                leaveCount: [],
-                empsA:[],
-                empsB:[],
-                empsW:[],
+                employees: [],//員工資訊
+                calendars: [],//請假人力的event事件
+                shifts: [],//AB班表by日期
+                attendance:[],
+                empsA:[],//A班數量
+                empsB:[],//B班數量
+                empsW: [],//常日班數量
             },
             mounted() {
                 fetch('http://localhost:51010/api/apiSchedule').then(response => {
@@ -54,13 +46,7 @@
                     this.calendars = result.calendars;
                     this.employees = result.employees;
                     this.shifts = result.shifts;
-                    this.plans = result.plans;
-                    let leaves = result.leaveCount;
-                    for (let key in leaves) {
-                        let newKey = new Date(key);
-                        let leaveObj = { date: newKey, count: leaves[key] };
-                        this.leaveCount.push(leaveObj);
-                    }
+                    this.attendance = result.attendance;
                     document.addEventListener('DOMContentLoaded', this.initialCalendar())
                 })
             },
@@ -110,6 +96,7 @@
                         eventDidMount: self.handleEventDidMount,
                         dayCellClassNames: self.handleDayCellClassNames,
                         dayCellContent: self.handleDayCellContent,
+                        dayCellDidMount: self.handleDayCellDidMount,
                     });
                     calendar.render();
                 },
@@ -136,6 +123,7 @@
                 handleEventClick(info) {
                     location.href = '@Url.Action("Record", "Holiday")?id=' + info.event.id;
                 },
+                //event tooltip
                 handleEventDidMount(arg) {
                     arg.el.setAttribute('data-toggle', 'eventTooltip');
                     arg.el.setAttribute('data-placement', 'top');
@@ -156,58 +144,31 @@
                         return '';
                     }
                 },
+                //cell的內容(人力不足顯示)
                 handleDayCellContent(arg) {
-                    let date = arg.date;
-                    //計算每天的需求人力
-                    let actual = this.plans.find(p => {
-                        let checkDate = new Date(p.StartDate);
-                        return date.toLocaleDateString() === checkDate.toLocaleDateString();
+                    let att = this.attendance.find(item => {
+                        let date = new Date(item.date);
+                        return arg.date.toLocaleDateString() === date.toLocaleDateString();
                     })
-                    let actualCount = '';
-                    if (actual) {
-                        actualCount = actual.PlanTitle;
+                    let msg = ''
+                    if (att) {
+                        msg = `人力不足${att.realNum}`;
                     }
-
-                    //計算請假人數
-                    let leave = this.leaveCount.find(l => {
-                        return l.date.toLocaleDateString() === date.toLocaleDateString();
-                    })
-                    let leaveCount = '';
-                    if (leave) {
-                        leaveCount = leave.count;
-                    }
-
-                    //計算每班的實際人數
-                    //this.plans.forEach(p => {
-                    //    let count = this.leaveCount[p.StartDate];
-
-                    //    if (count) {
-                    //        let shiftACount = this.empsA.length;
-                    //        let shiftBCount = this.empsB.length;
-                    //        let date = p.StartDate;
-                    //        let actualCount = 10;
-                    //        let requiredCount = p.PlanTitle;
-                    //        let leaveCount = count;
-                    //        let subCount = requiredCount - actualCount - leaveCount;
-                    //        let alarm = '';
-                    //        if (subCount < 0) {
-                    //            alarm = '人不夠';
-                    //        } else {
-                    //            alarm = '';
-                    //        }
-                    //    }
-                    //})
-                    let htmlStr = `<div class="row">
-                                      <div class="col badge badge-danger">${actualCount}-${leaveCount}</div>
-                                      <div class="col">
-                                         <i>${arg.dayNumberText}</i>
-                                      </div>
-                                   </div>`
+                    
+                    let htmlStr = `
+                                 <div class="row attendanceNum">
+                                    <div class="col badge badge-danger">${msg}</div>
+                                    <div class="col" data-toggle="attendanceTooltip" data-placement="top">${arg.dayNumberText}</div>
+                                 </div>
+                                `;
+                    setAttendanceTooltip(msg);
                     return { html: htmlStr };
+                },
+                handleDayCellDidMount(arg) {
+                  
                 },
             }
         })
-
 
         function setEventToolTip(title) {
             $('[data-toggle="eventTooltip"]').tooltip({
@@ -216,50 +177,12 @@
             });
         }
 
-        //document.addEventListener('DOMContentLoaded', function () {
-        //    var calendarEl = document.getElementById('calendar');
-        //    var calendar = new FullCalendar.Calendar(calendarEl, {
-        //        eventSources: [
-        //            {
-        //                events: result.calendars,//初始化events
-        //                defaultAllDay: true,
-        //                className: 'text-center badge badge-primary event_backImg',
-        //            }
-        //        ],
-        //        locale: 'zh-cn',
-        //        initialView: 'dayGridMonth',
-        //        height: 1000,
-        //        headerToolbar: {
-        //            left: 'prev,next,today',
-        //            center: 'title',
-        //            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        //        },
-        //        titleFormat: { year: 'numeric', month: 'short' },
-        //        buttonText: {
-        //            today: '今天',
-        //            month: '月',
-        //            week: '周',
-        //            day: '天',
-        //            list: '清單'
-        //        },
-        //        aspectRatio: 2,
-        //        dayMaxEvents: true,
-        //        //eventDidMount: function (arg) {
-        //        //    arg.el.setAttribute('data-toggle', 'eventTooltip');
-        //        //    arg.el.setAttribute('data-placement', 'top');
-        //        //    let id = arg.event.id;
-        //        //    let event = myData.calendars.find(e => e.id == id);
-        //        //    setEventToolTip(event.remark);
-
-        //        //},
-        //        //eventClick: vm.handleEventClick,
-        //        //dayCellClassNames: vm.handleDayCellClassNames,
-        //    });
-        //    calendar.render();
-        //});
-
-
-
+        function setAttendanceTooltip(title) {
+            $('[data-toggle="attendanceTooltip"]').tooltip({
+                title: title,
+                html: true,
+            });
+        }
     </script>
 
 }
@@ -283,11 +206,20 @@
             border-radius: 50%;
             color: black;
         }
-
+        .shift_block {
+            border: 1px solid black;
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            margin-right: 10px;
+        }
         .shiftA {
             background-color: #d6e7f3;
         }
-
+        .shiftW {
+            border: 1px dashed black;
+            background-color: #ffe93a;
+        }
         .event_backImg {
             background-size: contain;
             background-repeat: no-repeat;
@@ -307,6 +239,12 @@
 
         .cellBack {
             background-color: yellow;
+        }
+
+        .attendanceNum {
+            margin-right: 0px;
+            margin-left: 0px;
+            align-items: center;
         }
     </style>
 }
