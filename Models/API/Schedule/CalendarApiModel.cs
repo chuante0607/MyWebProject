@@ -14,5 +14,6 @@ namespace UCOMProject.API
         public string classNames { get; set; }
         public string color { get; set; }
         public string remark { get; set; }
+        public bool allDay { get { return true; } }
     }
 }

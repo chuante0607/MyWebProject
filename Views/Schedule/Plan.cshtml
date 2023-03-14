@@ -2,9 +2,9 @@
 @{
     ViewBag.Title = "人力計畫";
 }
-<div id="app" style="padding:0px 150px" v-cloak>
+<div id="app" v-cloak>
     <div class="row">
-        <div id='external-events' class="col-1" style="margin-top:197px">
+        <div id='external-events' class="col-2" style="margin-top:160px">
             <div>
                 <input type="text"
                        v-model.number="planTitle"
@@ -28,7 +28,7 @@
         </div>
         <div class="col">
             <h4 class="text-center">人力計畫</h4>
-            <div class="block mt-5">
+            <div class="block">
                 <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
                 <span>A班</span>&nbsp;&nbsp;&nbsp;
                 <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
@@ -51,106 +51,8 @@
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let url = 'http://localhost:51010/api/apiPlan';
-            fetch(url).then(response => {
-                if (response.ok)
-                    return response.json()
-            }).then(result => {
-                let myData = JSON.parse(result);
-                //eventsData初始化event需要的資料型態
-                let eventsData = [];
-                //定義event物件原型
-                function Event(id, title, start, end) {
-                    this.id = id;
-                    this.title = title;
-                    this.start = start;
-                    this.end = end;
-                }
-                //data資料來源
-                myData.plans.forEach(p => {
-                    //vm playload儲存事件的data 之後需要post後端更新資料庫
-                    vm.payload.push(p);
-                    //初始化calendar event需要的資料型態{id , title , start , end}
-                    eventsData.push(new Event(p.id, p.planTitle, p.startDate, p.endDate));
-                })
-                //外部拖曳物件
-                var containerEl = document.getElementById('external-events-list');
-                new FullCalendar.Draggable(containerEl, {
-                    itemSelector: '.fc-event',
-                    eventData: function (eventEl) {
-                        return {
-                            title: eventEl.innerText,
-                            id: eventEl.getAttribute('data-id'),
-                            className: 'text-center badge badge-primary',
-                            overlap: false,//阻止event重疊
-                        }
-                    },
-                });
-
-                //calendar物件
-                var calendarEl = document.getElementById('calendar');
-                var calendar = new FullCalendar.Calendar(calendarEl, {
-                    eventSources: [
-                        {
-                            events: eventsData,//初始化events
-                            defaultAllDay: true,
-                            className: 'text-center badge badge-primary',
-                            overlap: false,//阻止event重疊
-                        }
-                    ],
-                    locale: 'zh-cn',
-                    initialView: 'dayGridMonth',
-                    headerToolbar: {
-                        left: 'prev,next,today',
-                        center: 'title',
-                        right: 'dayGridMonth'
-                    },
-                    titleFormat: { year: 'numeric', month: 'short' },
-                    buttonText: {
-                        today: '今天',
-                        month: '月',
-                        week: '周',
-                        day: '天',
-                        list: '清單'
-                    },
-                    eventMaxStack: 1,
-                    editable: true,
-                    droppable: true,
-                    height: 800,
-                    timeZone: 'UTC',
-                    drop: function (info) {
-                        vm.handleDrop(info);
-                    },
-                    eventDrop: function (info) {
-                        vm.handleEventDrop(info);
-                    },
-                    eventClick: function (info) {
-                        vm.handleEventClick(info);
-                    },
-                    eventResize: function (info) {
-                        vm.handleEventResize(info);
-                    },
-                    dayCellClassNames: function (arg) {
-                        let date = new Date(arg.date);
-                        let shift = myData.shifts[date.getMonth()].find(s => {
-                            let check = new Date(s.checkDate).toLocaleDateString();
-                            return check === date.toLocaleDateString();
-                        })
-                        if (shift && shift.isWork) {
-                            return 'shiftA';
-                        }
-                        else
-                            return '';
-                    },
-                });
-                calendar.render();
-            }).catch(error => {
-                console.log(error);
-            })
 
 
-        });
         //產生Guid
         function guid() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -186,9 +88,12 @@
                 planList: [],//planList
                 payload: [],//post data
                 errorMsg: '',
+                shifts: [],
+                weekWorks:[],
             },
             mounted() {
                 this.initialTooltip();
+                document.addEventListener('DOMContentLoaded', this.initialCalendar);
             },
             computed: {
                 empsA() {
@@ -202,6 +107,102 @@
                 },
             },
             methods: {
+                initialCalendar() {
+                    let self = this;
+                    let url = 'http://localhost:51010/api/apiPlan';
+                    fetch(url).then(response => {
+                        if (response.ok)
+                            return response.json()
+                    }).then(result => {
+                        let myData = JSON.parse(result);
+                        self.shifts = myData.shifts;
+                        self.weekWorks = myData.weekWorks;
+                        //eventsData初始化event需要的資料型態
+                        let eventsData = [];
+                        //定義event物件原型
+                        function Event(id, title, start, end) {
+                            this.id = id;
+                            this.title = title;
+                            this.start = start;
+                            this.end = end;
+                        }
+                        //data資料來源
+                        myData.plans.forEach(p => {
+                            //vm playload儲存事件的data 之後需要post後端更新資料庫
+                            self.payload.push(p);
+                            //初始化calendar event需要的資料型態{id , title , start , end}
+                            eventsData.push(new Event(p.id, p.planTitle, p.startDate, p.endDate));
+                        })
+
+                        //外部拖曳物件
+                        var containerEl = document.getElementById('external-events-list');
+                        new FullCalendar.Draggable(containerEl, {
+                            itemSelector: '.fc-event',
+                            eventData: function (eventEl) {
+                                return {
+                                    title: eventEl.innerText,
+                                    id: eventEl.getAttribute('data-id'),
+                                    className: 'text-center badge badge-primary',
+                                    overlap: false,//阻止event重疊
+                                }
+                            },
+                        });
+
+                        //calendar物件
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            eventSources: [
+                                {
+                                    events: eventsData,//初始化events
+                                    defaultAllDay: true,
+                                    className: 'text-center badge badge-primary',
+                                    overlap: false,//阻止event重疊
+                                }
+                            ],
+                            locale: 'zh-cn',
+                            initialView: 'dayGridMonth',
+                            headerToolbar: {
+                                left: 'prev,next,today',
+                                center: 'title',
+                                right: 'dayGridMonth'
+                            },
+                            titleFormat: { year: 'numeric', month: 'short' },
+                            buttonText: {
+                                today: '今天',
+                                month: '月',
+                                week: '周',
+                                day: '天',
+                                list: '清單'
+                            },
+                            eventMaxStack: 1,
+                            editable: true,
+                            droppable: true,
+                            height: 900,
+                            timeZone: 'UTC',
+                            drop: function (info) {
+                                self.handleDrop(info);
+                            },
+                            eventDrop: function (info) {
+                                self.handleEventDrop(info);
+                            },
+                            eventClick: function (info) {
+                                self.handleEventClick(info);
+                            },
+                            eventResize: function (info) {
+                                self.handleEventResize(info);
+                            },
+                            dayCellClassNames: function (arg) {
+                               return self.handleDayCellClassNames(arg)
+                            },
+                            dayCellContent(arg) {
+                               return self.handledayCellContent(arg);
+                            },
+                        });
+                        calendar.render();
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                },
                 //初始化班別資訊tooltip
                 initialTooltip() {
                     this.employees = @Html.Raw(ViewBag.Source);
@@ -307,9 +308,35 @@
                             plan.endDate = info.event.end;
                         }
                     })
-
                     //**發送請求
                     this.UpdateData();
+                },
+                //設定AB班別顏色'
+                handleDayCellClassNames(arg) {
+                    let date = new Date(arg.date);
+                    let shift = this.shifts[date.getMonth()].find(s => {
+                        let check = new Date(s.checkDate).toLocaleDateString();
+                        return check === date.toLocaleDateString();
+                    })
+                    if (shift && shift.isWork) {
+                        return 'shiftA';
+                    }
+                    else
+                        return 'shfitB';
+                },
+                //設定cell內容
+                handledayCellContent(arg) {
+                    let date = arg.date;
+                    let data = this.weekWorks[date.getMonth()].find(w => {
+                        return new Date(w.checkDate).toLocaleDateString() === date.toLocaleDateString();
+                    });
+                    //常日班放假客製化日期字體顏色
+                    if (!data.isWork) {
+                        return { html: `<div class="dayCellContent">${arg.dayNumberText}</div>` }
+                    }
+                    else {
+                        return arg.dayNumberText;
+                    }
                 },
                 //post payload
                 UpdateData() {
@@ -334,7 +361,7 @@
                     fetch('http://localhost:51010/api/apiPlan?id=' + id, {
                         method: 'DELETE',
                     }).then(res => {
-                        console.log(res);
+                        console.log('刪除成功');
                     }).catch(error => {
                         console.log(error);
                     })
@@ -362,6 +389,7 @@
         .event_shiftW {
             background-image: url(/images/w.png);
         }
+
         .shift_block {
             border: 1px solid black;
             width: 30px;
@@ -369,13 +397,23 @@
             display: inline-block;
             margin-right: 10px;
         }
+
         .shiftA {
             background-color: #d6e7f3;
         }
 
+        .shiftB {
+            background-color: #fff;
+        }
+
         .shiftW {
-            border:1px dashed black;
+            border: 1px dashed black;
             background-color: #ffe93a;
+        }
+
+        .dayCellContent{
+            font-weight:800;
+            color:red;
         }
     </style>
 }

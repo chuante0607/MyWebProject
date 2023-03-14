@@ -188,6 +188,37 @@ namespace UCOMProject.Methods
             }
         }
 
+        /// <summary>
+        /// 取得指定日期的休假員工
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<HolidayDetailViewModel>> GetHolidayDetails(DateTime date)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                string dateStr = date.ToString("M/d/yyyy");
+                List<HolidayDetailViewModel> vmList = new List<HolidayDetailViewModel>();
+                try
+                {
+                    var details = await (from d in db.HolidayDetails
+                                         where d.RangeDate.Contains(dateStr)
+                                         select d)
+                                  .ToListAsync();
+                    foreach (var d in details)
+                    {
+                        vmList.Add(await SetDetailViewModelData(d, d.Employee));
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+                return vmList;
+            }
+        }
+
+
         public static async Task<HolidayDetailViewModel> GetHolidayDetail(int id)
         {
             using (MyDBEntities db = new MyDBEntities())
@@ -263,6 +294,8 @@ namespace UCOMProject.Methods
                 return vmList;
             }
         }
+
+
 
         /// <summary>
         /// 設定ViewModel資料

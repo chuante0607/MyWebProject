@@ -11,6 +11,7 @@ namespace UCOMProject.API
         public List<Plan> plans { get; set; }
         public List<CalendarApiModel> calendars { get; set; }
         public List<List<ShiftViewModel>> shifts { get; set; }
+        public List<List<ShiftViewModel>> weekWorks { get; set; }
         public List<EmployeeViewModel> employees { get; set; }
         public List<ScheduleNumApiModel> attendance { get; set; }
     }

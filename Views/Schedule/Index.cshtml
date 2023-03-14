@@ -7,7 +7,7 @@
 
 <h4 class="text-center">出勤總覽</h4>
 <div id="app" v-cloak>
-    <div class="mt-5">
+    <div>
         <div class="block">
             <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
             <span>A班</span>&nbsp;&nbsp;&nbsp;
@@ -76,7 +76,7 @@
                         ],
                         locale: 'zh-cn',
                         initialView: 'dayGridMonth',
-                        height: 1000,
+                        height: 900,
                         headerToolbar: {
                             left: 'prev,next,today',
                             center: 'title',
@@ -163,9 +163,6 @@
                                 `;
                     setAttendanceTooltip(msg);
                     return { html: htmlStr };
-                },
-                handleDayCellDidMount(arg) {
-                  
                 },
             }
         })

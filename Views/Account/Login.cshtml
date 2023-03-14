@@ -15,7 +15,7 @@
 
 </head>
 <body>
-    <form class="form" id="form" action="login" method="post">
+    <form class="form" id="form" action="@Url.Action("login")" method="post">
         @Html.AntiForgeryToken()
         <div class="field email">
             <div class="icon"></div>
@@ -49,14 +49,17 @@
     <script src="~/Scripts/site.js"></script>
 
     <script type="text/javascript">
+
         function handleOp() {
             $('[name="id"]').val('E001');
             $('[name="pwd"]').val('F123456789');
+            $('#form').submit();
         }
 
         function handleLeader() {
             $('[name="id"]').val('E004');
             $('[name="pwd"]').val('F123456789');
+            $('#form').submit();
         }
         function handleAdmin() {
             window.location.href = '@Url.Action("adminLogin" , "account")'

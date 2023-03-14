@@ -28,8 +28,9 @@ namespace UCOMProject.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult Get(string id)
+        public async Task<IHttpActionResult> Get(DateTime start, DateTime end)
         {
+            var result = await HolidayUtility.GetHolidayDetails(start);
             return Ok();
         }
 
