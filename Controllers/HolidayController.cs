@@ -138,10 +138,75 @@ namespace UCOMProject.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int? id)
         {
-            return View();
+            int checkId = (int)id;
+            RoleManage user = new User(RoleType.User);
+            var query = await user.GetHolidayDetails();
+            HolidayDetailViewModel detail = query.FirstOrDefault(d => d.Id == checkId);
+            if (detail == null)
+                return RedirectToAction("Index", "NotFound");
+
+            EmployeeViewModel currentEmp = await user.GetUser();
+            ApplyViewModel vm = new ApplyViewModel();
+            vm.Employee = await user.GetUser();
+            vm.Holidays = await user.GetHolidayInfosByEmp(currentEmp.EId);
+            if (currentEmp.ShiftType == ShiftType.常日班)
+            {
+                string[] file = System.IO.File.ReadAllLines(Server.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
+                vm.WorkDayOfYearByMonth = user.GetWorkDayOfYearByMonth(file, DateTime.Now.Year);
+            }
+            else
+            {
+                vm.WorkDayOfYearByMonth = user.GetWorkDayOfYearByMonth(currentEmp.ShiftType, DateTime.Now.Year);
+            }
+            ViewBag.editDetail = JsonConvert.SerializeObject(detail, camelSetting);
+            ViewBag.vm = JsonConvert.SerializeObject(vm, camelSetting);
+            return View(vm);
         }
+
+        [HttpPost]
+        public ActionResult Edit(ApplyViewModel payload)
+        {
+            //to do 驗證休假申請
+            //模型驗證
+            if (ModelState.IsValid)
+            {
+                //需要證明
+                if (payload.ProveType)
+                {
+                    //沒附加檔案
+                    if (payload.Files == null)
+                        return Json(new ApplyResult { isPass = false, msg = $"{payload.Title}需要提供證明" });
+                    //附加檔案超過4MB
+                    double size = payload.Files.Select(s => s.ContentLength).Sum() / (1024d * 1024d);
+                    if (size > 4)
+                        return Json(new ApplyResult { isPass = false, msg = "檔案大小不能超過4MB" });
+                    //是否申請成功(true成功 , false失敗)
+                    ApplyResult result = HolidayUtility.SaveApply(payload);
+                    if (result.isPass)
+                    {
+                        //將檔案儲存
+                        foreach (var file in payload.Files.Select((value, index) => new { value, index }))
+                        {
+                            string path = Server.MapPath($@"\Uploads\{result.FilesNames[file.index]}");
+                            file.value.SaveAs(path);
+                        }
+                    }
+                    return Json(result);
+                }
+                //不需要證明
+                ApplyResult result1 = HolidayUtility.SaveApply(payload);
+                return Json(result1);
+            }
+            else
+            {
+                //表單異常
+                return Json(new ApplyResult { isPass = false, msg = "表單驗證異常\r\n請重新確認" });
+            }
+        }
+
+
 
         [HttpGet]
         public async Task<ActionResult> Record(string id)

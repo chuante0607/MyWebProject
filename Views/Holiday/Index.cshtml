@@ -165,8 +165,8 @@
                                 <tbody>
                                     <tr v-for="data in allowBack" :key="data.id">
                                         <td style="white-space:nowrap">
-                                            <a class="btn btn-sm"><img src="~/img/edit.png" alt="Alternate Text" style="width:20px"/>修改</a>
-                                            <a class="btn btn-sm" v-on:click="delBackCheck(data.id)"><img src="~/img/trash.png" alt="Alternate Text" style="width:20px"/>刪除</a>
+                                            <a class="btn btn-sm" v-on:click="editBackCheck(data.id)"><img src="~/img/edit.png" alt="Alternate Text" style="width:20px" />修改</a>
+                                            <a class="btn btn-sm" v-on:click="delBackCheck(data.id)"><img src="~/img/trash.png" alt="Alternate Text" style="width:20px" />刪除</a>
                                         </td>
                                         <td class="text-danger font-weight-bold">{{data.reason}}</td>
                                         <td>h00{{data.id}}</td>
@@ -384,6 +384,9 @@
                         console.log('error', error);
                     })
                 },
+                editBackCheck(id) {
+                    location.href = '@Url.Action("Edit")?id=' + id;
+                }
             }
         })
     </script>
