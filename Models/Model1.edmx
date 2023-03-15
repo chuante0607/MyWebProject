@@ -167,7 +167,6 @@
     <edmx:ConceptualModels>
       <Schema Namespace="MyDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="MyDBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
           <EntitySet Name="Branches" EntityType="MyDBModel.Branch" />
           <EntitySet Name="sysdiagrams" EntityType="MyDBModel.sysdiagram" />
           <EntitySet Name="Employees" EntityType="MyDBModel.Employee" />
@@ -185,23 +184,13 @@
             <End Role="Employee" EntitySet="Employees" />
             <End Role="HolidayDetail" EntitySet="HolidayDetails" />
           </AssociationSet>
+          <EntitySet Name="Plans" EntityType="MyDBModel.Plan" />
+          <EntitySet Name="Holidays" EntityType="MyDBModel.Holiday" />
           <AssociationSet Name="FK_HolidayDetails_Holidays1" Association="MyDBModel.FK_HolidayDetails_Holidays1">
             <End Role="Holiday" EntitySet="Holidays" />
             <End Role="HolidayDetail" EntitySet="HolidayDetails" />
           </AssociationSet>
-          <EntitySet Name="Plans" EntityType="MyDBModel.Plan" />
           </EntityContainer>
-        <EntityType Name="Holiday">
-          <Key>
-            <PropertyRef Name="HId" />
-          </Key>
-          <Property Name="HId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="TotalDays" Type="Int32" Nullable="false" />
-          <Property Name="ProveType" Type="Boolean" Nullable="false" />
-          <Property Name="AnyOne" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="Holiday" ToRole="HolidayDetail" />
-        </EntityType>
         <EntityType Name="Branch">
           <Key>
             <PropertyRef Name="Id" />
@@ -310,6 +299,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Plan">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="PlanTitle" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
+        </EntityType>
+        <EntityType Name="Holiday">
+          <Key>
+            <PropertyRef Name="HId" />
+          </Key>
+          <Property Name="HId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TotalDays" Type="Int32" Nullable="false" />
+          <Property Name="ProveType" Type="Boolean" Nullable="false" />
+          <Property Name="AnyOne" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Holidays1" FromRole="Holiday" ToRole="HolidayDetail" />
+        </EntityType>
         <Association Name="FK_HolidayDetails_Holidays1">
           <End Type="MyDBModel.Holiday" Role="Holiday" Multiplicity="1" />
           <End Type="MyDBModel.HolidayDetail" Role="HolidayDetail" Multiplicity="*" />
@@ -322,32 +331,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Plan">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="PlanTitle" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
-        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="MyDBModelStoreContainer" CdmEntityContainer="MyDBEntities">
-          <EntitySetMapping Name="Holidays">
-            <EntityTypeMapping TypeName="MyDBModel.Holiday">
-              <MappingFragment StoreEntitySet="Holidays">
-                <ScalarProperty Name="AnyOne" ColumnName="AnyOne" />
-                <ScalarProperty Name="ProveType" ColumnName="ProveType" />
-                <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="HId" ColumnName="HId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Branches">
             <EntityTypeMapping TypeName="MyDBModel.Branch">
               <MappingFragment StoreEntitySet="Branch">
@@ -425,6 +414,17 @@
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="PlanTitle" ColumnName="PlanTitle" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Holidays">
+            <EntityTypeMapping TypeName="MyDBModel.Holiday">
+              <MappingFragment StoreEntitySet="Holidays">
+                <ScalarProperty Name="AnyOne" ColumnName="AnyOne" />
+                <ScalarProperty Name="ProveType" ColumnName="ProveType" />
+                <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="HId" ColumnName="HId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -35,6 +35,7 @@
                              v-show="isAll"
                              data-toggle="modal"
                              data-target="#reason">
+                            <img src="~/img/trash1.png" alt="Alternate Text" style="width:30px" />
                             全部退回
                         </div>
                     </template>
@@ -43,6 +44,7 @@
                              v-show="isChecked"
                              data-toggle="modal"
                              data-target="#reason">
+                            <img src="~/img/trash1.png" alt="Alternate Text" style="width:30px" />
                             已選擇({{isChecked}}筆)退回
                         </div>
                     </template>
@@ -113,10 +115,16 @@
 
                 <div class="funBtn">
                     <template v-if="isAll">
-                        <div class="btn btn-sm btn-success" v-show="isAll" @@click="handleAction('pass')">全部通過</div>
+                        <div class="btn btn-sm btn-success" v-show="isAll" @@click="handleAction('pass')">
+                            <img src="~/img/pass.png" alt="Alternate Text" style="width:30px" />
+                            全部通過
+                        </div>
                     </template>
                     <template v-else>
-                        <div class="btn btn-sm btn-success" v-show="isChecked" @@click="handleAction('pass')">已選擇({{isChecked}}筆)通過</div>
+                        <div class="btn btn-sm btn-success" v-show="isChecked" @@click="handleAction('pass')">
+                            <img src="~/img/pass.png" alt="Alternate Text" style="width:30px" />
+                            已選擇({{isChecked}}筆)通過
+                        </div>
                     </template>
                 </div>
 
@@ -422,7 +430,7 @@
 
         .funBtn1 {
             position: absolute;
-            left: 330px;
+            left: 400px;
             top: 5%;
             z-index: 10;
         }

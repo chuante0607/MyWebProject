@@ -1,17 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="MyDBModelStoreContainer" CdmEntityContainer="MyDBEntities">
-    <EntitySetMapping Name="Holidays">
-      <EntityTypeMapping TypeName="MyDBModel.Holiday">
-        <MappingFragment StoreEntitySet="Holidays">
-          <ScalarProperty Name="AnyOne" ColumnName="AnyOne" />
-          <ScalarProperty Name="ProveType" ColumnName="ProveType" />
-          <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
-          <ScalarProperty Name="Title" ColumnName="Title" />
-          <ScalarProperty Name="HId" ColumnName="HId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="Branches">
       <EntityTypeMapping TypeName="MyDBModel.Branch">
         <MappingFragment StoreEntitySet="Branch">
@@ -89,6 +78,17 @@
           <ScalarProperty Name="StartDate" ColumnName="StartDate" />
           <ScalarProperty Name="PlanTitle" ColumnName="PlanTitle" />
           <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Holidays">
+      <EntityTypeMapping TypeName="MyDBModel.Holiday">
+        <MappingFragment StoreEntitySet="Holidays">
+          <ScalarProperty Name="AnyOne" ColumnName="AnyOne" />
+          <ScalarProperty Name="ProveType" ColumnName="ProveType" />
+          <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="HId" ColumnName="HId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

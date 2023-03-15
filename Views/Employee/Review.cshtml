@@ -44,7 +44,7 @@
 
     <div class="row mt-5" style="margin:0px;">
         <div class="col-12 col-xl-6 block" v-for="(data , index) in showEmps" :key="data.eid">
-            <div class="col-2">
+            <div class="col">
                 <a :title="data.name" :href="'@Url.Action("detail")?eid=' + data.eId">
                     <img :src="'/img/' + data.image" :class="'img-fluid headImg ' + imgBorderColor[data.jobRank]" :alt="data.eid" v-if="data.allow" />
                     <img :src="'/img/' + data.image" class="img-fluid headImg closeBorderColor" :alt="data.eid" v-else />
@@ -287,8 +287,8 @@
             }
 
         .headImg {
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             border-radius: 100%;
             box-shadow: 3px 3px 10px black;
             cursor: pointer;

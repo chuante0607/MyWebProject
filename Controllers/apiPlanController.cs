@@ -25,11 +25,7 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            ScheduleApiModel schedule = new ScheduleApiModel();
-            //schedule.shifts = ScheduleUtility.GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
-            //schedule.plans = await ScheduleUtility.GetPlans();
-            //schedule.employees = await EmployeeUtility.GetEmployees();
-            schedule = await ScheduleUtility.GetSchedule();
+            ScheduleApiModel schedule = await ScheduleUtility.GetSchedule();
             return Json(JsonConvert.SerializeObject(schedule, camelSetting));
         }
 

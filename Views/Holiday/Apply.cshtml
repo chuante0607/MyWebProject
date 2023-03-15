@@ -40,15 +40,16 @@
                                         <div class="col-md-6">
                                             <input type="text"
                                                    id="startDatepicker"
-                                                   class="form-control form-control-user"
+                                                   class="form-control form-control-user topindex"
                                                    placeholder="開始日期"
                                                    readonly required>
                                         </div>
                                         <div class="col-md-6">
                                             <input type="text"
                                                    id="endDatepicker"
-                                                   class="form-control form-control-user"
+                                                   class="form-control form-control-user topindex"
                                                    placeholder="結束日期"
+                                                   style="z-index:999"
                                                    readonly required>
                                         </div>
                                     </div>
@@ -241,6 +242,7 @@
                 yearRange: selectYear,
                 showAnim: "fade",
                 beforeShowDay: vm.settingWorkDays,
+                showOptions: { direction: "up" },
             }).change(function () {
                 let start = $(this).datepicker("getDate");
                 let end = $("#endDatepicker").datepicker("option", "minDate", start).datepicker("getDate");
@@ -257,6 +259,7 @@
                 yearRange: selectYear,
                 showAnim: "fade",
                 beforeShowDay: vm.settingWorkDays,
+                showOptions: { direction: "up" },
             }).change(function () {
                 let start = $('#startDatepicker').datepicker("getDate");
                 let end = $("#endDatepicker").datepicker("getDate");
@@ -527,6 +530,10 @@
 
         .container {
             margin-top: 5%;
+        }
+        
+        .topindex{
+            z-index:99;
         }
     </style>
 

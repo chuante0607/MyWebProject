@@ -18,5 +18,6 @@ namespace UCOMProject.Models
         產檢假,
         陪產假,
         安胎假,
+        婚假
     }
 }

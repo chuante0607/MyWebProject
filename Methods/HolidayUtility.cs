@@ -40,7 +40,7 @@ namespace UCOMProject.Methods
                         ProveType = item.ProveType,
                         TotalDays = item.TotalDays,
                         UsedDays = emp.HolidayDetails
-                        .Where(w => w.HId == item.HId && w.BelongYear == DateTime.Now.Year)
+                        .Where(w => w.HId == item.HId && w.BelongYear == DateTime.Now.Year && w.State == 2)
                         .Select(s => s.UsedDays).Sum(),
                     };
                     holidayViewModels.Add(holiday);

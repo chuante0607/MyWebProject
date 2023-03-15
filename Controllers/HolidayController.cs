@@ -156,6 +156,7 @@ namespace UCOMProject.Controllers
             }
             else
             {
+                user = new User(RoleType.User);
                 holidays = await user.GetHolidayDetails();
             }
             List<HolidayDetailViewModel> holidayDetails = holidays.Where(w => w.State == (int)ReviewType.Pass).ToList();

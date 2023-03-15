@@ -1,13 +1,13 @@
-﻿
-@using UCOMProject.Methods;
+﻿@using UCOMProject.Methods;
 @{
     ViewBag.Title = "Summary";
     int rank = SessionEmp.CurrentEmp.JobRank;
+
 }
 
 <!-- Summary -->
 <div id="app" v-cloak>
-    <div>
+    <div v-show="showCalendars">
         <div class="row">
             <div class="col title">
                 <img src="~/img/employees.png" width="50" />
@@ -16,16 +16,16 @@
                 </span>
             </div>
         </div>
-    </div>
-    <div id="calendar"></div>
+        <div id="calendar"></div>
 
-    <div class="mt-5"></div>
+        <div class="mt-5"></div>
+    </div>
 
     <div class="row">
         <div class="col title">
             <img src="~/img/holiday.png" width="50" />
             <span class="h4 mb-0">
-                個人假別統計
+                個人假別統計 <span class="badge badge-secondary">年資 @Session["seniority"]</span>
             </span>
         </div>
     </div>
@@ -43,7 +43,7 @@
         <div class="col title">
             <img src="~/img/log.png" width="50" />
             <span class="h4 mb-0">
-                個人休假歷史紀錄{{new Date().getFullYear()}}
+                本年度休假歷史紀錄
             </span>
         </div>
     </div>
@@ -78,9 +78,11 @@
                 calendars: [],
                 holidays: [],
                 leaveInfos: {},
+                rank: 0,
+                showCalendars:false,
             },
             mounted() {
-
+                this.rank = @rank;
                 this.source = @Html.Raw(ViewBag.Source);
                 this.source.holidays.forEach((item, index) => {
                     this.$set(item, 'checked', false);
@@ -88,6 +90,7 @@
                 });
                 this.holidays = this.source.holidays;
                 this.leaveInfos = this.source.chartInfos[0];
+
                 fetch('http://localhost:51010/api/apiSchedule').then(response => {
                     return response.json();
                 }).then(result => {
@@ -95,7 +98,10 @@
                         c.title = `${c.title}(${c.remark})`;
                         this.calendars.push(c);
                     })
-                    document.addEventListener('DOMContentLoaded', this.initialCalendar());
+                    if (this.rank != 1) {
+                        document.addEventListener('DOMContentLoaded', this.initialCalendar());
+                        this.showCalendars = true;
+                    }
                     this.initialHoliadyChart();
                     this.initialLeaveChart();
                 })

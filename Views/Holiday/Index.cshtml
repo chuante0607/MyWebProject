@@ -149,7 +149,7 @@
                             <table class="table table-bordered" id="allowBack" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th v-show="allowBack.length">功能</th>
+                                        <th v-show="allowBack.length">動作</th>
                                         <th>退回原因</th>
                                         <th>編號</th>
                                         <th>申請人資訊</th>
@@ -165,8 +165,8 @@
                                 <tbody>
                                     <tr v-for="data in allowBack" :key="data.id">
                                         <td style="white-space:nowrap">
-                                            <a class="btn btn-sm btn-outline-info">修改</a>
-                                            <a class="btn btn-sm btn-danger" v-on:click="delBackCheck(data.id)">刪除</a>
+                                            <a class="btn btn-sm"><img src="~/img/edit.png" alt="Alternate Text" style="width:20px"/>修改</a>
+                                            <a class="btn btn-sm" v-on:click="delBackCheck(data.id)"><img src="~/img/trash.png" alt="Alternate Text" style="width:20px"/>刪除</a>
                                         </td>
                                         <td class="text-danger font-weight-bold">{{data.reason}}</td>
                                         <td>h00{{data.id}}</td>
