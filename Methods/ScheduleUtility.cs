@@ -163,6 +163,21 @@ namespace UCOMProject.Methods
             return workDayByMonth;
         }
 
+        public static ShiftType GetShiftTypeByDate(DateTime date, int year)
+        {
+            var query = GetWorkDayOfYearByMonth(ShiftType.A班, year);
+            ShiftViewModel result = query[date.Month - 1].Find(s => s.CheckDate == date);
+            if (result != null)
+            {
+                //A班工作就取B班 反之亦然
+                return result.IsWork ? ShiftType.B班 : ShiftType.A班;
+            }
+            else
+            {
+                return ShiftType.請選擇;
+            }
+        }
+
         /// <summary>
         /// 取得常日班的工作天
         /// </summary>
@@ -286,62 +301,5 @@ namespace UCOMProject.Methods
             return schedule;
         }
 
-        /// <summary>
-        /// 指定日期展示Schedule
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<ScheduleApiModel> GetSchedule(DateTime date)
-        {
-            ScheduleApiModel schedule = new ScheduleApiModel();
-            schedule.calendars = await GetCalendars();
-            schedule.employees = await EmployeeUtility.GetEmployees();
-            var details = await HolidayUtility.GetHolidayDetails();
-            var plans = await GetPlans();
-            string[] file = System.IO.File.ReadAllLines(System.Web.Hosting.HostingEnvironment.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
-            schedule.shifts = GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
-            var weekDays = GetWorkDayOfYearByMonth(file, DateTime.Now.Year);
-            int empsA = schedule.employees.Where(e => e.ShiftType == ShiftType.A班).ToList().Count();
-            int empsB = schedule.employees.Where(e => e.ShiftType == ShiftType.B班).ToList().Count();
-            int empsW = schedule.employees.Where(e => e.ShiftType == ShiftType.常日班).ToList().Count();
-
-
-            //以下計算人力
-            List<ScheduleNumApiModel> list = new List<ScheduleNumApiModel>();
-            foreach (Plan p in plans.OrderBy(p => p.StartDate))
-            {
-                //plan日期是範圍
-                TimeSpan days = p.EndDate.Subtract(p.StartDate);
-                for (int i = 0; i < days.Days; i++)
-                {
-                    DateTime planDate = p.StartDate.AddDays(i);
-                    ScheduleNumApiModel numModel = new ScheduleNumApiModel();
-                    //shifts weekDays leaves索引由0開始表示1月
-                    int month = planDate.Month - 1;
-                    //planNum當天排程需求人力
-                    numModel.planNum = int.Parse(p.PlanTitle);
-                    //確認當天是A或B班出勤
-                    ShiftViewModel shiftByDate = schedule.shifts[month].FirstOrDefault(shift => shift.CheckDate == planDate);
-                    //確認當天常日班是否出勤
-                    ShiftViewModel weekDayByDate = weekDays[month].FirstOrDefault(shift => shift.CheckDate == planDate);
-                    if (shiftByDate != null && weekDayByDate != null)
-                    {
-                        //shouldNum 當天應出勤出勤人力
-                        numModel.shouldNum += shiftByDate.IsWork ? empsA : empsB;
-                        numModel.shouldNum += weekDayByDate.IsWork ? empsW : 0;
-                        //當天請假人力
-                        numModel.leaveNum = details.Where(d => d.RangDate.Contains(planDate)).ToList().Count();
-                    }
-                    //實際人力不夠  在加到attendance於前端發送通知
-                    int aaa = numModel.realNum;
-                    if (numModel.realNum < 0)
-                    {
-                        numModel.date = planDate;
-                        list.Add(numModel);
-                    }
-                }
-            }
-            schedule.attendance = list;
-            return schedule;
-        }
     }
 }

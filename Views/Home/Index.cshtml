@@ -1,111 +1,69 @@
-﻿@{
+﻿
+@using UCOMProject.Methods;
+@{
     ViewBag.Title = "Summary";
+    int rank = SessionEmp.CurrentEmp.JobRank;
 }
 
 <!-- Summary -->
-<div id="app" class="mt-5" v-cloak>
-
+<div id="app" v-cloak>
+    <div>
+        <div class="row">
+            <div class="col title">
+                <img src="~/img/employees.png" width="50" />
+                <span class="h4 mb-0">
+                    今日休假人員清單
+                </span>
+            </div>
+        </div>
+    </div>
     <div id="calendar"></div>
-    <!-- Title -->
-    <div class="row title d-sm-flex align-items-center justify-content-evenly mb-4 mt-5">
-        <h1>
-            {{new Date().getFullYear()}}&nbsp;年
-            <span @@click="handleCanUse">
-                <template v-if="canUse">
-                    <a href="#" class="d-none d-sm-inline-block btn shadow-sm" v-bind:class="'btn-outline-' + color[1]">
-                        <i class="fas fa-house-user fa-sm text-bg-dark"></i> 可用休假天數
-                    </a>
-                </template>
-                <template v-else="canUse">
-                    <a href="#" class="d-none d-sm-inline-block btn shadow-sm" v-bind:class="'btn-outline-' + color[3]">
-                        <i class="fas fa-hospital-user fa-sm text-bg-dark"></i> 已使用休假天數
-                    </a>
-                </template>
+
+    <div class="mt-5"></div>
+
+    <div class="row">
+        <div class="col title">
+            <img src="~/img/holiday.png" width="50" />
+            <span class="h4 mb-0">
+                個人假別統計
             </span>
-        </h1>
-    </div>
-    <!--假別儀表板-->
-    <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4" v-for="holiday in source.holidays" :key="holiday.id">
-            <div class="card shadow h-100 py-2 " v-bind:class="'border-left-' + holiday.color">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="h4 text-center font-weight-bold holidayCard">
-                                {{holiday.title}}&nbsp;
-                                <template v-if="canUse">
-                                    <span class="badge badge-success">{{holiday.canUseDays}}&nbsp;天</span>
-                                </template>
-                                <template v-else>
-                                    <span class="badge badge-danger">{{holiday.usedDays}}&nbsp;天</span>
-                                </template>
-                            </div>
-                            @*<div v-if="canUse">
-                                    <div class="h3 mb-0 font-weight-bold text-gray-800 text-center"><span class="badge badge-success">{{holiday.canUseDays}}&nbsp;天</span></div>
-                                </div>
-                                <div v-else="canUse">
-                                    <div class="h3 mb-0 font-weight-bold text-center"><span class="badge badge-danger badge-secondary">{{holiday.usedDays}}&nbsp;天</span></div>
-                                </div>*@
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-    <!--Charts-->
+    <hr />
     <div class="row">
-        <!--Used -->
+        <div class="col-2 text-center mt-3" v-for="(h , index) in holidays" :key="h.hId">
+            <span :class="'badge badge-' + color[index]" style="font-size:18px">{{h.title}}</span>
+            <canvas class="holidayChart"></canvas>
+        </div>
+    </div>
+
+    <div class="mt-5"></div>
+
+    <div class="row">
+        <div class="col title">
+            <img src="~/img/log.png" width="50" />
+            <span class="h4 mb-0">
+                個人休假歷史紀錄{{new Date().getFullYear()}}
+            </span>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
         <div class="col">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-danger dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="badge">{{watchYear}}年</span>
-                            <span class="badge badge-danger">已用天數統計</span>
-                            <span class="badge">(月)</span>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                            <div class="dropdown-header">查看其他年份</div>
-                            <div v-for="item in chartInfos" :key="item.year">
-                                <template v-if="item.active">
-                                    <div class="dropdown-item" v-bind:class="{active:item.active}">{{item.year}}</div>
-                                    <div class="dropdown-divider"></div>
-                                </template>
-                                <template v-else>
-                                    <a class="dropdown-item" v-bind:class="{active:item.active}" href="#" v-on:click="changeChart(item.year)">{{item.year}}</a>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                         aria-labelledby="dropdownMenuLink">
-                        <div class="dropdown-header">查看其他年份</div>
-                        <div v-for="item in chartInfos" :key="item.year">
-                            <template v-if="item.active">
-                                <div class="dropdown-item" v-bind:class="{active:item.active}">{{item.year}}</div>
-                                <div class="dropdown-divider"></div>
-                            </template>
-                            <template v-else>
-                                <a class="dropdown-item" v-bind:class="{active:item.active}" href="#" v-on:click="changeChart(item.year)">{{item.year}}</a>
-                            </template>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart-area">
-                        <canvas id="myAreaChartUsed"></canvas>
-                    </div>
-                </div>
-            </div>
+            <canvas id="leaveChart" height="80"></canvas>
         </div>
     </div>
+
+
+
+
+
 </div>
 
 @section Script{
-    <!-- Charts -->
-    <script src="~/Content/admin/vendor/chart.js/Chart.bundle.js"></script>
-    <!--full calendar-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
+
 
     <script type="text/javascript">
         const vm = new Vue({
@@ -114,178 +72,175 @@
                 color,
                 source: {},
                 canUse: true,
-                chartInfos: [],
                 watchYear: '',
                 leaveCount: [],
-                totalCount:4,
+                totalCount: 4,
+                calendars: [],
+                holidays: [],
+                leaveInfos: {},
             },
             mounted() {
+
                 this.source = @Html.Raw(ViewBag.Source);
                 this.source.holidays.forEach((item, index) => {
                     this.$set(item, 'checked', false);
                     this.$set(item, 'color', this.color[index]);;
                 });
-                this.chartInfos = this.source.chartInfos;
-                this.chartInfos.sort((a, b) => b.active - a.active);
-                let data = this.chartInfos.filter(item => item.active)[0];
-                this.watchYear = data.year;
-                this.handleChart(data.days);
-                document.addEventListener('DOMContentLoaded', this.initialCalendar)
+                this.holidays = this.source.holidays;
+                this.leaveInfos = this.source.chartInfos[0];
+                fetch('http://localhost:51010/api/apiSchedule').then(response => {
+                    return response.json();
+                }).then(result => {
+                    result.calendars.forEach(c => {
+                        c.title = `${c.title}(${c.remark})`;
+                        this.calendars.push(c);
+                    })
+                    document.addEventListener('DOMContentLoaded', this.initialCalendar());
+                    this.initialHoliadyChart();
+                    this.initialLeaveChart();
+                })
+
             },
             methods: {
-            initialCalendar() {
+                //holidayChart
+                initialHoliadyChart() {
+                    let self = this;
+                    const ctx = document.querySelectorAll('.holidayChart');
+                    ctx.forEach((obj, index) => {
+                        const image = new Image();
+                        image.src = '/img/contract.png';
+                        let plugin = {
+                            id: 'customCanvasBackgroundImage',
+                            beforeDraw: (chart) => {
+                                if (image.complete) {
+                                    const ctx = chart.ctx;
+                                    const { top, left, width, height } = chart.chartArea;
+                                    const x = left + width / 2 - image.width / 2;
+                                    const y = top + height / 2 - image.height / 2;
+                                    ctx.drawImage(image, x, y);
+                                } else {
+                                    image.onload = () => chart.draw();
+                                }
+                            }
+                        };
+
+                        let info = self.holidays[index];
+                        let title = `TOTAL: ${info.totalDays}天`;
+                        let chartData = [];
+                        chartData.push(info.canUseDays);
+                        chartData.push(info.usedDays);
+                        const chart = new Chart(obj, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['可用', '已用'],
+                                datasets: [{
+                                    label: '天數',
+                                    data: chartData,
+                                    borderWidth: 2,
+                                }],
+                            },
+                            options: {
+                                //scales: {
+                                //    y: {
+                                //        beginAtZero: true
+                                //    }
+                                //},
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: title,
+                                        fullSize: true,
+                                        font: { size: 18 },
+                                    },
+                                    legend: {
+                                        labels: {
+                                            font: {
+                                                size: 12
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            //plugins: [plugin],
+                        });
+                    })
+
+                },
+                //leaveChart
+                initialLeaveChart() {
+                    let self = this;
+                    const ctx = document.getElementById('leaveChart');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月','十二月'],
+                            datasets: [{
+                                label: '使用天數',
+                                data: self.leaveInfos.days,
+                                borderWidth: 2,
+                                backgroundColor: ['#ff6699'],
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                font: { size: 18 },
+                            },
+                            legend: {
+                                labels: {
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    });
+                },
                 //calendar
-                var calendarEl = document.getElementById('calendar');
-                var calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'listDay',
-                    dayHeaders: false,
-                    listDayFormat: {
-                        year: 'numeric',
-                        month: 'numeric',
-                        day: 'numeric',
-                    },
-                    headerToolbar: false,
-                    contentHeight: 300,
-                    buttonText: {
-                        today: '今天',
-                        month: '月',
-                        week: '周',
-                        day: '天',
-                        list: '清單'
-                    },
-                    locale: 'zh-cn',
-                    dayMaxEvents: true,
-                    events: 'http://localhost:51010/api/apiSchedule',
-
-                });
-                calendar.render();
+                initialCalendar() {
+                    let self = this;
+                    var calendarEl = document.getElementById('calendar');
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        eventSources: [
+                            {
+                                events: self.calendars,//初始化events
+                                defaultAllDay: true,
+                            }
+                        ],
+                        locale: 'zh-cn',
+                        initialView: 'listDay',
+                        dayMaxEvents: true,
+                        dayHeaders: false,
+                        headerToolbar: {
+                            start: '', // will normally be on the left. if RTL, will be on the right
+                            center: '',
+                            end: '' // will normally be on the right. if RTL, will be on the left
+                        },
+                        listDayFormat: {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                        },
+                        contentHeight: 300,
+                        buttonText: {
+                            today: '今天',
+                            month: '月',
+                            week: '周',
+                            day: '天',
+                            list: '清單'
+                        },
+                    });
+                    calendar.render();
+                },
             },
-            handleCanUse() {
-                this.canUse = !this.canUse;
-            },
-            changeChart(year) {
-                window.location.href = '@Url.Action("index")?year=' + year;
-                },
-            handleChart(data) {
-                // Set new default font family and font color to mimic Bootstrap's default styling
-                Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinUrlMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-                Chart.defaults.global.defaultFontColor = '#858796';
-                function number_format(number, decimals, dec_point, thousands_sep) {
-                // *     example: number_format(1234.   56, 2, ',', ' ');
-                // *     return: '1 234,56'
-                number = (number + '').replace(',', '').replace(' ', '');
-                var n = !isFinite(+number) ? 0 : +number,
-                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-                sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-                dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-                s = '',
-                toFixedFix = function (n, prec) {
-                var k = Math.pow(10, prec);
-                return '' + Math.round(n * k) / k;
-                };
-                // Fix for IE parseFloat(0.55).toFixed(0) = 0;
-                s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-                if (s[0].length > 3) {
-                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-                }
-                if ((s[1] || '').length < prec) {
-                s[1] = s[1] || '';
-                    s[1] += new Array(prec - s[1].length + 1).join('0');
-                }
-                    return s.join(dec);
-                }
-                //Chart
-                var used = document.getElementById("myAreaChartUsed");
-                new Chart(used, {
-                type: 'line',
-                data: {
-                labels: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
-                datasets: [{
-                label: "Earnings",
-                lineTension: 0.3,
-                backgroundColor: "rgba(220, 53, 69, 0.1)",
-                borderColor: "rgba(220, 53, 69, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(255, 255, 255, 1)",
-                pointBorderColor: "rgba(220 , 53 , 69 , 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-                data,
-                }],
-                },
-                options: {
-                maintainAspectRatio: false,
-                layout: {
-                padding: {
-                left: 10,
-                right: 25,
-                top: 25,
-                bottom: 0
-                }
-                },
-                scales: {
-                xAxes: [{
-                time: {
-                unit: 'date'
-                },
-                gridLines: {
-                display: false,
-                drawBorder: false
-                },
-                ticks: {
-                maxTicksLimit: 7
-                }
-                }],
-                yAxes: [{
-                ticks: {
-                maxTicksLimit: 5,
-                padding: 10,
-                // Include a dollar sign in the ticks
-                callback: function (value, index, values) {
-                return number_format(value) + '天';
-                }
-                },
-                gridLines: {
-                color: "rgb(234, 236, 244)",
-                zeroLineColor: "rgb(234, 236, 244)",
-                drawBorder: false,
-                borderDash: [2],
-                zeroLineBorderDash: [2]
-                }
-                }],
-                },
-                legend: {
-                display: false
-                },
-                tooltips: {
-                backgroundColor: "#fff",
-                bodyFontColor: "#dc3545",
-                titleMarginBottom: 10,
-                titleFontColor: '#000',
-                titleFontSize: 16,
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                intersect: false,
-                mode: 'index',
-                caretPadding: 10,
-                callbacks: {
-                label: function (tooltipItem, chart) {
-                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                return '已用' + number_format(tooltipItem.yLabel) + '天';
-                }
-                }
-                }
-                }
-                });
-
-                }
-                },
     });
     </script>
 }
@@ -293,7 +248,9 @@
 @section Style{
     <style>
         .title {
-            flex-direction: column;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
         }
 
         .holidayCard {

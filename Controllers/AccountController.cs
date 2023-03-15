@@ -15,12 +15,6 @@ namespace UCOMProject.Controllers
     {
 
         [AllowAnonymous]
-        /// <summary>
-        /// 登入
-        /// </summary>
-        /// <param name="logout"></param>
-        /// <param name="msg"></param>
-        /// <returns></returns>
         public ActionResult Login()
         {
             ViewBag.login = 0;
@@ -29,33 +23,20 @@ namespace UCOMProject.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(string id, string pwd)
+        public async Task<ActionResult> Login(string eid, string pwd)
         {
-            Employee employee = await EmployeeUtility.MatchUser(id, pwd);
-            if (employee == null)
+            Employee employee = await EmployeeUtility.MatchUser(eid, pwd);
+            if(employee == null)
             {
-                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼無效!" });
-                return View();
+                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼錯誤!" });
             }
-            if (employee.JobRank == 0)
-            {
-                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "請由管理員頁面登入!" });
-                return View();
-            }
-            if (employee.Allow)
+            else
             {
                 Session["emp"] = employee;
                 return RedirectToAction("Index", "Home");
             }
-            else
-            {
-                ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "待管理員開通帳號權限!" });
-                return View();
-            }
+            return View();
         }
-
-
 
         [AllowAnonymous]
         public ActionResult AdminLogin()

@@ -1953,6 +1953,7 @@
     <Content Include="Content\loading.css" />
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\Login.css" />
+    <Content Include="Content\Login_A.css" />
     <Content Include="Content\MDB-Free_4.20.0\css\addons\datatables-select.min.css" />
     <Content Include="Content\MDB-Free_4.20.0\css\addons\datatables-select2.min.css" />
     <Content Include="Content\MDB-Free_4.20.0\css\addons\datatables.min.css" />
@@ -2029,6 +2030,31 @@
     <Content Include="Content\Multi-Column-Select\Multi-Column-Select.css" />
     <Content Include="Content\Multi-Column-Select\Multi-Column-Select.js" />
     <Content Include="Content\Multi-Column-Select\Multi-Column-Select.min.js" />
+    <Content Include="Content\online-shop-website-template\css\bootstrap-grid.css" />
+    <Content Include="Content\online-shop-website-template\css\bootstrap-grid.min.css" />
+    <Content Include="Content\online-shop-website-template\css\bootstrap-reboot.css" />
+    <Content Include="Content\online-shop-website-template\css\bootstrap-reboot.min.css" />
+    <Content Include="Content\online-shop-website-template\css\bootstrap.css" />
+    <Content Include="Content\online-shop-website-template\css\bootstrap.min.css" />
+    <Content Include="Content\online-shop-website-template\css\style.css" />
+    <Content Include="Content\online-shop-website-template\css\style.min.css" />
+    <Content Include="Content\online-shop-website-template\js\main.js" />
+    <Content Include="Content\online-shop-website-template\lib\animate\animate.min.css" />
+    <Content Include="Content\online-shop-website-template\lib\easing\easing.js" />
+    <Content Include="Content\online-shop-website-template\lib\easing\easing.min.js" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\ajax-loader.gif" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\owl.carousel.css" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\owl.carousel.min.css" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\owl.theme.default.css" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\owl.theme.default.min.css" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\owl.theme.green.css" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\owl.theme.green.min.css" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\assets\owl.video.play.png" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\owl.carousel.js" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\owl.carousel.min.js" />
+    <Content Include="Content\online-shop-website-template\mail\contact.js" />
+    <Content Include="Content\online-shop-website-template\mail\contact.php" />
+    <Content Include="Content\online-shop-website-template\mail\jqBootstrapValidation.min.js" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\toggle\css\bootstrap-toggle.css" />
     <Content Include="Content\toggle\css\bootstrap-toggle.min.css" />
@@ -2061,8 +2087,30 @@
     <Content Include="img\123.jpg" />
     <Content Include="img\321.png" />
     <Content Include="img\638127396292489863123.jpg" />
+    <Content Include="img\638127587457000478lin.jpg" />
+    <Content Include="img\638130175151625203321.png" />
+    <Content Include="img\638136308442108604638127396292489863123.jpg" />
+    <Content Include="img\638137009650984796man2.jpg" />
+    <Content Include="img\638138801245058414woman3.jpg" />
+    <Content Include="img\638138815303419430woman1.png" />
+    <Content Include="img\638139012159657343woman1.png" />
+    <Content Include="img\638141814480739652woman3.jpg" />
+    <Content Include="img\638141814919683536woman1.png" />
+    <Content Include="img\638141815581087173woman3.jpg" />
     <Content Include="img\admin.png" />
     <Content Include="img\lin.jpg" />
+    <Content Include="img\log.png" />
+    <Content Include="img\man.jpg" />
+    <Content Include="img\man1.jpg" />
+    <Content Include="img\man10.jpg" />
+    <Content Include="img\man2.jpg" />
+    <Content Include="img\man3.jpg" />
+    <Content Include="img\man4.jpg" />
+    <Content Include="img\man5.jpg" />
+    <Content Include="img\man6.jpg" />
+    <Content Include="img\man7.jpg" />
+    <Content Include="img\man8.jpg" />
+    <Content Include="img\man9.jpg" />
     <Content Include="img\office.jpg" />
     <Content Include="img\undraw_posting_photo.svg" />
     <Content Include="img\undraw_profile.svg" />
@@ -2070,6 +2118,19 @@
     <Content Include="img\undraw_profile_2.svg" />
     <Content Include="img\undraw_profile_3.svg" />
     <Content Include="img\undraw_rocket.svg" />
+    <Content Include="img\woman.jpg" />
+    <Content Include="img\woman1.jpg" />
+    <Content Include="img\woman1.png" />
+    <Content Include="img\woman10.jpg" />
+    <Content Include="img\woman2.jpg" />
+    <Content Include="img\woman2.png" />
+    <Content Include="img\woman3.jpg" />
+    <Content Include="img\woman4.jpg" />
+    <Content Include="img\woman5.jpg" />
+    <Content Include="img\woman6.jpg" />
+    <Content Include="img\woman7.jpg" />
+    <Content Include="img\woman8.jpg" />
+    <Content Include="img\woman9.jpg" />
     <Content Include="Models\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model1.Context.cs</LastGenOutput>
@@ -2466,6 +2527,7 @@
     <Content Include="Content\MDB-Free_4.20.0\Useful_Resources.pdf" />
     <Content Include="Content\toggle\js\bootstrap-toggle.min.js.map" />
     <Content Include="Content\toggle\js\bootstrap2-toggle.min.js.map" />
+    <Content Include="Content\online-shop-website-template\lib\owlcarousel\LICENSE" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -2489,7 +2551,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Holiday\Apply.cshtml" />
@@ -2497,6 +2558,7 @@
     <Content Include="Views\Holiday\Record.cshtml" />
     <Content Include="Views\Employee\Detail.cshtml" />
     <Content Include="Views\Employee\Edit.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <None Include="Views\Holiday\Review.cshtml" />
     <Content Include="Views\Account\AdminLogin.cshtml" />
     <Content Include="Views\Employee\Create.cshtml" />
@@ -2506,6 +2568,8 @@
     <Content Include="Views\Schedule\Index.cshtml" />
     <Content Include="Views\Schedule\Plan.cshtml" />
     <Content Include="Views\Schedule\Event.cshtml" />
+    <Content Include="Views\Schedule\Warn.cshtml" />
+    <Content Include="Views\Home\Chart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2556,7 +2620,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('packages\BuildWebCompiler.1.12.405\build\BuildWebCompiler.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BuildWebCompiler.1.12.405\build\BuildWebCompiler.targets'))" />
   </Target>
+  <Import Project="packages\BuildWebCompiler.1.12.405\build\BuildWebCompiler.targets" Condition="Exists('packages\BuildWebCompiler.1.12.405\build\BuildWebCompiler.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

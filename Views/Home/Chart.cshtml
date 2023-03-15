@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewBag.Title = "Chart";
+}
+
+<h2>Chart</h2>
+
+<div id="app" class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            <canvas class="myChart"></canvas>
+        </div>
+        <div class="col-2">
+            <canvas class="myChart"></canvas>
+        </div>
+        <div class="col-2">
+            <canvas class="myChart"></canvas>
+        </div>
+        <div class="col-2">
+            <canvas class="myChart"></canvas>
+        </div>
+        <div class="col-2">
+            <canvas class="myChart"></canvas>
+        </div>
+        <div class="col-2">
+            <canvas class="myChart"></canvas>
+        </div>
+        <div class="col-2">
+            <canvas class="myChart"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Script{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                chartTitle: [],
+            },
+            mounted() {
+                this.initialChart();
+            },
+            methods: {
+                initialChart() {
+                    let self = this;
+                    const ctx = document.querySelectorAll('.myChart');
+                    ctx.forEach(obj => {
+                        const image = new Image();
+                        image.src = '/img/contract.png';
+                        let plugin = {
+                            id: 'customCanvasBackgroundImage',
+                            beforeDraw: (chart) => {
+                                if (image.complete) {
+                                    const ctx = chart.ctx;
+                                    const { top, left, width, height } = chart.chartArea;
+                                    const x = left + width / 2 - image.width / 2;
+                                    const y = top + height / 2 - image.height / 2;
+                                    ctx.drawImage(image, x, y);
+                                } else {
+                                    image.onload = () => chart.draw();
+                                }
+                            }
+                        };
+                        const chart = new Chart(obj, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['可用', '已用'],
+                                datasets: [{
+                                    label: '天數',
+                                    data: [10, 2],
+                                    borderWidth: 1,
+                                    backgroundColor: ['#50C878', '#E55451'],
+                                }],
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                },
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: '特休:10天',
+                                        fullSize: true,
+                                        font: { size: 18 },
+                                    },
+                                    legend: {
+                                        labels: {
+                                            font: {
+                                                size: 12
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            //plugins: [plugin],
+                        });
+                    })
+                
+                },
+            }
+        })
+    </script>
+}
+
+@section Style{
+    <style>
+        #myChart {
+            width: 150px;
+            height: 150px;
+        }
+    </style>
+}

@@ -9,64 +9,67 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
-    <script src="~/Scripts/jquery-3.6.3.js"></script>
-    <link href="~/Content/Login.css" rel="stylesheet" />
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link href="~/Content/Login_A.css" rel="stylesheet" />
+    <link href="~/Content/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <style>
+   
+    </style>
 </head>
+
 <body>
-    <form class="form" id="form" action="@Url.Action("login")" method="post">
-        @Html.AntiForgeryToken()
-        <div class="field email">
-            <div class="icon"></div>
-            <input class="input" id="email" type="text" placeholder="ID" autocomplete="off" name="id" />
+    <form class="login" id="app" action="@Url.Action("Login")" method="post">
+        <h4 class="text-center" style="font-size:2em">LOGIN</h4>
+        <input type="text" placeholder="工號" v-model="acc" name="eid">
+        <input type="password" placeholder="密碼" v-model="pwd" name="pwd">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button v-on:click="mySubmit" class="btn btn-warning" id="login_btn">Sign In</button>
+            <button v-on:click="myOp" class="btn btn-outline-success">員工</button>
+            <button v-on:click="myManager" class="btn btn-outline-info">主管</button>
+            <button v-on:click="myAdmin" class="btn btn-outline-danger">管理員</button>
         </div>
-        <div class="field password">
-            <div class="icon"></div>
-            <input class="input" id="password" type="password" placeholder="Password" name="pwd" />
-        </div>
-        <div class="field">
-            <div class="icon"></div>
-            <input class="button" type="submit" value="LOGIN" />
-        </div>
-        <div class="field">
-            <div class="icon"></div>
-            <input class="button" type="button" value="員工" onclick="handleOp()" />
-        </div>
-
-        <div class="field">
-            <div class="icon"></div>
-            <input class="button" type="button" value="主管" onclick="handleLeader()" />
-        </div>
-        <div class="field">
-            <div class="icon"></div>
-            <input class="button" type="button" value="管理員" onclick="handleAdmin()" />
-        </div>
-
     </form>
 
-    <script src="~/Scripts/Login.js"></script>
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/alert/sweetalert.js"></script>
     <script src="~/Scripts/site.js"></script>
+    <script>
 
-    <script type="text/javascript">
-
-        function handleOp() {
-            $('[name="id"]').val('E001');
-            $('[name="pwd"]').val('F123456789');
-            $('#form').submit();
-        }
-
-        function handleLeader() {
-            $('[name="id"]').val('E004');
-            $('[name="pwd"]').val('F123456789');
-            $('#form').submit();
-        }
-        function handleAdmin() {
-            window.location.href = '@Url.Action("adminLogin" , "account")'
-        }
-        let login = JSON.parse('@Html.Raw(ViewBag.login)');
-        if (login)
-            eAlert(login.msg);
+        new Vue({
+            el: '#app',
+            data: {
+                acc: '',
+                pwd: '',
+            },
+            mounted() {
+                let data = '@Html.Raw(ViewBag.login)';
+                let result = JSON.parse(data);
+                if (result.error) {
+                    eAlert(result.msg);
+                }
+            },
+            methods: {
+                mySubmit() {
+                    document.querySelector('[name="eid"]').value = this.acc;
+                    document.querySelector('[name="pwd"]').value = this.pwd;
+                    document.querySelector('[class="login"]').submit();
+                },
+                myOp() {
+                    this.acc = "E001";
+                    this.pwd = "F123456789";
+                    this.mySubmit();
+                },
+                myManager() {
+                    this.acc = "E004";
+                    this.pwd = "F123456789";
+                    this.mySubmit();
+                },
+                myAdmin() {
+                    this.acc = "admin";
+                    this.pwd = "admin";
+                    this.mySubmit();
+                }
+            }
+        })
     </script>
 </body>
 </html>

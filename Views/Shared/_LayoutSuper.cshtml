@@ -89,8 +89,8 @@
             <hr class="sidebar-divider my-0">
             <hr class="sidebar-divider">
             @*<div class="sidebar-heading">
-                    Personal ' SYSTEM
-                </div>*@
+            Personal ' SYSTEM
+        </div>*@
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
@@ -106,24 +106,24 @@
                     </div>
                 </div>
             </div>
-            <div class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
-                   aria-expanded="true" aria-controls="collapse3">
-                    <i class="fas fa-calendar"></i>
-                    <span>生產相關</span>
-                </a>
-                <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">排班系統</h6>
-                        <a class="collapse-item" href="@Url.Action("index" , "schedule")">出勤總覽</a>
-                        <a class="collapse-item" href="@Url.Action("plan" , "schedule")">人力計畫</a>
-                        <a class="collapse-item" href="#">人力調度</a>
-                    </div>
-                </div>
-            </div>
+
             @switch (SessionEmp.CurrentEmp.JobRank)
             {
                 case (int)RoleType.Manager:
+                    <div class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
+                           aria-expanded="true" aria-controls="collapse3">
+                            <i class="fas fa-calendar"></i>
+                            <span>生產相關</span>
+                        </a>
+                        <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">排班系統</h6>
+                                <a class="collapse-item" href="@Url.Action("index" , "schedule")">出勤總覽</a>
+                                <a class="collapse-item" href="#">人力調度</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                            aria-expanded="true" aria-controls="collapsePages">
@@ -141,6 +141,21 @@
                     </div>
                     break;
                 case (int)RoleType.Admin:
+                    <div class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
+                           aria-expanded="true" aria-controls="collapse3">
+                            <i class="fas fa-calendar"></i>
+                            <span>生產相關</span>
+                        </a>
+                        <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">排班系統</h6>
+                                <a class="collapse-item" href="@Url.Action("index" , "schedule")">出勤總覽</a>
+                                <a class="collapse-item" href="@Url.Action("plan" , "schedule")">人力計畫</a>
+                                <a class="collapse-item" href="#">人力調度</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                            aria-expanded="true" aria-controls="collapsePages">
@@ -286,7 +301,7 @@
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-envelope fa-fw"></i>
                                 <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
+                                <span class="badge badge-danger badge-counter">@ViewBag.Num</span>
                             </a>
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"

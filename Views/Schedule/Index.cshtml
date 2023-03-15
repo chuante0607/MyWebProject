@@ -32,7 +32,9 @@
                 employees: [],//員工資訊
                 calendars: [],//請假人力的event事件
                 shifts: [],//AB班表by日期
-                attendance:[],
+                weekWorks: [],//常日班表by日期
+                attendance: [],//人力不足所有日期列表
+                warnDate:[],//人力不足紀錄
                 empsA:[],//A班數量
                 empsB:[],//B班數量
                 empsW: [],//常日班數量
@@ -46,6 +48,7 @@
                     this.calendars = result.calendars;
                     this.employees = result.employees;
                     this.shifts = result.shifts;
+                    this.weekWorks = result.weekWorks;
                     this.attendance = result.attendance;
                     document.addEventListener('DOMContentLoaded', this.initialCalendar())
                 })
@@ -97,6 +100,7 @@
                         dayCellClassNames: self.handleDayCellClassNames,
                         dayCellContent: self.handleDayCellContent,
                         dayCellDidMount: self.handleDayCellDidMount,
+                        dateClick: self.handleDateClick,
                     });
                     calendar.render();
                 },
@@ -146,24 +150,51 @@
                 },
                 //cell的內容(人力不足顯示)
                 handleDayCellContent(arg) {
+                    //判斷常班休假日
+                    let date = arg.date;
+                    let data = this.weekWorks[date.getMonth()].find(w => {
+                        return new Date(w.CheckDate).toLocaleDateString() === date.toLocaleDateString();
+                    });
                     let att = this.attendance.find(item => {
                         let date = new Date(item.date);
                         return arg.date.toLocaleDateString() === date.toLocaleDateString();
                     })
-                    let msg = ''
+                    let warn = '';
                     if (att) {
-                        msg = `人力不足${att.realNum}`;
+                        this.warnDate.push(date);
+                        warn = `<div class="col badge badge-danger">人力不足${att.realNum}</div>`
                     }
-                    
-                    let htmlStr = `
-                                 <div class="row attendanceNum">
-                                    <div class="col badge badge-danger">${msg}</div>
-                                    <div class="col" data-toggle="attendanceTooltip" data-placement="top">${arg.dayNumberText}</div>
-                                 </div>
-                                `;
-                    setAttendanceTooltip(msg);
-                    return { html: htmlStr };
+
+                    //常日班放假客製化日期字體顏色
+                    if (data && !data.IsWork) {
+                        let htmlStr = `
+                        <div class="row attendanceNum">
+                            ${warn}
+                            <div class="col dayCellContent">${arg.dayNumberText}</div>
+                        </div>`;
+                        return { html: htmlStr };
+                    }
+                    else {
+                        let htmlStr = `
+                        <div class="row attendanceNum">
+                            ${warn}
+                            <div class="col">${arg.dayNumberText}</div>
+                        </div>`;
+
+                        return { html: htmlStr };
+                    }
                 },
+                //cell click事件
+                handleDateClick(info) {
+                    let check = this.warnDate.some(d => {
+                        return info.date.toLocaleDateString() === d.toLocaleDateString();
+                    })
+                    if (check) {
+                        location.href = `@Url.Action("warn")?date=${info.date.toLocaleDateString()}`;
+                    }
+                    else
+                        return;
+                }
             }
         })
 
@@ -203,6 +234,7 @@
             border-radius: 50%;
             color: black;
         }
+
         .shift_block {
             border: 1px solid black;
             width: 30px;
@@ -210,13 +242,16 @@
             display: inline-block;
             margin-right: 10px;
         }
+
         .shiftA {
             background-color: #d6e7f3;
         }
+
         .shiftW {
             border: 1px dashed black;
             background-color: #ffe93a;
         }
+
         .event_backImg {
             background-size: contain;
             background-repeat: no-repeat;
@@ -242,6 +277,11 @@
             margin-right: 0px;
             margin-left: 0px;
             align-items: center;
+        }
+
+        .dayCellContent {
+            font-weight: 800;
+            color: red;
         }
     </style>
 }

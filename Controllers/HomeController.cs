@@ -18,6 +18,7 @@ namespace UCOMProject.Controllers
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
         public async Task<ActionResult> Index(int? year)
         {
+            ViewBag.Num = 11;
             Guid g = Guid.NewGuid();
             string guid = g.ToString();
 
@@ -34,6 +35,11 @@ namespace UCOMProject.Controllers
             {
                 string msg = ex.Message;
             }
+            return View();
+        }
+
+        public ActionResult Chart()
+        {
             return View();
         }
     }

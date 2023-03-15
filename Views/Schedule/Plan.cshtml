@@ -177,7 +177,7 @@
                             eventMaxStack: 1,
                             editable: true,
                             droppable: true,
-                            height: 900,
+                            height: 700,
                             timeZone: 'UTC',
                             drop: function (info) {
                                 self.handleDrop(info);
@@ -331,7 +331,7 @@
                         return new Date(w.checkDate).toLocaleDateString() === date.toLocaleDateString();
                     });
                     //常日班放假客製化日期字體顏色
-                    if (!data.isWork) {
+                    if (data && !data.isWork) {
                         return { html: `<div class="dayCellContent">${arg.dayNumberText}</div>` }
                     }
                     else {

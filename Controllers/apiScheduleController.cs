@@ -27,33 +27,6 @@ namespace UCOMProject.Controllers
             return Json(schedule);
         }
 
-        [HttpGet]
-        public async Task<IHttpActionResult> Get(DateTime start, DateTime end)
-        {
-            var result = await HolidayUtility.GetHolidayDetails(start);
-            return Ok();
-        }
-
-        /// <summary>
-        /// 連續請假天數
-        /// </summary>
-        /// <param name="days"></param>
-        /// <param name="currentDate"></param>
-        /// <returns></returns>
-        //private DateTime EvenDays(List<DateTime> days, DateTime currentDate)
-        //{
-        //    DateTime endDate = currentDate.AddDays(1);
-        //    bool even = days.Any(a => a == endDate);
-        //    if (even)
-        //    {
-        //        //連續的日期存入EvenDaysList
-        //        EvenDaysList.Add(endDate);
-        //        //重複呼叫自己
-        //        endDate = EvenDays(days, endDate);
-        //    }
-        //    return endDate;
-        //}
-
         private RoleManage ConfirmIdentity(int rank, BranchType branch)
         {
             RoleManage user = null;
@@ -72,13 +45,10 @@ namespace UCOMProject.Controllers
             return user;
         }
 
-
-        // PUT: api/apiSchedule/5
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE: api/apiSchedule/5
         public void Delete(int id)
         {
         }
