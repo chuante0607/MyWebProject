@@ -1,9 +1,8 @@
 ﻿@model UCOMProject.Models.ApplyViewModel
 
 @{
-    ViewBag.Title = "休假申請";
+    ViewBag.Title = "修改休假申請";
 }
-
 <div class="container" id="app" v-cloak>
     <div class="row">
         <!--表單區-->
@@ -14,7 +13,7 @@
                         <div class="col">
                             <div class="p-5">
                                 <div class="text-center">
-                                    <h1 class="h4 mb-4">休假申請</h1>
+                                    <h1 class="h4 mb-4">修改休假申請</h1>
                                 </div>
                                 <hr />
                                 <form class="user" action="~/Holiday/Apply" method="post" >
@@ -267,13 +266,15 @@
                     vm.range = { start, end };
                 }
             })
+            $("#startDatepicker").datepicker('setDate', new Date(vm.detail.beginDate));
+            $("#endDatepicker").datepicker('setDate', new Date(vm.detail.endDate));
+
         });
 
         //Vue
         const vm = new Vue({
             el: '#app',
             data: {
-                source: {},
                 employee: {},
                 holidays: {},
                 startDate: '',
@@ -287,9 +288,10 @@
                 files: null,
                 fileName: '上傳證明',
                 color,
+                detail: {},
+                id: {},
             },
             mounted() {
-                this.source = @Html.Raw(ViewBag.vm);
                 let data = @Html.Raw(ViewBag.vm);
                 this.employee = data.employee;
                 this.holidays = data.holidays;
@@ -297,8 +299,18 @@
                 this.holidays.forEach((h,i) => {
                     this.$set(h, 'color', color[i]);
                 })
+                this.detail = @Html.Raw(ViewBag.editDetail);
 
-
+                this.id = this.detail.id;
+                this.title = this.detail.title;
+                this.startDate = new Date(this.detail.beginDate);
+                this.endDate = new Date(this.detail.endDate);
+                this.hId = this.detail.hId;
+                this.UsedDays = this.detail.usedDays;
+                this.remark = this.detail.remark;
+                let holiday = this.holidays.find(h => h.hId == this.hId);
+                this.proveType = holiday.proveType;
+                
             },
             computed: {
                 //計算使用天數
@@ -379,6 +391,7 @@
                     //上傳檔案必須要使用FormData post方式
                     if (this.range && this.remain >= 0 && this.remark) {
                         var formData = new FormData();
+                        formData.append('id', this.id);
                         formData.append('Eid', this.employee.eId);
                         formData.append('HId', this.hId);
                         formData.append('Title', this.title);
@@ -400,7 +413,7 @@
                         }
                         $.ajax({
                             method: 'post',
-                            url: '@Url.Action("apply")',
+                            url: '@Url.Action("edit")',
                             data: formData,
                             processData: false,  // formData 不將數據轉換為字符串
                             contentType: false,  // formData 不設置Content-Type請求頭

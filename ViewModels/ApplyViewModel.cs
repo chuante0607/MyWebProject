@@ -22,6 +22,8 @@ namespace UCOMProject.Models
         public EmployeeViewModel Employee { get; set; }
         public List<HolidayViewModel> Holidays { get; set; }
         public List<List<ShiftViewModel>> WorkDayOfYearByMonth { get; set; }
+        
+        public string id { get; set; }
 
         [Required]
         public string EId { get; set; }

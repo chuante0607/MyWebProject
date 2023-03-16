@@ -62,7 +62,7 @@ namespace UCOMProject.Controllers
             }
             Session["seniority"] = seniority;
 
-            //每日人力計算
+            //vm.Attendance = await ScheduleUtility.GetAttendance();
             year = year == null ? DateTime.Now.Year : year;
             vm.Employee = SessionEmp.CurrentEmp;
             if (vm.Employee.EId == "admin") RedirectToAction("login", "admin");

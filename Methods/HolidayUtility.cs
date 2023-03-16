@@ -189,6 +189,94 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
+        /// 休假申請
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
+        public static ApplyResult SaveEditApply(ApplyViewModel payload)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                int id = int.Parse(payload.id);
+                string applyMsg = string.Empty;
+                var query = db.HolidayDetails
+                    .Where(w => w.EId == payload.EId && w.Id != id)
+                    .OrderBy(o => o.BeginDate)
+                    .Select(s => new { BeginDate = s.BeginDate, EndDate = s.EndDate });
+
+                //取得payloadMonths裡的休假月份 , 用來快速索引query的休假月份是否相符
+                List<int> payloadMonths = payload.RangeDate.Select(s => s.Month).OrderBy(o => o).Distinct().ToList();
+
+                foreach (var item in query)
+                {
+                    //判斷該員工休假detail之中有沒有與申請休假的月份相同 ,Any查到相符返回true , 進一步查詢是否有相符的日期
+                    if (payloadMonths.Any(month => month == item.BeginDate.Month || month == item.EndDate.Month))
+                    {
+                        //checkDays計算detail結束日期-開始日期的總天數
+                        int checkDays = item.EndDate.Subtract(item.BeginDate).Days;
+                        while (checkDays >= 0)
+                        {
+                            //請假範圍 >= 0天(包括當天) 就從結束的日期 - 要判斷的總天數開始判斷
+                            DateTime checkDate = item.EndDate.AddDays(checkDays * -1);
+
+                            //payload送過來的RangeDate含有員工選擇休假期間的所有日期集合,拿來判斷是否跟資料庫的日期是否重複
+                            var result = payload.RangeDate
+                                   .Any(date =>
+                                   (new DateTime(date.Year, date.Month, date.Day)).Ticks
+                                   .Equals(new DateTime(checkDate.Year, checkDate.Month, checkDate.Day).Ticks));
+
+                            if (result)  //如果申請的日期已有休假紀錄 
+                            {
+                                //休假紀錄只有一天,就返回該日期 , 超過一天,就返回開始日期~結束日期
+                                applyMsg = item.EndDate.Subtract(item.BeginDate).Days == 0 ?
+                                   $"{item.BeginDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請" :
+                                   $"{item.BeginDate.ToShortDateString()} ~ {item.EndDate.ToShortDateString()}\r\n已有休假紀錄，請重新申請";
+                                return new ApplyResult { isPass = false, msg = applyMsg };
+                            }
+                            checkDays--;
+                        }
+                    }
+                }
+                //設定檔案檔名
+                List<string> fileNames = new List<string>();
+                string fileStr = null;
+                if (payload.Files != null)
+                {
+                    var file = payload.Files.Select(s => s.FileName);
+                    foreach (var item in file.Select((value, index) => new { value, index }))
+                    {
+                        string format = $"{DateTime.Now.Ticks}{item.value}";
+                        fileNames.Add(format);
+                        fileStr += format;
+                        if (item.index < file.Count() - 1)
+                            fileStr += ",";
+                    }
+                }
+                //判斷結束無休假紀錄，準備將資料新增到資料庫
+                HolidayDetail dbDetail = db.HolidayDetails.Find(id);
+                dbDetail.EId = payload.EId;
+                dbDetail.HId = payload.HId;
+                dbDetail.ApplyDate = DateTime.Now;
+                dbDetail.BeginDate = payload.BeginDate;
+                dbDetail.EndDate = payload.EndDate;
+                dbDetail.BelongYear = payload.BeginDate.Year;
+                dbDetail.UsedDays = payload.UsedDays;
+                dbDetail.Remark = payload.Remark;
+                dbDetail.Prove = fileStr;
+                dbDetail.State = (int)ReviewType.Wait;
+                string rangStr = string.Join(",", payload.RangeDateString);
+                dbDetail.RangeDate = rangStr;
+                db.SaveChanges();
+                applyMsg = $"申請已送出！\r\n" +
+                           $"{((DateTime)payload.BeginDate).ToShortDateString()} ~ " +
+                           $"{((DateTime)payload.EndDate).ToShortDateString()}\r\n共計：{payload.Title}{payload.UsedDays}天";
+                return new ApplyResult { isPass = true, msg = applyMsg, FilesNames = fileNames };
+            }
+        }
+
+
+
+        /// <summary>
         /// 取得指定日期的休假員工
         /// </summary>
         /// <returns></returns>

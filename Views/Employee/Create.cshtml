@@ -12,7 +12,7 @@
     <div class="form-horizontal">
         <hr />
         <div class="input-group mb-3" style="justify-content: space-between;">
-            <button type="submit" class="btn btn-primary"> <i class="fi fa-ice-cream">新增</i></button>
+            <button type="submit" class="btn btn-primary">新增</button>
             <a href="@Url.Action("index" , "home")" class="btn btn-outline-warning">
                 <i class="fi fi-rr-left">返回</i>
             </a>
@@ -27,7 +27,7 @@
             @Html.EditorFor(model => model.EId, new { htmlAttributes = new { @class = "form-control", placeholder = "工號" } })
             <div class="input-group-prepend">
                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-id-badge"></i></span>
+                <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-globe"></i></span>
             </div>
             @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "身分證字號" } })
         </div>

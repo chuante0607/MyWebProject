@@ -183,7 +183,7 @@ namespace UCOMProject.Controllers
                     if (size > 4)
                         return Json(new ApplyResult { isPass = false, msg = "檔案大小不能超過4MB" });
                     //是否申請成功(true成功 , false失敗)
-                    ApplyResult result = HolidayUtility.SaveApply(payload);
+                    ApplyResult result = HolidayUtility.SaveEditApply(payload);
                     if (result.isPass)
                     {
                         //將檔案儲存
@@ -196,7 +196,7 @@ namespace UCOMProject.Controllers
                     return Json(result);
                 }
                 //不需要證明
-                ApplyResult result1 = HolidayUtility.SaveApply(payload);
+                ApplyResult result1 = HolidayUtility.SaveEditApply(payload);
                 return Json(result1);
             }
             else
