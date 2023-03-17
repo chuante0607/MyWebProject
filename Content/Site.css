@@ -48,4 +48,9 @@
     font-size: 2rem;
 }
 
-
+.headImgLayout {
+    width: 100px;
+    height: auto;
+    border-color: #123456;
+    border-width: 10px;
+}

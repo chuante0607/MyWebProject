@@ -213,17 +213,27 @@ namespace UCOMProject.Methods
             foreach (HolidayDetailViewModel detail in holidayDetails)
             {
                 string className = "";
+                string backColor = "";
+                string txtColor = "";
                 if (detail.State != 2)
                     continue;
                 switch (detail.Shift.xTranShiftEnum())
                 {
                     case ShiftType.常日班:
+                        className = "event_shiftW";
+                        backColor = "#FFF";
+                        txtColor = "#000";
                         break;
                     case ShiftType.A班:
                         className = "event_shiftA";
+                        backColor = "#630089";
+                        txtColor = "#FFF";
                         break;
                     case ShiftType.B班:
                         className = "event_shiftB";
+                        backColor = "#890000";
+                        txtColor = "#FFF";
+                    
                         break;
                     default:
                         break;
@@ -236,6 +246,8 @@ namespace UCOMProject.Methods
                     calendar.start = date;
                     calendar.end = date.AddDays(1);
                     calendar.classNames = className;
+                    calendar.backgroundColor = backColor;
+                    calendar.textColor = txtColor;
                     calendar.remark = $"{ detail.Title} {detail.UsedDays}天：{detail.BeginDate.ToString("M/d")} - {detail.EndDate.ToString("M/d")}";
                     calendars.Add(calendar);
                 }
@@ -302,56 +314,5 @@ namespace UCOMProject.Methods
         }
 
 
-        public static async Task<List<ScheduleNumApiModel>> GetAttendance()
-        {
-            ScheduleApiModel schedule = new ScheduleApiModel();
-            schedule.employees = await EmployeeUtility.GetEmployees();
-            var details = await HolidayUtility.GetHolidayDetails();
-            schedule.plans = await GetPlans();
-            string[] file = System.IO.File.ReadAllLines(System.Web.Hosting.HostingEnvironment.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
-            schedule.shifts = GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
-            schedule.weekWorks = GetWorkDayOfYearByMonth(file, DateTime.Now.Year);
-            int empsA = schedule.employees.Where(e => e.ShiftType == ShiftType.A班).ToList().Count();
-            int empsB = schedule.employees.Where(e => e.ShiftType == ShiftType.B班).ToList().Count();
-            int empsW = schedule.employees.Where(e => e.ShiftType == ShiftType.常日班).ToList().Count();
-
-
-            //以下計算人力
-            List<ScheduleNumApiModel> list = new List<ScheduleNumApiModel>();
-            foreach (Plan p in schedule.plans.OrderBy(p => p.StartDate))
-            {
-                //plan日期是範圍
-                TimeSpan days = p.EndDate.Subtract(p.StartDate);
-                for (int i = 0; i < days.Days; i++)
-                {
-                    DateTime planDate = p.StartDate.AddDays(i);
-                    ScheduleNumApiModel numModel = new ScheduleNumApiModel();
-                    //shifts weekDays leaves索引由0開始表示1月
-                    int month = planDate.Month - 1;
-                    //planNum當天排程需求人力
-                    numModel.planNum = int.Parse(p.PlanTitle);
-                    //確認當天是A或B班出勤
-                    ShiftViewModel shiftByDate = schedule.shifts[month].FirstOrDefault(shift => shift.CheckDate == planDate);
-                    //確認當天常日班是否出勤
-                    ShiftViewModel weekDayByDate = schedule.weekWorks[month].FirstOrDefault(shift => shift.CheckDate == planDate);
-                    if (shiftByDate != null && weekDayByDate != null)
-                    {
-                        //shouldNum 當天應出勤出勤人力
-                        numModel.shouldNum += shiftByDate.IsWork ? empsA : empsB;
-                        numModel.shouldNum += weekDayByDate.IsWork ? empsW : 0;
-                        //當天請假人力
-                        numModel.leaveNum = details.Where(d => d.RangDate.Contains(planDate)).ToList().Count();
-                    }
-                    //實際人力不夠  在加到attendance於前端發送通知
-                    int aaa = numModel.realNum;
-                    if (numModel.realNum < 0)
-                    {
-                        numModel.date = planDate;
-                        list.Add(numModel);
-                    }
-                }
-            }
-            return list;
-        }
     }
 }

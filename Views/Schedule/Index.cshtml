@@ -1,14 +1,14 @@
 ﻿@using UCOMProject.Models
 @using UCOMProject.Methods
 @{
-    ViewBag.Title = "出勤總覽";
+    ViewBag.Title = "休假人力總覽";
     Employee emp = SessionEmp.CurrentEmp;
 }
 
-<h4 class="text-center">出勤總覽</h4>
+@*<h4 class="text-center">休假人力總覽</h4>*@
 <div id="app" v-cloak>
     <div>
-        <div class="block">
+        @*<div class="block">
             <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
             <span>A班</span>&nbsp;&nbsp;&nbsp;
             <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
@@ -17,7 +17,7 @@
             <span>常日班</span>&nbsp;&nbsp;&nbsp;
             <div class="all" data-toggle="tooltip" data-placement="top" id="titleAll"></div>
             <span class="allContent">{{employees.length}}</span>
-        </div>
+        </div>*@
         <div id="calendar" class=""></div>
     </div>
 </div>
@@ -74,7 +74,7 @@
                             {
                                 events: this.calendars,//初始化events
                                 defaultAllDay: true,
-                                className: 'text-center badge badge-primary event_backImg',
+                                className: 'text-center event_backImg eventFont',
                             }
                         ],
                         locale: 'zh-cn',
@@ -162,13 +162,13 @@
                     let warn = '';
                     if (att) {
                         this.warnDate.push(date);
-                        warn = `<div class="col badge badge-danger">人力不足${att.realNum}</div>`
+                        warn = `<div class="col badge badge-danger attendanceNum">人力不足${att.realNum}</div>`
                     }
 
                     //常日班放假客製化日期字體顏色
                     if (data && !data.IsWork) {
                         let htmlStr = `
-                        <div class="row attendanceNum">
+                        <div class="row">
                             ${warn}
                             <div class="col dayCellContent">${arg.dayNumberText}</div>
                         </div>`;
@@ -176,7 +176,7 @@
                     }
                     else {
                         let htmlStr = `
-                        <div class="row attendanceNum">
+                        <div class="row">
                             ${warn}
                             <div class="col">${arg.dayNumberText}</div>
                         </div>`;
@@ -266,7 +266,7 @@
         }
 
         .event_shiftW {
-            background-image: url(/images/w.png);
+            /*background-image: url(/images/w.png);*/
         }
 
         .cellBack {
@@ -277,11 +277,13 @@
             margin-right: 0px;
             margin-left: 0px;
             align-items: center;
+            font-size:20px;
         }
 
         .dayCellContent {
             font-weight: 800;
             color: red;
         }
+      
     </style>
 }

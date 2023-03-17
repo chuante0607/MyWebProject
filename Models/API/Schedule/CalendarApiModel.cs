@@ -12,6 +12,8 @@ namespace UCOMProject.API
         public DateTime start { get; set; }
         public DateTime end { get; set; }
         public string classNames { get; set; }
+        public string backgroundColor { get; set; }
+        public string textColor { get; set; }
         public string color { get; set; }
         public string remark { get; set; }
         public bool allDay { get { return true; } }

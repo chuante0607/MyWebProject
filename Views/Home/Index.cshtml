@@ -15,24 +15,23 @@
                 <span class="h4 mb-0">
                     今日休假人員清單
                 </span>
-
             </div>
         </div>
         <br />
         <div class="row" v-if="showAlarm">
             <div class="col">
                 <span class="badge badge-info" style="font-size:1rem">
-                    計畫：
+                    計畫
                     {{attendance.total}}
                     人
                 </span>
                 <span class="badge badge-secondary" style="font-size:1rem">
-                    實到：
+                    實到
                     {{attendance.real}}
                     人
                 </span>
                 <span class="badge badge-danger" style="font-size:1rem">
-                    缺少：
+                    缺少
                     {{attendance.alarm * -1}}
                     人
                 </span>
@@ -115,7 +114,7 @@
                 });
                 this.holidays = this.source.holidays;
                 this.leaveInfos = this.source.chartInfos[0];
-             
+
                 fetch('http://localhost:51010/api/apiSchedule').then(response => {
                     return response.json();
                 }).then(result => {

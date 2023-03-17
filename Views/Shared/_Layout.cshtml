@@ -62,33 +62,58 @@
                 </div>
                 <div class="sidebar-brand-text mx-3">Employee<sup>sys</sup></div>
             </a>
-            <span class="badge badge-light" style="border-radius: initial;">
-                @SessionEmp.CurrentEmp.Branch @SessionEmp.CurrentEmp.Shift
-                <span class="badge badge-success">
-                    @SessionEmp.CurrentEmp.JobTitle
-                </span>
-            </span>
-            <span class="badge badge-info" style="border-radius: initial;">
-                @SessionEmp.CurrentEmp.EId @SessionEmp.CurrentEmp.Name
-                <span class="badge badge-secondary">
-                    年資 @Session["seniority"]
-                </span>
-            </span>
-            <hr class="sidebar-divider my-0">
+
+            <p class="text-light text-center mb-0">
+                <small class="badge">
+                    @employee.Branch&nbsp;@employee.Shift&nbsp; @employee.EId
+                </small>
+            </p>
+            <p class="text-light text-center">
+                <small class="badge badge-success">@employee.JobTitle</small>
+            </p>
+
             <hr class="sidebar-divider">
+
+            <a href="@Url.Action("Detail","Employee")">
+                <img class="rounded-circle headImgLayout rounded mx-auto d-block" src="~/img/@SessionEmp.CurrentEmp.Image">
+            </a>
+
+
+            <p class="text-light text-center">
+                <span>@employee.Name</span>
+                <small>@employee.EnglishName</small>
+            </p>
+            <hr class="sidebar-divider">
+
 
             <div class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-person-booth"></i>
+                    <i class="fas fa-info-circle"></i>
                     <span>個人相關</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">休假系統</h6>
-                        <a class="collapse-item" href="@Url.Action("apply","holiday" , new { eid = employee.EId , shift = employee.Shift})">申請</a>
-                        <a class="collapse-item" href="@Url.Action("index","holiday")">審核進度</a>
-                        <a class="collapse-item" href="@Url.Action("record","holiday")">歷史紀錄</a>
+                        <a class="collapse-item" href="@Url.Action("detail" , "employee")">
+                            <i class="fas fa-user fa-sm fa-fw mr-2"></i>
+                            檢視個人資訊
+                        </a>
+                        <a class="collapse-item" href="@Url.Action("edit","employee")">
+                            <i class="fas fa-cogs fa-sm fa-fw mr-2"></i>
+                            修改個人資訊
+                        </a>
+                        <a class="collapse-item" href="@Url.Action("apply","holiday" , new { eid = employee.EId , shift = employee.Shift})">
+                            <i class="fas fa-house-damage fa-sm fa-fw mr-2"></i>
+                            休假申請
+                        </a>
+                        <a class="collapse-item" href="@Url.Action("index","holiday")">
+                            <i class="fas fa-inbox fa-sm fa-fw mr-2"></i>
+                            休假審核進度
+                        </a>
+                        <a class="collapse-item" href="@Url.Action("record","holiday")">
+                            <i class="fas fa-table fa-sm fa-fw mr-2"></i>
+                            休假歷史紀錄
+                        </a>
                     </div>
                 </div>
             </div>
@@ -100,10 +125,10 @@
                 </a>
                 <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">排班系統</h6>
-                        <a class="collapse-item" href="@Url.Action("index" , "schedule")">出勤總覽</a>
-                        @*<a class="collapse-item" href="#">人力通知</a>
-                            <a class="collapse-item" href="#">歷史紀錄</a>*@
+                        <a class="collapse-item" href="@Url.Action("index" , "schedule")">
+                            <i class="fas fa-table fa-sm fa-fw mr-2"></i>
+                            休假人力總覽
+                        </a>
                     </div>
                 </div>
             </div>
@@ -112,10 +137,10 @@
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
             @*<div class="sidebar-card d-none d-lg-flex">
-                    <img class="sidebar-card-illustration mb-2" src="~/img/undraw_rocket.svg" alt="...">
-                    <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                    <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
-                </div>*@
+            <img class="sidebar-card-illustration mb-2" src="~/img/undraw_rocket.svg" alt="...">
+            <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
+            <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
+        </div>*@
         </div>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -147,55 +172,6 @@
                             </div>
                         </li>
 
-                        <!--<li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>-->
-                        <!-- Counter - Alerts -->
-                        <!--<span class="badge badge-danger badge-counter">3+</span>
-                        </a>-->
-                        <!-- Dropdown - Alerts -->
-                        <!--<div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                 aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>-->
                         <!-- Nav Item - Messages -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
@@ -223,8 +199,8 @@
                                     {
                                         <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Index" , "Holiday")">
                                             <div class="dropdown-list-image mr-3">
-                                                <img class="rounded-circle" src="~/img/@SessionEmp.CurrentEmp.Image"
-                                                     alt="...">
+                                                <img class="rounded-circle" src="~/img/@SessionEmp.CurrentEmp.Image">
+
                                                 <div class="status-indicator bg-success"></div>
                                             </div>
                                             <div class="font-weight-bold">
@@ -244,27 +220,15 @@
                             </div>
                         </li>
 
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">@employee.EnglishName</span>
-                                <img class="img-profile rounded-circle" src="~/img/@employee.Image">
+                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="@Url.Action("detail" , "employee")">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    檢視個人資訊
-                                </a>
-                                <a class="dropdown-item" href="@Url.Action("edit","employee")">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    修改個人資訊
-                                </a>
-                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     登出
@@ -304,12 +268,12 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">確定要登出?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Message</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">您目前尚有編輯未完成的工作</div>
+                <div class="modal-body">確定要登出?</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
                     <a class="btn btn-primary" href="@Url.Action("logout" , "account")">確定</a>
