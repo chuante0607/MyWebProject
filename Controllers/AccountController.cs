@@ -29,12 +29,14 @@ namespace UCOMProject.Controllers
             if(employee == null)
             {
                 ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "帳號密碼錯誤!" });
+                return View();
             }
-            else
+            if (employee.Allow)
             {
                 Session["emp"] = employee;
                 return RedirectToAction("Index", "Home");
             }
+            ViewBag.login = JsonConvert.SerializeObject(new { error = true, msg = "請等待帳號開通!" });
             return View();
         }
 

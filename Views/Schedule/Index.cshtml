@@ -5,10 +5,10 @@
     Employee emp = SessionEmp.CurrentEmp;
 }
 
-@*<h4 class="text-center">休假人力總覽</h4>*@
+<h4 class="text-center">休假人力總覽</h4>
 <div id="app" v-cloak>
     <div>
-        @*<div class="block">
+        <div class="block">
             <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
             <span>A班</span>&nbsp;&nbsp;&nbsp;
             <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
@@ -17,7 +17,7 @@
             <span>常日班</span>&nbsp;&nbsp;&nbsp;
             <div class="all" data-toggle="tooltip" data-placement="top" id="titleAll"></div>
             <span class="allContent">{{employees.length}}</span>
-        </div>*@
+        </div>
         <div id="calendar" class=""></div>
     </div>
 </div>
@@ -144,8 +144,6 @@
                     })
                     if (shift && shift.IsWork) {
                         return 'shiftA';
-                    } else {
-                        return '';
                     }
                 },
                 //cell的內容(人力不足顯示)
@@ -159,28 +157,47 @@
                         let date = new Date(item.date);
                         return arg.date.toLocaleDateString() === date.toLocaleDateString();
                     })
-                    let warn = '';
+                    let todayDom = '';
+                    if (arg.isToday) {
+                        //判斷今天為哪個班
+                        let shift = this.shifts[date.getMonth()].find(s => {
+                            let check = new Date(s.CheckDate).toLocaleDateString();
+                            return check === date.toLocaleDateString();
+                        })
+                        //是否為A班上班
+                        let shiftDom = '';
+                        if (shift && shift.IsWork) {
+                            shiftDom = `<span class="badge badge-primary">A</span>`;
+                        } else {
+                            shiftDom = `<span class="badge badge-secondary">B</span>`;
+                        }
+                        todayDom = `<div class="badge badge-warning">Today ${shiftDom}</div>`;
+
+                    }
+                    //若判斷為人力不足的日期發出警告
+                    let warnDom = '';
                     if (att) {
-                        this.warnDate.push({ date: date, num: att.realNum });
-                        warn = `<div class="col badge badge-danger attendanceNum">人力不足${att.realNum}</div>`
+                        this.warnDate.push({ date: date, num: att.realNum, plan: att.planNum });
+                        warnDom = `<div class="badge badge-primary">需求${att.planNum}人
+                                   <span class="badge badge-danger attendanceNum">不足${att.realNum * -1}人</span>
+                                   </div>`;
                     }
 
                     //常日班放假客製化日期字體顏色
                     if (data && !data.IsWork) {
                         let htmlStr = `
-                        <div class="row">
-                            ${warn}
-                            <div class="col dayCellContent">${arg.dayNumberText}</div>
-                        </div>`;
+                        <div class="dayCellContent">${arg.dayNumberText}</div>
+                        ${ todayDom }
+                        ${ warnDom }
+                        `;
                         return { html: htmlStr };
                     }
                     else {
                         let htmlStr = `
-                        <div class="row">
-                            ${warn}
-                            <div class="col">${arg.dayNumberText}</div>
-                        </div>`;
-
+                        <div>${arg.dayNumberText}</div>
+                        ${ todayDom }
+                        ${ warnDom}
+                        `;
                         return { html: htmlStr };
                     }
                 },
@@ -190,7 +207,7 @@
                         return info.date.toLocaleDateString() === d.date.toLocaleDateString();
                     })
                     if (check) {
-                        location.href = `@Url.Action("warn")?date=${check.date.toLocaleDateString()}&need=${check.num}`;
+                        location.href = `@Url.Action("Notify")?date=${check.date.toLocaleDateString()}&need=${check.num}`;
                     }
                     else
                         return;
@@ -247,9 +264,17 @@
             background-color: #d6e7f3;
         }
 
+        .shiftB {
+            background-color: #fff;
+        }
+
         .shiftW {
             border: 1px dashed black;
-            background-color: #ffe93a;
+            background-color: #FED3D3;
+        }
+
+        .totayCell {
+            background-color: #ff6a00;
         }
 
         .event_backImg {
@@ -269,21 +294,29 @@
             /*background-image: url(/images/w.png);*/
         }
 
-        .cellBack {
-            background-color: yellow;
+
+        .fc-daygrid-day-top {
+            position: relative;
         }
 
-        .attendanceNum {
-            margin-right: 0px;
-            margin-left: 0px;
-            align-items: center;
-            font-size:20px;
+
+        .fc-daygrid-day-number {
+            width: 100%;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
         }
 
         .dayCellContent {
             font-weight: 800;
             color: red;
         }
-      
+
+        .attendanceNum {
+            display: inline-block;
+            animation-name: slidein;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+        }
     </style>
 }

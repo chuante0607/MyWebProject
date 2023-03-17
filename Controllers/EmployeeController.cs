@@ -110,7 +110,6 @@ namespace UCOMProject.Controllers
         [HttpGet]
         public async Task<JsonResult> Allow(string eid)
         {
-
             return Json(JsonConvert.SerializeObject(null, camelSetting)); ;
         }
 

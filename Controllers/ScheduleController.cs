@@ -31,7 +31,7 @@ namespace UCOMProject.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Warn(DateTime? date, string need)
+        public async Task<ActionResult> Notify(DateTime? date, string need)
         {
             if (date != null && need != null)
             {

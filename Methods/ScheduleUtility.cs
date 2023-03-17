@@ -221,18 +221,17 @@ namespace UCOMProject.Methods
                 {
                     case ShiftType.常日班:
                         className = "event_shiftW";
-                        backColor = "#FFF";
+                        backColor = "#FED3D3";
                         txtColor = "#000";
                         break;
                     case ShiftType.A班:
                         className = "event_shiftA";
-                        backColor = "#630089";
-                        txtColor = "#FFF";
+             
                         break;
                     case ShiftType.B班:
                         className = "event_shiftB";
-                        backColor = "#890000";
-                        txtColor = "#FFF";
+                        backColor = "#fff";
+                        txtColor = "#000";
                     
                         break;
                     default:

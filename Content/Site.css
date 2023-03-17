@@ -54,3 +54,21 @@
     border-color: #123456;
     border-width: 10px;
 }
+
+
+@keyframes slidein {
+    0% {
+        background-color: red;
+        color: #fff;
+    }
+
+    50% {
+        background-color: white;
+        color: #000;
+    }
+
+    100% {
+        background-color: red;
+        color: #fff;
+    }
+}

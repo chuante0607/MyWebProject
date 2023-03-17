@@ -222,6 +222,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\HolidayViewModel.cs" />
     <Compile Include="Models\API\Schedule\ScheduleApiModel.cs" />
+    <Compile Include="ViewModels\NotifyViewModel.cs" />
     <Compile Include="ViewModels\SummaryViewModel.cs" />
     <Compile Include="ViewModels\ShiftViewModel.cs" />
   </ItemGroup>
@@ -2606,7 +2607,7 @@
     <Content Include="Views\Schedule\Index.cshtml" />
     <Content Include="Views\Schedule\Plan.cshtml" />
     <Content Include="Views\Schedule\Event.cshtml" />
-    <Content Include="Views\Schedule\Warn.cshtml" />
+    <Content Include="Views\Schedule\Notify.cshtml" />
     <Content Include="Views\Home\Chart.cshtml" />
   </ItemGroup>
   <ItemGroup>
