@@ -31,10 +31,13 @@ namespace UCOMProject.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Warn(DateTime? date)
+        public async Task<ActionResult> Warn(DateTime? date, string need)
         {
-            if (date != null)
+            if (date != null && need != null)
             {
+                int needNum = Math.Abs(int.Parse(need));
+                (DateTime, int) info = ((DateTime)date, needNum);
+                ViewBag.need = JsonConvert.SerializeObject(info);
                 DateTime checkDate = (DateTime)date;
                 if (checkDate.Year == DateTime.Now.Year)
                 {

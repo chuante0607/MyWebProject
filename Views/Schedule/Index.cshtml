@@ -161,7 +161,7 @@
                     })
                     let warn = '';
                     if (att) {
-                        this.warnDate.push(date);
+                        this.warnDate.push({ date: date, num: att.realNum });
                         warn = `<div class="col badge badge-danger attendanceNum">人力不足${att.realNum}</div>`
                     }
 
@@ -186,15 +186,15 @@
                 },
                 //cell click事件
                 handleDateClick(info) {
-                    let check = this.warnDate.some(d => {
-                        return info.date.toLocaleDateString() === d.toLocaleDateString();
+                    let check = this.warnDate.find(d => {
+                        return info.date.toLocaleDateString() === d.date.toLocaleDateString();
                     })
                     if (check) {
-                        location.href = `@Url.Action("warn")?date=${info.date.toLocaleDateString()}`;
+                        location.href = `@Url.Action("warn")?date=${check.date.toLocaleDateString()}&need=${check.num}`;
                     }
                     else
                         return;
-                }
+                },
             }
         })
 

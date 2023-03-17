@@ -10,6 +10,7 @@
     @Html.AntiForgeryToken()
     <h4 class="col text-center">建立員工檔案</h4>
     <div class="form-horizontal">
+        <div class="btn btn-secondary createDemo">Demo</div>
         <hr />
         <div class="input-group mb-3" style="justify-content: space-between;">
             <button type="submit" class="btn btn-primary">新增</button>
@@ -113,6 +114,10 @@
     <script src="~/Scripts/jquery-ui.js"></script>
     <script>
         $(function () {
+            $('.createDemo').click(function () {
+                $('#EId').val('E030');
+            })
+
             $("#ImageFile").change(function () {
                 var reader = new FileReader();
 
@@ -257,6 +262,7 @@
             let end = $("#endDatepicker").datepicker("option", "minDate", start).datepicker("getDate");
         })
 
+ 
     </script>
 }
 
