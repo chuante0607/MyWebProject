@@ -5,6 +5,21 @@
 
 }
 
+<!--toast-->
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <img src="~/img/email.png" class="rounded mr-2" alt="..." style="width:50px;height:50px">
+        <strong class="mr-auto">訊息狀態</strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        Hello @SessionEmp.CurrentEmp.Name,有發布一則加班需求通知，請再進行確認
+    </div>
+</div>
+
+
 <!-- Summary -->
 <div id="app" v-cloak>
     <div v-show="showCalendars">
@@ -21,22 +36,15 @@
         <div class="row" v-if="showAlarm">
             <div class="col">
                 <span class="badge badge-info" style="font-size:1rem">
-                    計畫
-                    {{attendance.total}}
-                    人
-                </span>
-                <span class="badge badge-secondary" style="font-size:1rem">
-                    實到
-                    {{attendance.real}}
-                    人
+                    計畫{{attendance.total}}人
+                    實到{{attendance.real}}人
                 </span>
                 <span class="badge badge-danger" style="font-size:1rem">
-                    缺少
-                    {{attendance.alarm * -1}}
-                    人
+                    實到{{attendance.alarm * -1}}人
                 </span>
             </div>
         </div>
+
         <div id="calendar"></div>
     </div>
     <div class="mt-5"></div>
@@ -78,7 +86,6 @@
 
 
 
-
 </div>
 
 @section Script{
@@ -87,6 +94,8 @@
 
 
     <script type="text/javascript">
+
+
         const vm = new Vue({
             el: '#app',
             data: {
@@ -143,11 +152,13 @@
                     this.initialHoliadyChart();
                     this.initialLeaveChart();
                 })
-
+                $('.toast').toast({
+                    autohide:false,
+                })
+                $('.toast').toast('show');
             },
             watch: {
                 showAlarm(newValue, oldValue) {
-                    console.log(newValue);
                     if (newValue) {
                         let total = this.planAttendance.shouldNum;
                         let real = this.planAttendance.shouldNum - this.planAttendance.leaveNum;
