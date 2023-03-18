@@ -24,6 +24,7 @@ namespace UCOMProject.Controllers
         public async Task<IHttpActionResult> Get()
         {
             ScheduleApiModel schedule = await ScheduleUtility.GetSchedule();
+            schedule.plansByDay = await ScheduleUtility.GetPlansByDay();
             return Json(schedule);
         }
 

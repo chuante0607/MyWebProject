@@ -79,6 +79,20 @@
           <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="WorkDay" Type="date" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MyDB.dbo.ShiftWork' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ShiftWork">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="WorkDate" />
+            <PropertyRef Name="Shift" />
+            <PropertyRef Name="WeekWork" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WorkDate" Type="date" Nullable="false" />
+          <Property Name="Shift" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="WeekWork" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -145,6 +159,14 @@
           <EntitySet Name="Plans" EntityType="Self.Plans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ShiftWork" EntityType="Self.ShiftWork" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ShiftWork].[Id] AS [Id], 
+    [ShiftWork].[WorkDate] AS [WorkDate], 
+    [ShiftWork].[Shift] AS [Shift], 
+    [ShiftWork].[WeekWork] AS [WeekWork]
+    FROM [dbo].[ShiftWork] AS [ShiftWork]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_Employees_Branch1" Association="Self.FK_Employees_Branch1">
             <End Role="Branch" EntitySet="Branch" />
             <End Role="Employees" EntitySet="Employees" />
@@ -190,6 +212,7 @@
             <End Role="Holiday" EntitySet="Holidays" />
             <End Role="HolidayDetail" EntitySet="HolidayDetails" />
           </AssociationSet>
+          <EntitySet Name="ShiftWorks" EntityType="MyDBModel.ShiftWork" />
           </EntityContainer>
         <EntityType Name="Branch">
           <Key>
@@ -331,6 +354,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ShiftWork">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="WorkDate" />
+            <PropertyRef Name="Shift" />
+            <PropertyRef Name="WeekWork" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Shift" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WeekWork" Type="Boolean" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -425,6 +460,16 @@
                 <ScalarProperty Name="TotalDays" ColumnName="TotalDays" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="HId" ColumnName="HId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShiftWorks">
+            <EntityTypeMapping TypeName="MyDBModel.ShiftWork">
+              <MappingFragment StoreEntitySet="ShiftWork">
+                <ScalarProperty Name="WeekWork" ColumnName="WeekWork" />
+                <ScalarProperty Name="Shift" ColumnName="Shift" />
+                <ScalarProperty Name="WorkDate" ColumnName="WorkDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

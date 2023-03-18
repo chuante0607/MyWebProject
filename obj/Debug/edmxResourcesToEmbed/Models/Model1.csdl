@@ -24,6 +24,7 @@
       <End Role="Holiday" EntitySet="Holidays" />
       <End Role="HolidayDetail" EntitySet="HolidayDetails" />
     </AssociationSet>
+    <EntitySet Name="ShiftWorks" EntityType="MyDBModel.ShiftWork" />
   </EntityContainer>
   <EntityType Name="Branch">
     <Key>
@@ -165,4 +166,16 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="ShiftWork">
+    <Key>
+      <PropertyRef Name="Id" />
+      <PropertyRef Name="WorkDate" />
+      <PropertyRef Name="Shift" />
+      <PropertyRef Name="WeekWork" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="Shift" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WeekWork" Type="Boolean" Nullable="false" />
+  </EntityType>
 </Schema>

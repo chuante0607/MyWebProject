@@ -333,18 +333,17 @@
 
                     let todayDom = '';
                     if (arg.isToday) {
-                        //判斷今天為哪個班
                         let shift = this.shifts[date.getMonth()].find(s => {
-                            let check = new Date(s.CheckDate).toLocaleDateString();
+                            let check = new Date(s.checkDate).toLocaleDateString();
                             return check === date.toLocaleDateString();
                         })
                         //是否為A班上班
                         let shiftDom = '';
-                        if (shift && shift.IsWork) {
-                            shiftDom = `<span class="badge badge-primary">{A}</span>`;
+                        if (shift && shift.isWork) {
+                            shiftDom = `<span class="badge badge-primary">A</span>`;
                         } else {
                             shiftDom = `<span class="badge badge-secondary">B</span>`;
-                        }
+                        };
                         todayDom = `<div class="badge badge-warning">Today ${shiftDom}</div>`;
                     }
                     //常日班放假客製化日期字體顏色

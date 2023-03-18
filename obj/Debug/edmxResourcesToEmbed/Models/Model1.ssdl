@@ -74,6 +74,20 @@
     <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="WorkDay" Type="date" Nullable="false" />
   </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'MyDB.dbo.ShiftWork' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="ShiftWork">
+    <Key>
+      <PropertyRef Name="Id" />
+      <PropertyRef Name="WorkDate" />
+      <PropertyRef Name="Shift" />
+      <PropertyRef Name="WeekWork" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkDate" Type="date" Nullable="false" />
+    <Property Name="Shift" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="WeekWork" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="sysdiagrams">
     <Key>
       <PropertyRef Name="diagram_id" />
@@ -140,6 +154,14 @@
     <EntitySet Name="Plans" EntityType="Self.Plans" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ShiftWork" EntityType="Self.ShiftWork" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ShiftWork].[Id] AS [Id], 
+    [ShiftWork].[WorkDate] AS [WorkDate], 
+    [ShiftWork].[Shift] AS [Shift], 
+    [ShiftWork].[WeekWork] AS [WeekWork]
+    FROM [dbo].[ShiftWork] AS [ShiftWork]</DefiningQuery>
+    </EntitySet>
     <AssociationSet Name="FK_Employees_Branch1" Association="Self.FK_Employees_Branch1">
       <End Role="Branch" EntitySet="Branch" />
       <End Role="Employees" EntitySet="Employees" />

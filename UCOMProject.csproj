@@ -164,6 +164,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\API\Schedule\CalendarApiModel.cs" />
+    <Compile Include="Models\ShiftWork.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\EditEmployeeViewModel.cs" />
     <Compile Include="Models\ReviewType.cs" />
     <Compile Include="Models\Schedule.cs">

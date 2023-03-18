@@ -16,6 +16,7 @@
         <EntityTypeShape EntityType="MyDBModel.Plan" Width="1.5" PointX="5.375" PointY="4.75" />
         <EntityTypeShape EntityType="MyDBModel.Holiday" Width="1.5" PointX="7.375" PointY="4.875" />
         <AssociationConnector Association="MyDBModel.FK_HolidayDetails_Holidays1" />
+        <EntityTypeShape EntityType="MyDBModel.ShiftWork" Width="1.5" PointX="5.375" PointY="7.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

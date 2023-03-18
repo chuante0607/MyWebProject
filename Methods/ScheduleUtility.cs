@@ -27,6 +27,29 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
+        /// 取得每天的plans人力計畫
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<Plan>> GetPlansByDay()
+        {
+            List<Plan> list = new List<Plan>();
+            List<Plan> plans = await GetPlans();
+            //(統計"每天"需求人力)
+            foreach (Plan p in plans)
+            {
+                //plan只有start跟end 所以要轉成每天的人力所有-1天表示當天
+                p.EndDate = p.EndDate.AddDays(-1);
+                TimeSpan span = p.EndDate.Subtract(p.StartDate);
+                int day = span.Days;
+                for (int i = 0; i <= day; i++)
+                {
+                    list.Add(new Plan { Id = p.Id, PlanTitle = p.PlanTitle, StartDate = p.StartDate.AddDays(i), EndDate = p.StartDate.AddDays(i) });
+                }
+            }
+            return list.OrderBy(o => o.StartDate).ToList();
+        }
+
+        /// <summary>
         /// 新增與更新Plans人力計畫
         /// </summary>
         /// <param name="plans"></param>
@@ -98,29 +121,6 @@ namespace UCOMProject.Methods
             }
         }
 
-        /// <summary>
-        /// 取得每天的plans人力計畫
-        /// </summary>
-        /// <returns></returns>
-        public static async Task<List<Plan>> GetPlansByDay()
-        {
-            List<Plan> list = new List<Plan>();
-            List<Plan> plans = await GetPlans();
-            //(統計"每天"需求人力)
-            foreach (Plan p in plans)
-            {
-                //plan只有start跟end 所以要轉成每天的人力所有-1天表示當天
-                p.EndDate = p.EndDate.AddDays(-1);
-                TimeSpan span = p.EndDate.Subtract(p.StartDate);
-                int day = span.Days;
-                for (int i = 0; i <= day; i++)
-                {
-                    list.Add(new Plan { Id = p.Id, PlanTitle = p.PlanTitle, StartDate = p.StartDate.AddDays(i), EndDate = p.StartDate.AddDays(i) });
-                }
-            }
-            return list.OrderBy(o => o.StartDate).ToList();
-
-        }
 
         /// <summary>
         /// 取得A.B班的當年度的工作天(做2休2)
@@ -208,8 +208,9 @@ namespace UCOMProject.Methods
         /// <returns></returns>
         public static async Task<List<CalendarApiModel>> GetCalendars()
         {
-            List<HolidayDetailViewModel> holidayDetails = await HolidayUtility.GetHolidayDetails();
+            var query = await HolidayUtility.GetHolidayDetails();
             List<CalendarApiModel> calendars = new List<CalendarApiModel>();
+            List<HolidayDetailViewModel> holidayDetails = query.OrderBy(o => o.BeginDate).ToList();
             foreach (HolidayDetailViewModel detail in holidayDetails)
             {
                 string className = "";
@@ -272,6 +273,8 @@ namespace UCOMProject.Methods
             int empsB = schedule.employees.Where(e => e.ShiftType == ShiftType.B班).ToList().Count();
             int empsW = schedule.employees.Where(e => e.ShiftType == ShiftType.常日班).ToList().Count();
 
+            //計算每天請假的人數
+            schedule.leaveInfos = schedule.calendars.GroupBy(g => g.start).Select(group => new LeaveNumApiModel { date = group.Key, leaveNum = group.Count() }).ToList();
 
             //以下計算人力
             List<ScheduleNumApiModel> list = new List<ScheduleNumApiModel>();
@@ -300,7 +303,6 @@ namespace UCOMProject.Methods
                         numModel.leaveNum = details.Where(d => d.State == 2 && d.RangDate.Contains(planDate)).ToList().Count();
                     }
                     //實際人力不夠  在加到attendance於前端發送通知
-                    int aaa = numModel.realNum;
                     if (numModel.realNum < 0)
                     {
                         List<string> shifts = new List<string>();

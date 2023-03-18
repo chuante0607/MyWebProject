@@ -14,6 +14,8 @@ namespace UCOMProject.API
         public List<List<ShiftViewModel>> weekWorks { get; set; }
         public List<EmployeeViewModel> employees { get; set; }
         public List<ScheduleNumApiModel> attendance { get; set; }
+        public List<LeaveNumApiModel> leaveInfos { get; set; }
+        public List<Plan> plansByDay { get; set; }
     }
 
     public class ScheduleNumApiModel
@@ -30,6 +32,13 @@ namespace UCOMProject.API
                 return (shouldNum - leaveNum) - planNum;
             }
         }
+    }
+
+    public class LeaveNumApiModel
+    {
+        public DateTime date { get; set; }
+        public int leaveNum { get; set; }
+      
     }
 
 }
