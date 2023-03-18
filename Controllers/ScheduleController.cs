@@ -11,6 +11,7 @@ using UCOMProject.Models;
 using UCOMProject.Roles;
 using UCOMProject.API;
 using System.Globalization;
+using UCOMProject.Extension;
 
 namespace UCOMProject.Controllers
 {
@@ -35,6 +36,12 @@ namespace UCOMProject.Controllers
         {
             if (date != null && need != null)
             {
+                RoleManage user = ConfirmIdentity();
+
+                List<EmployeeViewModel> empss = await user.GetEmployees();
+
+                NotifyViewModel notify = new NotifyViewModel();
+
                 int needNum = Math.Abs(int.Parse(need));
                 (DateTime, int) info = ((DateTime)date, needNum);
                 ViewBag.need = JsonConvert.SerializeObject(info);
@@ -53,6 +60,24 @@ namespace UCOMProject.Controllers
         public ActionResult Event()
         {
             return View();
+        }
+
+        private RoleManage ConfirmIdentity()
+        {
+            RoleManage user = null;
+            switch (SessionEmp.CurrentEmp.JobRank)
+            {
+                case 0:
+                    user = new Admin(RoleType.Admin);
+                    break;
+                case 1:
+                    user = new User(RoleType.User);
+                    break;
+                case 2:
+                    user = new Manager(RoleType.Manager, SessionEmp.CurrentEmp.Branch.xTranBranchEnum());
+                    break;
+            }
+            return user;
         }
     }
 }

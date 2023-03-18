@@ -45,6 +45,7 @@
                         return response.json();
                     }
                 }).then(result => {
+                    console.log(result);
                     this.calendars = result.calendars;
                     this.employees = result.employees;
                     this.shifts = result.shifts;
@@ -157,6 +158,7 @@
                         let date = new Date(item.date);
                         return arg.date.toLocaleDateString() === date.toLocaleDateString();
                     })
+                    let workShift = [];
                     let todayDom = '';
                     if (arg.isToday) {
                         //判斷今天為哪個班

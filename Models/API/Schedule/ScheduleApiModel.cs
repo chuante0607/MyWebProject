@@ -19,6 +19,7 @@ namespace UCOMProject.API
     public class ScheduleNumApiModel
     {
         public DateTime date { get; set; }
+        public List<string> shouldShifts { get; set; }
         public int planNum { get; set; }
         public int shouldNum { get; set; }
         public int leaveNum { get; set; }

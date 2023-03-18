@@ -226,13 +226,13 @@ namespace UCOMProject.Methods
                         break;
                     case ShiftType.A班:
                         className = "event_shiftA";
-             
+
                         break;
                     case ShiftType.B班:
                         className = "event_shiftB";
                         backColor = "#fff";
                         txtColor = "#000";
-                    
+
                         break;
                     default:
                         break;
@@ -303,7 +303,12 @@ namespace UCOMProject.Methods
                     int aaa = numModel.realNum;
                     if (numModel.realNum < 0)
                     {
+                        List<string> shifts = new List<string>();
                         numModel.date = planDate;
+                        //紀錄出勤班別
+                        shifts.Add(shiftByDate.IsWork ? ShiftType.A班.ToString() : ShiftType.B班.ToString());
+                        shifts.Add(weekDayByDate.IsWork ? ShiftType.常日班.ToString() : ShiftType.請選擇.ToString());
+                        numModel.shouldShifts = shifts;
                         list.Add(numModel);
                     }
                 }
