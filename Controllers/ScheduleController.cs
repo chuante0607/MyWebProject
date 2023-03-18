@@ -83,7 +83,7 @@ namespace UCOMProject.Controllers
                 DateTime checkDate = (DateTime)date;
                 if (checkDate.Year == DateTime.Now.Year)
                 {
-                    ShiftType type = ScheduleUtility.GetShiftTypeByDate(checkDate, checkDate.Year);
+                    ShiftType type = await ScheduleUtility.GetShiftTypeByDate(checkDate, checkDate.Year);
                     var emps = await EmployeeUtility.GetEmployees();
                     List<EmployeeViewModel> employees = emps.Where(e => e.ShiftType == type).ToList();
                     return View(employees);

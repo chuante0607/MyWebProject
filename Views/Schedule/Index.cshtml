@@ -217,7 +217,7 @@ else
                 }
                     todayDom = `<div class="badge badge-warning">Today${shiftDom}</div>`;
                 }
-                    //常日班應到人力
+                //常日班應到人力
                 let shouldNum = 0;
                 if (data && data.IsWork) {
                     let emps = this.employees.filter(emp => {
@@ -230,12 +230,12 @@ else
                     let emps = this.employees.filter(emp => {
                         return emp.Shift === 'A班';
                     })
-                                    shouldNum = emps.length;
+                    shouldNum += emps.length;
                 } else {
                     let emps = this.employees.filter(emp => {
                         return emp.Shift === 'B班';
                     })
-                                    shouldNum += emps.length;
+                    shouldNum += emps.length;
                 }
                 //請假人力
                 let leaveNum = 0;
@@ -267,8 +267,8 @@ else
                     let attdate = new Date(item.date);
                     return date.toLocaleDateString() === attdate.toLocaleDateString();
                 })
-                    //若有計畫排程需求人力且人力不足會發出警告
-                    let planEl = '';
+                //若有計畫排程需求人力且人力不足會發出警告
+                let planEl = '';
                 if (att) {
                 this.warnDate.push({ date: date, num: att.realNum, plan:plan });
                 planEl = `<span class="badge badge-danger attendanceNum">少${att.realNum * -1}</span>`;

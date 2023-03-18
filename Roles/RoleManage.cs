@@ -120,9 +120,9 @@ namespace UCOMProject.Roles
         /// <param name="shift"></param>
         /// <param name="year"></param>
         /// <returns></returns>
-        public List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
+        public async Task<List<List<ShiftViewModel>>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
         {
-            return ScheduleUtility.GetWorkDayOfYearByMonth(shift, year);
+            return await ScheduleUtility.GetWorkDayOfYearByMonth(shift, year);
         }
 
         /// <summary>

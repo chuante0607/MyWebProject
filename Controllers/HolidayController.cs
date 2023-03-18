@@ -43,7 +43,7 @@ namespace UCOMProject.Controllers
             }
             else
             {
-                vm.WorkDayOfYearByMonth = user.GetWorkDayOfYearByMonth(shift.xTranShiftEnum(), DateTime.Now.Year);
+                vm.WorkDayOfYearByMonth = await user.GetWorkDayOfYearByMonth(shift.xTranShiftEnum(), DateTime.Now.Year);
             }
             ViewBag.vm = JsonConvert.SerializeObject(vm, camelSetting);
             return View(vm);
@@ -158,7 +158,7 @@ namespace UCOMProject.Controllers
             }
             else
             {
-                vm.WorkDayOfYearByMonth = user.GetWorkDayOfYearByMonth(currentEmp.ShiftType, DateTime.Now.Year);
+                vm.WorkDayOfYearByMonth = await user .GetWorkDayOfYearByMonth(currentEmp.ShiftType, DateTime.Now.Year);
             }
             ViewBag.editDetail = JsonConvert.SerializeObject(detail, camelSetting);
             ViewBag.vm = JsonConvert.SerializeObject(vm, camelSetting);

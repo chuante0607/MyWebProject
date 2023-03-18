@@ -126,10 +126,10 @@ namespace UCOMProject.Methods
         /// <summary>
         /// 取得A.B班的當年度的工作天(做2休2)
         /// </summary>
-        public static List<List<ShiftViewModel>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
+        public static async Task<List<List<ShiftViewModel>>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
         {
-            const int WorkCycle = 4;
             List<List<ShiftViewModel>> workDayByMonth = new List<List<ShiftViewModel>>();
+            const int WorkCycle = 4;
             //to do:
             //計算做2休2的週期
             bool isWork = false;
@@ -164,9 +164,9 @@ namespace UCOMProject.Methods
             return workDayByMonth;
         }
 
-        public static ShiftType GetShiftTypeByDate(DateTime date, int year)
+        public static async Task<ShiftType> GetShiftTypeByDate(DateTime date, int year)
         {
-            var query = GetWorkDayOfYearByMonth(ShiftType.A班, year);
+            var query = await GetWorkDayOfYearByMonth(ShiftType.A班, year);
             ShiftViewModel result = query[date.Month - 1].Find(s => s.CheckDate == date);
             if (result != null)
             {
@@ -276,10 +276,10 @@ namespace UCOMProject.Methods
             ScheduleApiModel schedule = new ScheduleApiModel();
             schedule.calendars = await GetCalendars(user);
             schedule.employees = await user.GetEmployees();
-            var details = await HolidayUtility.GetHolidayDetails();
+            var details = await user.GetHolidayDetails();
             schedule.plans = await GetPlans();
             string[] file = System.IO.File.ReadAllLines(System.Web.Hosting.HostingEnvironment.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
-            schedule.shifts = GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
+            schedule.shifts = await GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
             schedule.weekWorks = GetWorkDayOfYearByMonth(file, DateTime.Now.Year);
             int empsA = schedule.employees.Where(e => e.ShiftType == ShiftType.A班).ToList().Count();
             int empsB = schedule.employees.Where(e => e.ShiftType == ShiftType.B班).ToList().Count();
