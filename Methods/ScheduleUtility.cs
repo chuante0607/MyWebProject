@@ -9,6 +9,7 @@ using System.Web;
 using UCOMProject.API;
 using UCOMProject.Extension;
 using UCOMProject.Models;
+using UCOMProject.Roles;
 
 namespace UCOMProject.Methods
 {
@@ -187,17 +188,25 @@ namespace UCOMProject.Methods
         {
             List<List<ShiftViewModel>> workDayByMonth = new List<List<ShiftViewModel>>();
             List<ShiftViewModel> ShiftViewModels = new List<ShiftViewModel>();
-            foreach (var line in file)
+            using (MyDBEntities db = new MyDBEntities())
             {
-                List<string> str = line.Split(',').ToList();
-                if (DateTime.TryParseExact(str[0], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+                foreach (var line in file)
                 {
-                    if (str[2] == "2")
-                        ShiftViewModels.Add(new ShiftViewModel(ShiftType.常日班, date, false));
-                    else
-                        ShiftViewModels.Add(new ShiftViewModel(ShiftType.常日班, date, true));
+                    List<string> str = line.Split(',').ToList();
+                    if (DateTime.TryParseExact(str[0], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+                    {
+                        if (str[2] == "2")
+                        {
+                            ShiftViewModels.Add(new ShiftViewModel(ShiftType.常日班, date, false));
+                        }
+                        else
+                        {
+                            ShiftViewModels.Add(new ShiftViewModel(ShiftType.常日班, date, true));
+                        }
+                    }
                 }
             }
+
             workDayByMonth = ShiftViewModels.GroupBy(g => g.CheckDate.Month).Select(s => s.ToList()).ToList();
             return workDayByMonth;
         }
@@ -206,11 +215,11 @@ namespace UCOMProject.Methods
         /// 取得請假人數在Calendars所展示的資訊
         /// </summary>
         /// <returns></returns>
-        public static async Task<List<CalendarApiModel>> GetCalendars()
+        public static async Task<List<CalendarApiModel>> GetCalendars(RoleManage user)
         {
-            var query = await HolidayUtility.GetHolidayDetails();
+            var query = await user.GetHolidayDetails();
             List<CalendarApiModel> calendars = new List<CalendarApiModel>();
-            List<HolidayDetailViewModel> holidayDetails = query.OrderBy(o => o.BeginDate).ToList();
+            List<HolidayDetailViewModel> holidayDetails = query.ToList();
             foreach (HolidayDetailViewModel detail in holidayDetails)
             {
                 string className = "";
@@ -249,9 +258,12 @@ namespace UCOMProject.Methods
                     calendar.backgroundColor = backColor;
                     calendar.textColor = txtColor;
                     calendar.remark = $"{ detail.Title} {detail.UsedDays}天：{detail.BeginDate.ToString("M/d")} - {detail.EndDate.ToString("M/d")}";
+                    calendar.shift = detail.Shift;
+                    calendar.eid = detail.EId;
                     calendars.Add(calendar);
                 }
             }
+            calendars = calendars.OrderBy(o => o.classNames).ToList();
             return calendars;
         }
 
@@ -259,11 +271,11 @@ namespace UCOMProject.Methods
         /// Schedule頁面的所有資訊
         /// </summary>
         /// <returns></returns>
-        public static async Task<ScheduleApiModel> GetSchedule()
+        public static async Task<ScheduleApiModel> GetSchedule(RoleManage user)
         {
             ScheduleApiModel schedule = new ScheduleApiModel();
-            schedule.calendars = await GetCalendars();
-            schedule.employees = await EmployeeUtility.GetEmployees();
+            schedule.calendars = await GetCalendars(user);
+            schedule.employees = await user.GetEmployees();
             var details = await HolidayUtility.GetHolidayDetails();
             schedule.plans = await GetPlans();
             string[] file = System.IO.File.ReadAllLines(System.Web.Hosting.HostingEnvironment.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
@@ -319,6 +331,53 @@ namespace UCOMProject.Methods
             return schedule;
         }
 
+        /// <summary>
+        /// 取得出勤表
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<Attendance>> GetAttendances()
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                return await db.Attendances.ToListAsync();
+            }
+        }
 
+        /// <summary>
+        /// 取得出勤表指定日期
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<Attendance> GetAttendances(DateTime date)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var query = await db.Attendances.ToListAsync();
+                if (query == null)
+                    throw new Exception($"{date}沒有指定日期的資訊");
+                return query.Where(data => data.WorkDate == date).FirstOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// 取得指定日期出勤表
+        /// </summary>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        public static async Task<List<Attendance>> GetAttendances(List<DateTime> days)
+        {
+            List<Attendance> attendances = new List<Attendance>();
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var query = await db.Attendances.ToListAsync();
+                foreach (DateTime date in days)
+                {
+                    var result = query.Where(data => data.WorkDate == date).FirstOrDefault();
+                    if (result == null)
+                        throw new Exception($"{date}沒有指定日期的資訊");
+                    attendances.Add(result);
+                }
+                return attendances;
+            }
+        }
     }
 }

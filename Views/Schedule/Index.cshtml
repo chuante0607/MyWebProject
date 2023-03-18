@@ -4,25 +4,62 @@
     ViewBag.Title = "休假人力總覽";
     Employee emp = SessionEmp.CurrentEmp;
 }
-
-<h4 class="text-center">休假人力總覽</h4>
+@if (emp.JobRank == 0)
+{
+    <h4 class="text-center">休假人力總覽(全部門)</h4>
+}
+else
+{
+    <h4 class="text-center">休假人力總覽(@SessionEmp.CurrentEmp.Branch)</h4>
+}
 <br />
 <div id="app" v-cloak>
-    <div>
-        @*<div class="block">
-                <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
-                <span>A班</span>&nbsp;&nbsp;&nbsp;
-                <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
-                <span>B班</span>&nbsp;&nbsp;&nbsp;
-                <div class="shift_block shiftW" data-toggle="tooltip" data-placement="top" id="titleW"></div>
-                <span>常日班</span>&nbsp;&nbsp;&nbsp;
-                <div class="all" data-toggle="tooltip" data-placement="top" id="titleAll"></div>
-                <span class="allContent">{{employees.length}}</span>
-            </div>*@
-        <div id="calendar" class=""></div>
-    </div>
-</div>
+    @if (emp.Shift == "常日班")
+    {
+        if (emp.JobRank == 0)
+        {
+            <div class="block">
+                <div class="item_block">
+                    <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
+                    <div>A班總計{{empsA.length}}人</div>
+                </div>
+                <div class="item_block">
+                    <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
+                    <div>B班總計{{empsB.length}}人</div>
+                </div>
+                <div class="item_block">
+                    <div class="shift_block shiftW" data-toggle="tooltip" data-placement="top" id="titleW"></div>
+                    <div>常日班總計{{empsW.length}}人</div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="block">
+                <div class="item_block">
+                    <div class="shift_block shiftW" data-toggle="tooltip" data-placement="top" id="titleW"></div>
+                    <div>常日班總計{{empsW.length}}人</div>
+                </div>
+            </div>
+        }
 
+    }
+    else
+    {
+
+        <div class="block">
+            <div class="item_block">
+                <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
+                <div>A班總計{{empsA.length}}人</div>
+            </div>
+            <div class="item_block">
+                <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
+                <div>B班總計{{empsB.length}}人</div>
+            </div>
+        </div>
+    }
+    <div id="calendar" class=""></div>
+</div>
 
 @section Script{
     <script src="~/Content/fullcalendar-6.1.4/dist/index.global.js"></script>
@@ -30,7 +67,7 @@
         const vm = new Vue({
             el: '#app',
             data: {
-                employees: [],//員工資訊
+            employees: [],//員工資訊
                 calendars: [],//請假人力的event事件
                 shifts: [],//AB班表by日期
                 weekWorks: [],//常日班表by日期
@@ -43,22 +80,27 @@
                 leaveInfos:[],
             },
             mounted() {
-                fetch('http://localhost:51010/api/apiSchedule').then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                }).then(result => {
-                    this.plansByDay = result.plansByDay;
-                    this.calendars = result.calendars;
-                    this.employees = result.employees;
-                    this.shifts = result.shifts;
-                    this.weekWorks = result.weekWorks;
-                    this.attendance = result.attendance;
-                    this.leaveInfos = result.leaveInfos;
-                    document.addEventListener('DOMContentLoaded', this.initialCalendar())
-                })
-            },
-            watch: {
+                let currentEmp = '@SessionEmp.CurrentEmp.EId';
+                const myHeaders = new Headers();
+                myHeaders.append('Authorization', `${currentEmp}`);
+                fetch('http://localhost:51010/api/apiSchedule', {
+                    headers: myHeaders,
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                    }).then(result => {
+                        this.plansByDay = result.plansByDay;
+                        this.calendars = result.calendars;
+                        this.employees = result.employees;
+                        this.shifts = result.shifts;
+                        this.weekWorks = result.weekWorks;
+                        this.attendance = result.attendance;
+                        this.leaveInfos = result.leaveInfos;
+                        document.addEventListener('DOMContentLoaded', this.initialCalendar())
+                    })
+                },
+                watch: {
                 //employees為非同步取得 使用watch可監測employees取得值的變化,再渲染tooltip
                 employees: {
                     handler(newValue, oldValue) {
@@ -70,11 +112,11 @@
                 }
             },
             methods: {
-                //初始化calendar
-                initialCalendar() {
-                    let self = this;
-                    var calendarEl = document.getElementById('calendar');
-                    var calendar = new FullCalendar.Calendar(calendarEl, {
+            //初始化calendar
+            initialCalendar() {
+                let self = this;
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
                         eventSources: [
                             {
                                 events: this.calendars,//初始化events
@@ -86,13 +128,13 @@
                         initialView: 'dayGridMonth',
                         height: 900,
                         headerToolbar: {
-                            left: 'prev,next,today',
+                        left: 'prev,next,today',
                             center: 'title',
                             right: 'dayGridMonth,timeGridWeek,timeGridDay'
                         },
                         titleFormat: { year: 'numeric', month: 'short' },
                         buttonText: {
-                            today: '今天',
+                        today: '今天',
                             month: '月',
                             week: '周',
                             day: '天',
@@ -107,193 +149,182 @@
                         dayCellDidMount: self.handleDayCellDidMount,
                         dateClick: self.handleDateClick,
                     });
-                    calendar.render();
-                },
-                //初始化班別資訊tooltip
-                initialTooltip() {
-                    $('#titleA').tooltip({
-                        title: 'A班人力：' + this.empsA.length,
-                        html: true,
-                    })
-                    $('#titleB').tooltip({
-                        title: 'B班人力：' + this.empsB.length,
-                        html: true,
-                    })
-                    $('#titleW').tooltip({
-                        title: '常日班人力：' + this.empsW.length,
-                        html: true,
-                    })
-                    $('#titleAll').tooltip({
-                        title: '總人力',
-                        html: true,
-                    })
-                },
+                calendar.render();
+            },
+            //初始化班別資訊tooltip
+            initialTooltip() {
+                $('#titleA').tooltip({
+            title: 'A班人力：' + this.empsA.length,
+                    html: true,
+                })
+                $('#titleB').tooltip({
+            title: 'B班人力：' + this.empsB.length,
+                    html: true,
+                })
+                $('#titleW').tooltip({
+            title: '常日班人力：' + this.empsW.length,
+                    html: true,
+                })
+                $('#titleAll').tooltip({
+            title: '總人力',
+                    html: true,
+                })
+            },
                 //event點擊跳到員工請假detail
-                handleEventClick(info) {
-                    //location.href = '@Url.Action("Record", "Holiday")?id=' + info.event.id;
-                },
+            handleEventClick(info) {
+            //location.href = '@Url.Action("Record", "Holiday")?id=' + info.event.id;
+            },
                 //event tooltip
-                handleEventDidMount(arg) {
-                    arg.el.setAttribute('data-toggle', 'eventTooltip');
-                    arg.el.setAttribute('data-placement', 'top');
-                    let id = arg.event.id;
-                    let event = this.calendars.find(e => e.id == id);
-                    setEventToolTip(event.remark);
-                },
+            handleEventDidMount(arg) {
+                arg.el.setAttribute('data-toggle', 'eventTooltip');
+                arg.el.setAttribute('data-placement', 'top');
+                let id = arg.event.id;
+                let event = this.calendars.find(e => e.id == id);
+                setEventToolTip(event.remark);
+            },
                 //cell的AB班顏色 class name
-                handleDayCellClassNames(arg) {
-                    let date = arg.date;
-                    let shift = this.shifts[date.getMonth()].find(s => {
-                        let check = new Date(s.CheckDate).toLocaleDateString();
-                        return check === date.toLocaleDateString();
-                    })
-                    if (shift && shift.IsWork) {
-                        return 'shiftA';
-                    }
-                },
-                //cell的內容(人力不足顯示)
-                handleDayCellContent(arg) {
-                    //判斷常日班是否上班
-                    let date = arg.date;
-                    let data = this.weekWorks[date.getMonth()].find(w => {
-                        return new Date(w.CheckDate).toLocaleDateString() === date.toLocaleDateString();
-                    });
-
-                    //判斷輪班哪個班上班
-                    let shift = this.shifts[date.getMonth()].find(s => {
-                        let check = new Date(s.CheckDate).toLocaleDateString();
-                        return check === date.toLocaleDateString();
-                    })
-                    let todayDom = '';
-                    if (arg.isToday) {
-                        //是否為A班上班
-                        let shiftDom = '';
+            handleDayCellClassNames(arg) {
+                let date = arg.date;
+                let shift = this.shifts[date.getMonth()].find(s => {
+                    let check = new Date(s.CheckDate).toLocaleDateString();
+                    return check === date.toLocaleDateString();
+                })
                         if (shift && shift.IsWork) {
-                            shiftDom = `<span class="badge badge-primary">A班</span>`;
-                        } else {
-                            shiftDom = `<span class="badge badge-secondary">B班</span>`;
-                        }
-                        todayDom = `<div class="badge badge-warning">Today${shiftDom}</div>`;
+                    return 'shiftA';
+                }
+            },
+                //cell的內容(人力不足顯示)
+            handleDayCellContent(arg) {
+            //判斷常日班是否上班
+                let date = arg.date;
+                let data = this.weekWorks[date.getMonth()].find(w => {
+                    return new Date(w.CheckDate).toLocaleDateString() === date.toLocaleDateString();
+                });
 
-                    }
-
+                //判斷輪班哪個班上班
+                let shift = this.shifts[date.getMonth()].find(s => {
+                    let check = new Date(s.CheckDate).toLocaleDateString();
+                    return check === date.toLocaleDateString();
+                })
+                let todayDom = '';
+                if (arg.isToday) {
+                //是否為A班上班
+                let shiftDom = '';
+                if (shift && shift.IsWork) {
+                    shiftDom = `<span class="badge badge-primary">A班</span>`;
+                } else {
+                    shiftDom = `<span class="badge badge-secondary">B班</span>`;
+                }
+                    todayDom = `<div class="badge badge-warning">Today${shiftDom}</div>`;
+                }
                     //常日班應到人力
-                    let shouldNum = 0;
-                    if (data && data.IsWork) {
-                        let emps = this.employees.filter(emp => {
-                            return emp.Shift === data.Shift
-                        })
-                        shouldNum = emps.length;
-                    }
-                    //輪班應到人力
-                    if (shift && shift.IsWork) {
-                        let emps = this.employees.filter(emp => {
-                            return emp.Shift === 'A班';
-                        })
-                        shouldNum = emps.length;
-                    } else {
-                        let emps = this.employees.filter(emp => {
-                            return emp.Shift === 'B班';
-                        })
-                        shouldNum += emps.length;
-                    }
-                    //請假人力
-                    let leaveNum = 0;
-                    let leaveinfo = this.leaveInfos.find(l => {
-                        let check = new Date(l.date).toLocaleDateString();
-                        return check === date.toLocaleDateString();
+                let shouldNum = 0;
+                if (data && data.IsWork) {
+                    let emps = this.employees.filter(emp => {
+                    return emp.Shift === data.Shift
+                })
+                    shouldNum = emps.length;
+                }
+                //輪班應到人力
+                if (shift && shift.IsWork) {
+                    let emps = this.employees.filter(emp => {
+                        return emp.Shift === 'A班';
                     })
-                    if (leaveinfo) {
-                        leaveNum = leaveinfo.leaveNum;
-                    }
-                    //實際人力
-                    let realNum = shouldNum - leaveNum;
-
-                    let numEl = '';
-                    if (leaveNum) {
-                        numEl = ` <span class="badge badge-info">實${realNum}</span>
-                                  <span class="badge badge-danger">休${leaveNum}</span>`;
-                    } else {
-                        numEl = `<span class="badge badge-info">實${realNum}</span>`;
-                    }
-
-                    //判斷有無人力計畫
-                    let plan = this.plansByDay.find(p => {
-                        let planDate = new Date(p.StartDate).toLocaleDateString();
-                        return planDate === date.toLocaleDateString();
+                                    shouldNum = emps.length;
+                } else {
+                    let emps = this.employees.filter(emp => {
+                        return emp.Shift === 'B班';
                     })
+                                    shouldNum += emps.length;
+                }
+                //請假人力
+                let leaveNum = 0;
+                let leaveinfo = this.leaveInfos.find(l => {
+                    let check = new Date(l.date).toLocaleDateString();
+                    return check === date.toLocaleDateString();
+                })
+                                if (leaveinfo) {
+                    leaveNum = leaveinfo.leaveNum;
+                }
+                //實際人力
+                let realNum = shouldNum - leaveNum;
 
-                    //let planEl = '';
-                    //if (!plan) {
-                    //    planEl = `<div class="badge">!請安排需求人力</div>`;
-                    //} else {
-                    //    planEl = `<div class="badge badge-info">需${plan.PlanTitle}</div>`;
-                    //}
+                let numEl = '';
+                if (leaveNum) {
+                    numEl = ` <span class="badge badge-info">實${realNum}</span>
+                              <span class="badge badge-danger">休${leaveNum}</span>`;
+                } else {
+                    numEl = `<span class="badge badge-info">實${realNum}</span>`;
+                }
 
-                    //如果當天有規劃人力計畫並且人力不足時  會產生的warn提示訊息
-                    let att = this.attendance.find(item => {
-                        let attdate = new Date(item.date);
-                        return date.toLocaleDateString() === attdate.toLocaleDateString();
-                    })
-
+                //判斷有無人力計畫
+                let plan = this.plansByDay.find(p => {
+                    let planDate = new Date(p.StartDate).toLocaleDateString();
+                    return planDate === date.toLocaleDateString();
+                })
+                //如果當天有規劃人力計畫並且人力不足時  會產生的warn提示訊息
+                let att = this.attendance.find(item => {
+                    let attdate = new Date(item.date);
+                    return date.toLocaleDateString() === attdate.toLocaleDateString();
+                })
                     //若有計畫排程需求人力且人力不足會發出警告
                     let planEl = '';
-                    if (att) {
-                        this.warnDate.push({ date: date, num: att.realNum, plan:plan });
-                        planEl = `<span class="badge badge-danger attendanceNum">少${att.realNum * -1}</span>`;
-                    }
+                if (att) {
+                this.warnDate.push({ date: date, num: att.realNum, plan:plan });
+                planEl = `<span class="badge badge-danger attendanceNum">少${att.realNum * -1}</span>`;
+                }
 
-                    //常日班放假客製化日期字體顏色
-                    if (data && !data.IsWork) {
-                        let htmlStr = `
-                        <div class="dayCellContent">${arg.dayNumberText}</div>
-                        <div>${planEl}</div>
-                        <div>${todayDom}</div>
-                        <div>${numEl}</div>
-                        `;
-                        return { html: htmlStr };
-                    }
-                    else {
-                        let htmlStr = `
+                //常日班放假客製化日期字體顏色
+                if (data && !data.IsWork) {
+                let htmlStr = `
+                    <div class="dayCellContent">${arg.dayNumberText}</div>
+                    <div>${planEl}</div>
+                    <div>${todayDom}</div>
+                    <div>${numEl}</div>
+                    `;
+                    return { html: htmlStr };
+                }
+                else {
+                    let htmlStr = `
                         <div>${arg.dayNumberText}</div>
                         <div>${planEl}</div>
                         <div>${todayDom}</div>
                         <div>${numEl}</div>
                         `;
-                        return { html: htmlStr };
-                    }
+                    return { html: htmlStr };
+                }
                 },
                 //cell click事件
                 handleDateClick(info) {
-                    let check = this.warnDate.find(d => {
+                location.href = `@Url.Action("AttendanceSummary")?date=${info.date.toLocaleDateString()}`;
+                    @*let check = this.warnDate.find(d => {
                         return info.date.toLocaleDateString() === d.date.toLocaleDateString();
                     })
                     if (check) {
                         location.href = `@Url.Action("Notify")?date=${check.date.toLocaleDateString()}&need=${check.num}`;
                     }
                     else
-                        return;
+                        return;*@
                 },
             }
         })
 
-        function setEventToolTip(title) {
-            $('[data-toggle="eventTooltip"]').tooltip({
-                title: title,
-                html: true,
-            });
-        }
+            function setEventToolTip(title) {
+                $('[data-toggle="eventTooltip"]').tooltip({
+                    title: title,
+                    html: true,
+                });
+            }
 
-        function setAttendanceTooltip(title) {
-            $('[data-toggle="attendanceTooltip"]').tooltip({
-                title: title,
-                html: true,
-            });
-        }
+            function setAttendanceTooltip(title) {
+                $('[data-toggle="attendanceTooltip"]').tooltip({
+                    title: title,
+                    html: true,
+                });
+            }
     </script>
 
 }
-
 
 @section Style{
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
@@ -318,8 +349,16 @@
             border: 1px solid black;
             width: 30px;
             height: 30px;
-            display: inline-block;
-            margin-right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .item_block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
         }
 
         .shiftA {
@@ -345,7 +384,7 @@
         }
 
         .event_shiftA {
-            background-image: url(/images/a.png);
+            background-image: url('../../images/a.png');
         }
 
         .event_shiftB {
@@ -356,11 +395,9 @@
             /*background-image: url(/images/w.png);*/
         }
 
-
         .fc-daygrid-day-top {
             position: relative;
         }
-
 
         .fc-daygrid-day-number {
             width: 100%;

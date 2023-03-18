@@ -17,5 +17,7 @@ namespace UCOMProject.API
         public string color { get; set; }
         public string remark { get; set; }
         public bool allDay { get { return true; } }
+        public string shift { get; set; }
+        public string eid { get; set; }
     }
 }

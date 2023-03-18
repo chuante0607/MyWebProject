@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="MyDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Attendance">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkDate" Type="date" Nullable="false" />
+    <Property Name="Shift" Type="nvarchar" MaxLength="50" />
+    <Property Name="WeekWork" Type="bit" Nullable="false" />
+  </EntityType>
   <EntityType Name="Branch">
     <Key>
       <PropertyRef Name="Id" />
@@ -66,28 +75,6 @@
     <Property Name="StartDate" Type="date" Nullable="false" />
     <Property Name="EndDate" Type="date" Nullable="false" />
   </EntityType>
-  <EntityType Name="Schedules">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
-    <Property Name="WorkDay" Type="date" Nullable="false" />
-  </EntityType>
-  <!--Errors Found During Generation:
-warning 6002: The table/view 'MyDB.dbo.ShiftWork' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-  <EntityType Name="ShiftWork">
-    <Key>
-      <PropertyRef Name="Id" />
-      <PropertyRef Name="WorkDate" />
-      <PropertyRef Name="Shift" />
-      <PropertyRef Name="WeekWork" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="WorkDate" Type="date" Nullable="false" />
-    <Property Name="Shift" Type="nvarchar" MaxLength="50" Nullable="false" />
-    <Property Name="WeekWork" Type="bit" Nullable="false" />
-  </EntityType>
   <EntityType Name="sysdiagrams">
     <Key>
       <PropertyRef Name="diagram_id" />
@@ -98,7 +85,19 @@ warning 6002: The table/view 'MyDB.dbo.ShiftWork' does not have a primary key de
     <Property Name="version" Type="int" />
     <Property Name="definition" Type="varbinary(max)" />
   </EntityType>
-  <Association Name="FK_Employees_Branch1">
+  <Association Name="FK_Branch_Employees">
+    <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+    <End Role="Branch" Type="Self.Branch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Employees">
+        <PropertyRef Name="EId" />
+      </Principal>
+      <Dependent Role="Branch">
+        <PropertyRef Name="Head" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Employees_Branch">
     <End Role="Branch" Type="Self.Branch" Multiplicity="1" />
     <End Role="Employees" Type="Self.Employees" Multiplicity="*" />
     <ReferentialConstraint>
@@ -122,7 +121,7 @@ warning 6002: The table/view 'MyDB.dbo.ShiftWork' does not have a primary key de
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_HolidayDetails_Holidays1">
+  <Association Name="FK_HolidayDetails_Holidays">
     <End Role="Holidays" Type="Self.Holidays" Multiplicity="1" />
     <End Role="HolidayDetails" Type="Self.HolidayDetails" Multiplicity="*" />
     <ReferentialConstraint>
@@ -134,35 +133,19 @@ warning 6002: The table/view 'MyDB.dbo.ShiftWork' does not have a primary key de
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Schedules_Employees">
-    <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
-    <End Role="Schedules" Type="Self.Schedules" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Employees">
-        <PropertyRef Name="EId" />
-      </Principal>
-      <Dependent Role="Schedules">
-        <PropertyRef Name="EId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <EntityContainer Name="MyDBModelStoreContainer">
+    <EntitySet Name="Attendance" EntityType="Self.Attendance" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="HolidayDetails" EntityType="Self.HolidayDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Plans" EntityType="Self.Plans" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="ShiftWork" EntityType="Self.ShiftWork" store:Type="Tables" store:Schema="dbo">
-      <DefiningQuery>SELECT 
-    [ShiftWork].[Id] AS [Id], 
-    [ShiftWork].[WorkDate] AS [WorkDate], 
-    [ShiftWork].[Shift] AS [Shift], 
-    [ShiftWork].[WeekWork] AS [WeekWork]
-    FROM [dbo].[ShiftWork] AS [ShiftWork]</DefiningQuery>
-    </EntitySet>
-    <AssociationSet Name="FK_Employees_Branch1" Association="Self.FK_Employees_Branch1">
+    <AssociationSet Name="FK_Branch_Employees" Association="Self.FK_Branch_Employees">
+      <End Role="Employees" EntitySet="Employees" />
+      <End Role="Branch" EntitySet="Branch" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Employees_Branch" Association="Self.FK_Employees_Branch">
       <End Role="Branch" EntitySet="Branch" />
       <End Role="Employees" EntitySet="Employees" />
     </AssociationSet>
@@ -170,13 +153,9 @@ warning 6002: The table/view 'MyDB.dbo.ShiftWork' does not have a primary key de
       <End Role="Employees" EntitySet="Employees" />
       <End Role="HolidayDetails" EntitySet="HolidayDetails" />
     </AssociationSet>
-    <AssociationSet Name="FK_HolidayDetails_Holidays1" Association="Self.FK_HolidayDetails_Holidays1">
+    <AssociationSet Name="FK_HolidayDetails_Holidays" Association="Self.FK_HolidayDetails_Holidays">
       <End Role="Holidays" EntitySet="Holidays" />
       <End Role="HolidayDetails" EntitySet="HolidayDetails" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Schedules_Employees" Association="Self.FK_Schedules_Employees">
-      <End Role="Employees" EntitySet="Employees" />
-      <End Role="Schedules" EntitySet="Schedules" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

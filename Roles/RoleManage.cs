@@ -14,7 +14,19 @@ namespace UCOMProject.Roles
 
     public abstract class RoleManage
     {
-        protected Employee CurrentUser { get { return SessionEmp.CurrentEmp; } }
+        private Employee _currentUser;
+        public Employee CurrentUser
+        {
+            get
+            {
+                if (_currentUser == null)
+                    return SessionEmp.CurrentEmp;
+                else
+                    return _currentUser;
+            }
+            set
+            { _currentUser = value; }
+        }
         protected BranchType BranchType { get; set; }
         public RoleType Role { get; set; }
         public RoleManage(RoleType role)
@@ -79,7 +91,6 @@ namespace UCOMProject.Roles
         public abstract Task<List<EmployeeViewModel>> GetEmployees();
 
 
-
         /// <summary>
         /// 取得休假資訊
         /// </summary>
@@ -125,5 +136,49 @@ namespace UCOMProject.Roles
             return ScheduleUtility.GetWorkDayOfYearByMonth(file, year);
         }
 
+        /// <summary>
+        /// 取得出勤表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Attendance>> GetWorkSchedule()
+        {
+            return await ScheduleUtility.GetAttendances();
+        }
+
+
+
+        /// <summary>
+        /// 取得指定日期出勤表
+        /// </summary>
+        /// <returns>若指定日期沒有資訊會回傳null</returns>
+        public async Task<List<Attendance>> GetWorkSchedule(List<DateTime> days)
+        {
+            try
+            {
+                return await ScheduleUtility.GetAttendances(days);
+            }
+            catch (Exception ex)
+            {
+                string error = ex.Message;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 取得指定日期出勤表
+        /// </summary>
+        /// <returns>若指定日期沒有資訊會回傳null</returns>
+        public async Task<Attendance> GetWorkSchedule(DateTime date)
+        {
+            try
+            {
+                return await ScheduleUtility.GetAttendances(date);
+            }
+            catch (Exception ex)
+            {
+                string error = ex.Message;
+                return null;
+            }
+        }
     }
 }

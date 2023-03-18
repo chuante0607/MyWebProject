@@ -13,20 +13,20 @@ namespace UCOMProject.Controllers
     public class apiEventController : ApiController
     {
         // GET: api/apiEvent
-        public async Task<IHttpActionResult> Get()
-        {
-            List<CalendarApiModel> calendars = new List<CalendarApiModel>();
-            calendars = await ScheduleUtility.GetCalendars();
-            return Json(calendars);
-        }
+        //public async Task<IHttpActionResult> Get()
+        //{
+        //    List<CalendarApiModel> calendars = new List<CalendarApiModel>();
+        //    calendars = await ScheduleUtility.GetCalendars();
+        //    return Json(calendars);
+        //}
 
-        // GET: api/apiEvent/5
-        public async Task<IHttpActionResult> Get(DateTime start, DateTime end)
-        {
-            List<CalendarApiModel> calendars = new List<CalendarApiModel>();
-            calendars = await ScheduleUtility.GetCalendars();
-            return Json(calendars);
-        }
+        //// GET: api/apiEvent/5
+        //public async Task<IHttpActionResult> Get(DateTime start, DateTime end)
+        //{
+        //    List<CalendarApiModel> calendars = new List<CalendarApiModel>();
+        //    calendars = await ScheduleUtility.GetCalendars();
+        //    return Json(calendars);
+        //}
 
         // POST: api/apiEvent
         public void Post([FromBody] string value)

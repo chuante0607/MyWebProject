@@ -12,7 +12,7 @@ namespace UCOMProject.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ShiftWork
+    public partial class Attendance
     {
         public int Id { get; set; }
         public System.DateTime WorkDate { get; set; }

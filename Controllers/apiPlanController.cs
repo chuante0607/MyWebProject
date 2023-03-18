@@ -22,12 +22,11 @@ namespace UCOMProject.Controllers
         /// 查詢Plan schedule
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IHttpActionResult> Get()
-        {
-            ScheduleApiModel schedule = await ScheduleUtility.GetSchedule();
-            return Json(JsonConvert.SerializeObject(schedule, camelSetting));
-        }
+        //public async Task<IHttpActionResult> Get()
+        //{
+        //    ScheduleApiModel schedule = await ScheduleUtility.GetSchedule();
+        //    return Json(JsonConvert.SerializeObject(schedule, camelSetting));
+        //}
 
 
         /// <summary>

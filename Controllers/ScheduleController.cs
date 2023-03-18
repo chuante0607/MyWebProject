@@ -32,6 +32,41 @@ namespace UCOMProject.Controllers
             return View();
         }
 
+        public async Task<ActionResult> AttendanceDay(DateTime? date)
+        {
+            DateTime currentDate = (DateTime)date;
+            RoleManage user = ConfirmIdentity();
+            //出勤表
+            List<Attendance> schedules = await user.GetWorkSchedule();
+            Attendance schedule = schedules.Where(w => w.WorkDate == currentDate).FirstOrDefault();
+            if (schedule == null)
+            {
+                return RedirectToAction("Index");
+            }
+            ShiftType shift = schedule.Shift.xTranShiftEnum();
+            ShiftType weekType = ShiftType.常日班;
+            //所有員工資料找符合班別與常日班是否要上班
+            List<EmployeeViewModel> emps = await user.GetEmployees();
+            if (schedule.WeekWork)
+            {
+                //如果常日班也上班就安排進去
+                emps = emps.Where(e => e.ShiftType == shift || e.ShiftType == weekType).ToList();
+            }
+            else
+            {
+                //排除常日班
+                emps = emps.Where(e => e.ShiftType == shift).ToList();
+            }
+            List<HolidayDetailViewModel> details = await user.GetHolidayDetails();
+            //請假的人員名單
+            details = details.Where(d => d.RangDate.Contains(currentDate)).ToList();
+
+          
+
+            return View();
+        }
+
+
         public async Task<ActionResult> Notify(DateTime? date, string need)
         {
             if (date != null && need != null)

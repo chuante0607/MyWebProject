@@ -27,5 +27,7 @@ namespace UCOMProject.Models
         [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Employee> Employees { get; set; }
+        [JsonIgnore]
+        public virtual Employee Employee { get; set; }
     }
 }

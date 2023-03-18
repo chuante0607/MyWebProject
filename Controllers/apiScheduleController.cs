@@ -20,12 +20,23 @@ namespace UCOMProject.Controllers
 {
     public class apiScheduleController : ApiController
     {
-        [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            ScheduleApiModel schedule = await ScheduleUtility.GetSchedule();
-            schedule.plansByDay = await ScheduleUtility.GetPlansByDay();
-            return Json(schedule);
+            var head = Request.Headers.Select(s => new { s.Key, s.Value }).FirstOrDefault(w => w.Key == "Authorization");
+            string eid = "";
+            foreach (var id in head.Value)
+            {
+                eid = id;
+            }
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                Employee emp = db.Employees.Find(eid);
+                RoleManage user = ConfirmIdentity(emp.JobRank, emp.Branch.xTranBranchEnum());
+                user.CurrentUser = emp;
+                ScheduleApiModel schedule = await ScheduleUtility.GetSchedule(user);
+                schedule.plansByDay = await ScheduleUtility.GetPlansByDay();
+                return Json(schedule);
+            }
         }
 
         private RoleManage ConfirmIdentity(int rank, BranchType branch)

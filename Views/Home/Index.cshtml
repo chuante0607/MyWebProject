@@ -127,7 +127,12 @@
                 this.holidays = this.source.holidays;
                 this.leaveInfos = this.source.chartInfos[0];
 
-                fetch('http://localhost:51010/api/apiSchedule').then(response => {
+                let currentEmp = '@SessionEmp.CurrentEmp.EId';
+                const myHeaders = new Headers();
+                myHeaders.append('Authorization', `${currentEmp}`);
+                fetch('http://localhost:51010/api/apiSchedule', {
+                    headers: myHeaders,
+                }).then(response => {
                     return response.json();
                 }).then(result => {
                     result.calendars.forEach(c => {
@@ -291,7 +296,7 @@
                         headerToolbar: {
                             start: '',
                             center: '',
-                            end: '' 
+                            end: ''
                         },
                         listDayFormat: {
                             year: 'numeric',
