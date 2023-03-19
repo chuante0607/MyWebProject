@@ -128,6 +128,39 @@ namespace UCOMProject.Methods
         /// </summary>
         public static async Task<List<List<ShiftViewModel>>> GetWorkDayOfYearByMonth(ShiftType shift, int year)
         {
+            //using (MyDBEntities db = new MyDBEntities())
+            //{
+            //    List<List<ShiftViewModel>> workDayByMonth = new List<List<ShiftViewModel>>();
+            //    var query = await db.Attendances.ToListAsync();
+            //    Dictionary<int, List<Attendance>> group = query.GroupBy(g => g.WorkDate.Month).ToDictionary(t => t.Key, t => t.ToList());
+            //    int month = 1;
+            //    while (true)
+            //    {
+            //        if (group.ContainsKey(month))
+            //        {
+            //            List<ShiftViewModel> shifts = new List<ShiftViewModel>();
+            //            foreach (Attendance attendance in group[month])
+            //            {
+            //                if(shift.ToString() == attendance.Shift)
+            //                {
+            //                    shifts.Add(new ShiftViewModel(shift, attendance.WorkDate, true));
+            //                }
+            //                else
+            //                {
+            //                    shifts.Add(new ShiftViewModel(shift, attendance.WorkDate, false));
+            //                }
+            //            }
+            //            workDayByMonth.Add(shifts);
+            //        }
+            //        else
+            //        {
+            //            break;
+            //        }
+            //        month++;
+            //    }
+            //    return workDayByMonth;
+            //}
+
             List<List<ShiftViewModel>> workDayByMonth = new List<List<ShiftViewModel>>();
             const int WorkCycle = 4;
             //to do:
@@ -162,6 +195,8 @@ namespace UCOMProject.Methods
                 workDayByMonth.Add(workDays);
             }
             return workDayByMonth;
+
+
         }
 
         public static async Task<ShiftType> GetShiftTypeByDate(DateTime date, int year)
@@ -344,39 +379,61 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
-        /// 取得出勤表指定日期
+        /// 取得部門出勤表指定日期
         /// </summary>
         /// <returns></returns>
-        public static async Task<Attendance> GetAttendances(DateTime date)
+        public static async Task<List<AttendanceViewModel>> GetAttendances(DateTime date, BranchType branch)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                var query = await db.Attendances.ToListAsync();
-                if (query == null)
-                    throw new Exception($"{date}沒有指定日期的資訊");
-                return query.Where(data => data.WorkDate == date).FirstOrDefault();
-            }
-        }
-
-        /// <summary>
-        /// 取得指定日期出勤表
-        /// </summary>
-        /// <param name="days"></param>
-        /// <returns></returns>
-        public static async Task<List<Attendance>> GetAttendances(List<DateTime> days)
-        {
-            List<Attendance> attendances = new List<Attendance>();
-            using (MyDBEntities db = new MyDBEntities())
-            {
-                var query = await db.Attendances.ToListAsync();
-                foreach (DateTime date in days)
+                DateTime currentDate = date;
+                //出勤表
+                List<Attendance> attendances = await db.Attendances.ToListAsync();
+                Attendance attendance = attendances.FirstOrDefault(f => f.WorkDate == currentDate);
+                if (attendance == null)
                 {
-                    var result = query.Where(data => data.WorkDate == date).FirstOrDefault();
-                    if (result == null)
-                        throw new Exception($"{date}沒有指定日期的資訊");
-                    attendances.Add(result);
+                    throw new Exception($"{date.ToShortDateString()}沒有指定日期的資訊");
                 }
-                return attendances;
+                ShiftType shift = attendance.Shift.xTranShiftEnum();
+                //人員清單
+                List<EmployeeViewModel> emps = await EmployeeUtility.GetEmployees(new List<int> { (int)branch });
+                emps = emps.Where(w => w.ShiftType == shift).ToList();
+                //請假的人員名單
+                List<HolidayDetailViewModel> details = await HolidayUtility.GetHolidayDetails(currentDate);
+                details = details.Where(d => d.RangDate.Contains(currentDate)).ToList();
+
+                //統計出勤
+                List<AttendanceViewModel> vmList = new List<AttendanceViewModel>();
+                foreach (EmployeeViewModel emp in emps)
+                {
+                    AttendanceViewModel vm = new AttendanceViewModel();
+                    vm.ViewDate = currentDate;
+                    vm.EId = emp.EId;
+                    vm.Shift = emp.Shift;
+                    vm.ShiftType = emp.ShiftType;
+                    vm.Name = emp.Name;
+                    vm.EnglishName = emp.EnglishName;
+                    vm.Image = emp.Image;
+                    vm.BranchType = emp.BranchType;
+                    vm.JobType = emp.JobType;
+                    vm.JobRank = emp.JobRank;
+                    vm.IsLeave = details.Any(hasEmp => hasEmp.EId == emp.EId);
+                    //請假的人
+                    if (vm.IsLeave)
+                    {
+                        HolidayDetailViewModel detail = details.Where(w => w.EId == vm.EId).FirstOrDefault();
+                        vm.Id = detail.Id;
+                        vm.HId = detail.HId;
+                        vm.Title = detail.Title;
+                        vm.TitleType = detail.TitleType;
+                        vm.BeginDate = detail.BeginDate;
+                        vm.EndDate = detail.EndDate;
+                        vm.RangDate = detail.RangDate;
+                        vm.Remark = detail.Remark;
+                    }
+                    vmList.Add(vm);
+                }
+                return vmList;
             }
         }
     }

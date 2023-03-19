@@ -30,7 +30,11 @@ namespace UCOMProject.Controllers
             }
             using (MyDBEntities db = new MyDBEntities())
             {
-                Employee emp = db.Employees.Find(eid);
+                Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.EId == eid);
+                if(emp == null)
+                {
+                    return Json(new { success = false, msg = "無目前使用者資訊" });
+                }
                 RoleManage user = ConfirmIdentity(emp.JobRank, emp.Branch.xTranBranchEnum());
                 user.CurrentUser = emp;
                 ScheduleApiModel schedule = await ScheduleUtility.GetSchedule(user);

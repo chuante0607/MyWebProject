@@ -296,7 +296,7 @@ else
                 },
                 //cell click事件
                 handleDateClick(info) {
-                location.href = `@Url.Action("AttendanceSummary")?date=${info.date.toLocaleDateString()}`;
+                    location.href = `@Url.Action("AttendanceDay")?date=${info.date.toLocaleDateString()}`;
                     @*let check = this.warnDate.find(d => {
                         return info.date.toLocaleDateString() === d.date.toLocaleDateString();
                     })

@@ -137,48 +137,10 @@ namespace UCOMProject.Roles
         }
 
         /// <summary>
-        /// 取得出勤表
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<Attendance>> GetWorkSchedule()
-        {
-            return await ScheduleUtility.GetAttendances();
-        }
-
-
-
-        /// <summary>
         /// 取得指定日期出勤表
         /// </summary>
         /// <returns>若指定日期沒有資訊會回傳null</returns>
-        public async Task<List<Attendance>> GetWorkSchedule(List<DateTime> days)
-        {
-            try
-            {
-                return await ScheduleUtility.GetAttendances(days);
-            }
-            catch (Exception ex)
-            {
-                string error = ex.Message;
-                return null;
-            }
-        }
+        public abstract Task<List<AttendanceViewModel>> GetAttendances(DateTime date);
 
-        /// <summary>
-        /// 取得指定日期出勤表
-        /// </summary>
-        /// <returns>若指定日期沒有資訊會回傳null</returns>
-        public async Task<Attendance> GetWorkSchedule(DateTime date)
-        {
-            try
-            {
-                return await ScheduleUtility.GetAttendances(date);
-            }
-            catch (Exception ex)
-            {
-                string error = ex.Message;
-                return null;
-            }
-        }
     }
 }

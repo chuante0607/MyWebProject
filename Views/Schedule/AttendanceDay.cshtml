@@ -1,9 +1,182 @@
-﻿@model IEnumerable<UCOMProject.Models.AttendanceViewModel>
-
+﻿@using UCOMProject.Methods;
 @{
-    ViewBag.Title = "AttendanceDay";
+    ViewBag.Title = "出勤總覽";
+    var currentEmp = SessionEmp.CurrentEmp;
+
 }
 
-<h2>AttendanceSummary</h2>
 
+<div id="app" v-cloak>
+    <h4 class="text-center">出勤總覽(@currentEmp.Branch)</h4>
+    <h4 class="text-center">{{viewDateTitle}}</h4>
+    <div class="row mt-5">
+        <div class="col-3 input-group mb-3">
+            <div class="input-group-prepend">
+                <div class="dropdown">
+                    <input class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false" v-model="searchTitle">
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item"
+                             v-for="(wait , index) in searchWait"
+                             :key="wait.id"
+                             v-on:click="handleSearchTitle(wait.id)">
+                            {{wait.value}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="text"
+                   class="form-control"
+                   :placeholder="'請輸入' + searchTitle"
+                   aria-label="Username"
+                   aria-describedby="basic-addon1"
+                   v-model="searchValue"
+                   v-on:keyup="handleSearchValue">
+        </div>
+        <div class="col">
+            查詢其他日期：
+            <input type="date" class="btn btn-sm btn-outline-info" v-model="searchDate" v-on:change="handleSearchDate" />
+            <input class="btn btn-sm btn-outline-danger" value="前一周" />
+            <input class="btn btn-sm btn-outline-secondary" value="當周" />
+            <input class="btn btn-sm btn-outline-success" value="後一周" />
+        </div>
+    </div>
+    <div class="badge badge-info">實到{{workEmp.length}}人</div>
+    <div class="badge badge-danger">休息{{leaveEmp.length}}人</div>
+    <table class="table table-hover mt-3 w-50">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">部門</th>
+                <th scope="col">工號</th>
+                <th scope="col">姓名</th>
+                <th scope="col">班別</th>
+                <th scope="col" v-for="(date , index) in viewDate" :key="index">{{date.toLocaleDateString()}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(data , index) in searchResult" :key="data.eId">
+                <th scope="row" width="50">{{index + 1}}</th>
+                <td>{{data.Branch}}</td>
+                <td>{{data.EId}}</td>
+                <td>{{data.Name}}</td>
+                <td>{{data.Shift}}</td>
+                <td v-if="data.IsLeave">
+                    <span class="btn btn-sm btn-outline-danger" v-on:click="handleDetail(data.Id)">請假</span>
+                </td>
+                <td v-else><span class="text-success">出勤</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+@section Script{
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                source:[],
+                workEmp:[],
+                leaveEmp: [],
+                search: [{ id: 0, value: '工號' }, { id: 1, value: '姓名' }, { id: 2, value: '班別' }],
+                searchWait:[],
+                searchTitle: '姓名',
+                searchValue: '',
+                searchResult: [],
+                searchDate: '',
+                viewDate: [],
+                viewDateTitle:'',
+            },
+            mounted() {
+                let source = @Html.Raw(ViewBag.source);
+                this.source = source;
+                this.initialData(source);
+            },
+            methods: {
+                initialData(data) {
+                    this.searchResult = [];
+                    this.viewDate = [];
+                    this.workEmp = [];
+                    this.leaveEmp = [];
+                    this.viewDateTitle = '';
+                    data.forEach(att => {
+                    this.searchResult.push(att);
+                    att.IsLeave ? this.leaveEmp.push(att) : this.workEmp.push(att);
+                    let viewDate = new Date(att.ViewDate);
+                    let isRepeat = this.viewDate.some(date => date.valueOf() === viewDate.valueOf());
+                    if (!isRepeat) {
+                        this.viewDate.push(viewDate);
+                    }
+                    this.viewDateTitle = this.viewDate[0].toLocaleDateString();
+                })
+                this.searchWait = this.search.filter(s => s.value != this.searchTitle);
+                },
+                handleSearchTitle(id) {
+                    this.searchWait = this.search.filter(s => {
+                        if (s.id == id)
+                            this.searchTitle = s.value;
+                       return s.id != id
+                    });
+                },
+                handleSearchValue() {
+                    let kw = this.searchValue;
+                    this.searchResult = [];
+                    switch (this.searchTitle) {
+                        case '工號':
+                            this.searchResult = this.source.filter(att => {
+                                return att.EId.includes(kw);
+                            })
+                            break;
+                        case '姓名':
+                            this.searchResult = this.source.filter(att => {
+                                return att.Name.includes(kw);
+                            })
+                            break;
+                        case '班別':
+                            this.searchResult = this.source.filter(att => {
+                                return att.Shift.includes(kw);
+                            })
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                async handleSearchDate() {
+                    let current = '@currentEmp.EId';
+                    const myHeaders = new Headers();
+                    myHeaders.append('Authorization', `${current}`);
+                    let date = new Date(this.searchDate).toLocaleDateString()
+                    let url = 'http://localhost:51010/api/apiAttendance?date=' + date;
+                    let result = await this.searchData(url, myHeaders);
+                    if (result.success) {
+                        let data = result.attendances;
+                        this.initialData(data);
+                    } else {
+                        eAlert(result.msg);
+                    }
+
+                },
+                handleDetail(id) {
+                    location.href = '@Url.Action("Record", "Holiday")?id=' + id;
+                },
+                searchData(url, headers) {
+                    return fetch(url, { headers: headers }).then(response => {
+                        if (response.ok)
+                            return response.json();
+                    })
+                }
+            },
+        })
+
+    </script>
+}
+
+@section Style{
+    <style>
+        td {
+            width: 100px;
+        }
+    </style>
+
+}
 

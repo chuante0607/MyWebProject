@@ -11,12 +11,12 @@ using UCOMProject.Extension;
 
 namespace UCOMProject.Roles
 {
-    public class Manager : RoleManage, IHolidayReviewer , IAccountReviewer
+    public class Manager : RoleManage, IHolidayReviewer, IAccountReviewer
     {
         public Manager(RoleType role) : base(role) { }
-        public Manager(RoleType role , BranchType branch) : base(role , branch) { }
+        public Manager(RoleType role, BranchType branch) : base(role, branch) { }
 
-        
+
         public override RoleType GetRole()
         {
             return RoleType.Manager;
@@ -43,7 +43,7 @@ namespace UCOMProject.Roles
                     throw new Exception("部門主管只能查直屬部門員工資訊");
                 }
             }
-         
+
         }
 
         /// <summary>
@@ -116,6 +116,19 @@ namespace UCOMProject.Roles
             {
                 Console.WriteLine(ex.Message);
                 return false;
+            }
+        }
+
+        public override async Task<List<AttendanceViewModel>> GetAttendances(DateTime date)
+        {
+            try
+            {
+                return await ScheduleUtility.GetAttendances(date, BranchType);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

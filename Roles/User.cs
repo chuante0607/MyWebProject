@@ -76,5 +76,10 @@ namespace UCOMProject.Roles
                 return new List<HolidayViewModel>();
             }
         }
+
+        public override Task<List<AttendanceViewModel>> GetAttendances(DateTime date)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
