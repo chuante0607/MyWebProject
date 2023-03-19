@@ -2611,6 +2611,7 @@
     <Content Include="Views\Schedule\Notify.cshtml" />
     <Content Include="Views\Home\Chart.cshtml" />
     <Content Include="Views\Schedule\AttendanceDay.cshtml" />
+    <Content Include="Views\Schedule\NotifyDay.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

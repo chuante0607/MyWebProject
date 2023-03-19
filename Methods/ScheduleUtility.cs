@@ -441,6 +441,13 @@ namespace UCOMProject.Methods
             }
         }
 
+        /// <summary>
+        /// 計算出勤
+        /// </summary>
+        /// <param name="emps"></param>
+        /// <param name="details"></param>
+        /// <param name="currentDate"></param>
+        /// <returns></returns>
         private static List<AttendanceViewModel> getAttendanceViewModel(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> details, DateTime currentDate)
         {
             //統計出勤
@@ -476,5 +483,7 @@ namespace UCOMProject.Methods
             }
             return vmList;
         }
+
+        public static 
     }
 }

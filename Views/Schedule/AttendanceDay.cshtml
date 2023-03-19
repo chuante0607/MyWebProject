@@ -4,121 +4,241 @@
     var currentEmp = SessionEmp.CurrentEmp;
 
 }
+<div class="page-banner overlay-dark bg-image titleBackImg">
+    <div class="banner-section">
+        <div class="container text-center wow fadeInUp">
+            <h1 class="font-weight-normal">每日出勤總覽</h1>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div id="app" v-cloak>
     <div class="back">
-        <a class="btn btn-warning" href="@Url.Action("Index" , "Schedule")">返回員工休假計畫</a>
-        <a class="btn btn-outline-info" href="@Url.Action("Notify")">發布加班</a>
+        <div class="btn-group" role="group" aria-label="Basic example" style="z-index:10">
+            <a class="btn btn-warning" href="@Url.Action("Index" , "Schedule")">返回員工休假計畫</a>
+        </div>
     </div>
-    <h4 class="text-center">
-        每日出勤總覽
-    </h4>
     <br />
-
-
-    <div class="row mt-3">
-        <div class="col-4">
-            <div>
-                <label for="searchDate">查詢其他日期：</label>
-                <input type="date" id="searchDate" class="btn btn-sm btn-outline-info" v-model="searchDate" v-on:change="handleSearchDate" />
-                <input class="btn btn-sm btn-outline-info" value="前一天" v-on:click="handleBtnSearchDate(-1)" />
-                <input class="btn btn-sm btn-outline-info" value="後一天" v-on:click="handleBtnSearchDate(1)" />
+    <br />
+    <hr />
+    <div class="row">
+        <div class="col">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio"
+                       id="customRadioInline1"
+                       name="customRadioInline"
+                       class="custom-control-input"
+                       value="全顯示"
+                       v-model="radioValue"
+                       v-on:click="handleSearchValue">
+                <label class="custom-control-label" for="customRadioInline1">全顯示</label>
             </div>
-            <br />
-            <div>
-                <div class="custom-control custom-radio custom-control-inline">
-                    <input type="radio"
-                           id="customRadioInline1"
-                           name="customRadioInline"
-                           class="custom-control-input"
-                           value="全顯示"
-                           v-model="radioValue"
-                           v-on:click="handleSearchValue">
-                    <label class="custom-control-label" for="customRadioInline1">全顯示</label>
-                </div>
-                <div class="custom-control custom-radio custom-control-inline">
-                    <input type="radio"
-                           id="customRadioInline2"
-                           name="customRadioInline"
-                           class="custom-control-input"
-                           value="只顯示出勤"
-                           v-model="radioValue"
-                           v-on:click="handleSearchValue">
-                    <label class="custom-control-label" for="customRadioInline2">只顯示出勤</label>
-                </div>
-                <div class="custom-control custom-radio custom-control-inline">
-                    <input type="radio"
-                           id="customRadioInline3"
-                           name="customRadioInline"
-                           class="custom-control-input"
-                           value="只顯示休假"
-                           v-model="radioValue"
-                           v-on:click="handleSearchValue">
-                    <label class="custom-control-label" for="customRadioInline3">只顯示休假</label>
-                </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio"
+                       id="customRadioInline2"
+                       name="customRadioInline"
+                       class="custom-control-input"
+                       value="只顯示出勤"
+                       v-model="radioValue"
+                       v-on:click="handleSearchValue">
+                <label class="custom-control-label" for="customRadioInline2">只顯示出勤</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio"
+                       id="customRadioInline3"
+                       name="customRadioInline"
+                       class="custom-control-input"
+                       value="只顯示休假"
+                       v-model="radioValue"
+                       v-on:click="handleSearchValue">
+                <label class="custom-control-label" for="customRadioInline3">只顯示休假</label>
             </div>
         </div>
-        <div class="col-4 input-group mb-3">
-            <div class="input-group-prepend">
-                <div class="dropdown">
-                    <input class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false" v-model="searchTitle">
-                    <div class="dropdown-menu">
-                        <div class="dropdown-item"
-                             v-for="(wait , index) in searchWait"
-                             :key="wait.id"
-                             v-on:click="handleSearchTitle(wait.id)">
-                            {{wait.value}}
-                        </div>
+    </div>
+
+
+    <div class="page-section">
+        <div class="row">
+            <div class="col-lg-6 mt-4">
+                @*<table id="myTable" class="display text-center">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>部門</th>
+                    <th>工號</th>
+                    <th>姓名</th>
+                    <th>班別</th>
+                    <th>{{searchDate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(data , index) in searchResult" :key="data.eId">
+                    <td>{{index + 1}}</td>
+                    <td>{{data.Branch}}</td>
+                    <td>{{data.EId}}</td>
+                    <td>{{data.Name}}</td>
+                    <td>{{data.Shift}}</td>
+                    <td v-if="data.IsLeave">
+                        <span class="hBtn" v-on:click="handleDetail(data.Id)">休假</span>
+                    </td>
+                    <td v-else><span>出勤</span></td>
+                </tr>
+            </tbody>
+        </table>*@
+
+                <div class="row">
+
+                    <table class="table table-hover mt-3 text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">部門</th>
+                                <th scope="col">工號</th>
+                                <th scope="col">姓名</th>
+                                <th scope="col">班別</th>
+                                <th scope="col">{{searchDate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(data , index) in searchResult" :key="data.eId">
+                                <td scope="row" width="50">{{index + 1}}</td>
+                                <td>{{data.Branch}}</td>
+                                <td>{{data.EId}}</td>
+                                <td>{{data.Name}}</td>
+                                <td>{{data.Shift}}</td>
+                                <td v-if="data.IsLeave">
+                                    <span class="hBtn" v-on:click="handleDetail(data.Id)">休假</span>
+                                </td>
+                                <td v-else><span>出勤</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    <div class="col-12 my-5 py-3">
+                        <nav aria-label="Page Navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                                </li>
+                                <li class="page-item active" aria-current="page">
+                                    <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">2</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
-            <input type="text"
-                   class="form-control"
-                   :placeholder="'請輸入' + searchTitle"
-                   aria-label="Username"
-                   aria-describedby="basic-addon1"
-                   v-model="searchValue"
-                   v-on:keyup="handleSearchValue">
+            <div class="col-lg-1 py-3 mt-4">
+
+            </div>
+            <div class="col-lg-5 py-3 mt-4">
+                <div class="sidebar-block">
+                    <h3 class="sidebar-title">
+                        人力總覽
+                        <span class="badge">{{searchDate}}</span>
+                        <a class="btn btn-outline-danger" v-on:click="goToNotify">
+                            發布加班
+                        </a>
+
+                    </h3>
+                    <ul class="categories">
+                        <li><a class="bg-success text-light h4">實到<span style="font-size:16px">{{workEmp.length}}人</span></a></li>
+                        <li><a class="bg-danger text-light h4">休假<span style="font-size:16px">{{leaveEmp.length}}人</span></a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-block">
+                    <div>
+                        <label for="searchDate" class="sidebar-title h3">查詢其他日期：</label>
+                        <input type="date" id="searchDate" class="btn btn-sm btn-outline-info" v-model="searchDate" v-on:change="handleSearchDate" />
+                    </div>
+                    <div>
+                        <input class="btn btn-sm btn-outline-info" value="前一天" v-on:click="handleBtnSearchDate(-1)" />
+                        <input class="btn btn-sm btn-outline-info" value="後一天" v-on:click="handleBtnSearchDate(1)" />
+                    </div>
+                </div>
+
+                <div class="sidebar-block">
+                    <h3 class="sidebar-title h3">搜尋</h3>
+                    <div class="input-group mb-3">
+                        <div class="dropdown">
+                            <input class="btn btn-large btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false" v-model="searchTitle">
+                            <div class="dropdown-menu">
+                                <div class="dropdown-item"
+                                     v-for="(wait , index) in searchWait"
+                                     :key="wait.id"
+                                     v-on:click="handleSearchTitle(wait.id)">
+                                    {{wait.value}}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="text"
+                               class="form-control-user w-50"
+                               :placeholder="'請輸入' + searchTitle"
+                               aria-label="Username"
+                               aria-describedby="basic-addon1"
+                               v-model="searchValue"
+                               v-on:keyup="handleSearchValue">
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <div class="col-4"></div>
     </div>
 
-    <div>
-        <div class="badge text-center mt-3" style="font-size:1rem">{{searchDate}}</div>
-        <div class="badge badge-info" style="font-size:1rem">實到{{workEmp.length}}人</div>
-        <div class="badge badge-danger" style="font-size:1rem">休假{{leaveEmp.length}}人</div>
-    </div>
 
-    <table class="table table-hover mt-3 w-50">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">部門</th>
-                <th scope="col">工號</th>
-                <th scope="col">姓名</th>
-                <th scope="col">班別</th>
-                <th scope="col">{{searchDate}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="(data , index) in searchResult" :key="data.eId">
-                <th scope="row" width="50">{{index + 1}}</th>
-                <td>{{data.Branch}}</td>
-                <td>{{data.EId}}</td>
-                <td>{{data.Name}}</td>
-                <td>{{data.Shift}}</td>
-                <td v-if="data.IsLeave">
-                    <span class="btn btn-sm btn-outline-danger" v-on:click="handleDetail(data.Id)">休假</span>
-                </td>
-                <td v-else><span class="text-success">出勤</span></td>
-            </tr>
-        </tbody>
-    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
 </div>
 
 
 @section Script{
+    <script src="~/Content/assets/vendor/owl-carousel/js/owl.carousel.min.js"></script>
+    <script src="~/Content/assets/vendor/wow/wow.min.js"></script>
+    <script src="~/Content/assets/js/theme.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+
     <script>
+        $(() => {
+            //$('#myTable').DataTable({
+            //    "searching": true,
+            //    "language": {
+            //        "info": "顯示 _START_ 到 _END_ 項結果，共 _TOTAL_ 項",
+            //        "infoEmpty": "顯示 0 至 0 項結果，共 0 項",
+            //        "search": "搜尋:",
+            //        "lengthMenu": "顯示 _MENU_ 筆",
+            //        "paginate": {
+            //            "first": "第一頁",
+            //            "last": "最後一頁",
+            //            "next": "下一頁",
+            //            "previous": "上一頁"
+            //        }
+            //    }
+            //});
+        })
         const vm = new Vue({
             el: '#app',
             data: {
@@ -138,6 +258,9 @@
                 this.initialData(source);
             },
             methods: {
+                initialDataTable() {
+
+                },
                 initialData(data) {
                     moment.locale('zh-tw');
                     this.source = data;
@@ -246,6 +369,9 @@
                         if (response.ok)
                             return response.json();
                     })
+                },
+                goToNotify() {
+                    location.href = `@Url.Action("NotifyDay")?date=${this.searchDate}`;
                 }
             },
         })
@@ -254,17 +380,52 @@
 }
 
 @section Style{
+    <link href="~/Content/assets/css/maicons.css" rel="stylesheet" />
+    @*<link href="~/Content/assets/css/bootstrap.css" rel="stylesheet" />*@
+    <link href="~/Content/assets/vendor/owl-carousel/css/owl.carousel.css" rel="stylesheet" />
+    <link href="~/Content/assets/vendor/animate/animate.css" rel="stylesheet" />
+    <link href="~/Content/assets/css/theme.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
     <style>
         td {
             width: 100px;
         }
-        #app{
-            position:relative;
+
+        #app {
+            position: relative;
         }
-        .back{
-            position:absolute;
-            top:0;
-            left:0;
+
+        .back {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .navbar-nav {
+            margin-top: 0px;
+            border-top: initial;
+            flex-shrink: 0;
+        }
+
+        .titleBackImg {
+            background-image: url('../../img/about_.jpg');
+        }
+
+        .myHeadImgeBackGround {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .hBtn {
+            padding: 10px;
+            cursor: pointer;
+            color: red;
+        }
+
+        .page-section {
+            padding-top: 0;
         }
     </style>
 

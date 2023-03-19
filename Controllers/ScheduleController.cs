@@ -47,31 +47,35 @@ namespace UCOMProject.Controllers
             {
                 return RedirectToAction("Index", "NotFound");
             }
-       
+
         }
 
-
-        public async Task<ActionResult> Notify(DateTime? date, string need)
+        public async Task<ActionResult> NotifyDay(DateTime? date)
         {
-            if (date != null && need != null)
+            RoleManage user = ConfirmIdentity();
+
+
+
+            return View();
+        }
+
+        public async Task<ActionResult> Notify(DateTime? date)
+        {
+
+            RoleManage user = ConfirmIdentity();
+
+            List<EmployeeViewModel> empss = await user.GetEmployees();
+
+            NotifyViewModel notify = new NotifyViewModel();
+
+            //int needNum = Math.Abs(int.Parse(need));
+            DateTime checkDate = (DateTime)date;
+            if (checkDate.Year == DateTime.Now.Year)
             {
-                RoleManage user = ConfirmIdentity();
-
-                List<EmployeeViewModel> empss = await user.GetEmployees();
-
-                NotifyViewModel notify = new NotifyViewModel();
-
-                int needNum = Math.Abs(int.Parse(need));
-                (DateTime, int) info = ((DateTime)date, needNum);
-                ViewBag.need = JsonConvert.SerializeObject(info);
-                DateTime checkDate = (DateTime)date;
-                if (checkDate.Year == DateTime.Now.Year)
-                {
-                    ShiftType type = await ScheduleUtility.GetShiftTypeByDate(checkDate, checkDate.Year);
-                    var emps = await EmployeeUtility.GetEmployees();
-                    List<EmployeeViewModel> employees = emps.Where(e => e.ShiftType == type).ToList();
-                    return View(employees);
-                }
+                ShiftType type = await ScheduleUtility.GetShiftTypeByDate(checkDate, checkDate.Year);
+                var emps = await EmployeeUtility.GetEmployees();
+                List<EmployeeViewModel> employees = emps.Where(e => e.ShiftType == type).ToList();
+                return View(employees);
             }
             return RedirectToAction("index", "NotFound");
         }
