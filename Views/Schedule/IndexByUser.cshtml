@@ -4,60 +4,10 @@
     ViewBag.Title = "員工休假計畫";
     Employee emp = SessionEmp.CurrentEmp;
 }
-@if (emp.JobRank == 0)
-{
-    <h4 class="text-center">員工休假計畫(全部門)</h4>
-}
-else
-{
-    <h4 class="text-center">員工休假計畫(@SessionEmp.CurrentEmp.Branch)</h4>
-}
+
+<h4 class="text-center">@SessionEmp.CurrentEmp.Name 休假計畫</h4>
 <br />
 <div id="app" v-cloak>
-    @if (emp.Shift == "常日班")
-    {
-        if (emp.JobRank == 0)
-        {
-            <div class="block">
-                <div class="item_block">
-                    <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
-                    <div>A班總計{{empsA.length}}人</div>
-                </div>
-                <div class="item_block">
-                    <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
-                    <div>B班總計{{empsB.length}}人</div>
-                </div>
-                <div class="item_block">
-                    <div class="shift_block shiftW" data-toggle="tooltip" data-placement="top" id="titleW"></div>
-                    <div>常日班總計{{empsW.length}}人</div>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="block">
-                <div class="item_block">
-                    <div class="shift_block shiftW" data-toggle="tooltip" data-placement="top" id="titleW"></div>
-                    <div>常日班總計{{empsW.length}}人</div>
-                </div>
-            </div>
-        }
-
-    }
-    else
-    {
-
-        <div class="block">
-            <div class="item_block">
-                <div class="shift_block shiftA" data-toggle="tooltip" data-placement="top" id="titleA"></div>
-                <div>A班總計{{empsA.length}}人</div>
-            </div>
-            <div class="item_block">
-                <div class="shift_block" data-toggle="tooltip" data-placement="top" id="titleB"></div>
-                <div>B班總計{{empsB.length}}人</div>
-            </div>
-        </div>
-    }
     <div id="calendar" class=""></div>
 </div>
 
@@ -147,7 +97,6 @@ else
                         dayCellClassNames: self.handleDayCellClassNames,
                         dayCellContent: self.handleDayCellContent,
                         dayCellDidMount: self.handleDayCellDidMount,
-                        dateClick: self.handleDateClick,
                     });
                 calendar.render();
             },
@@ -279,7 +228,6 @@ else
                 let htmlStr = `
                     <div class="dayCellContent">${arg.dayNumberText}</div>
                     <div>${todayDom}</div>
-                    <div>${numEl}</div>
                     `;
                     return { html: htmlStr };
                 }
@@ -287,14 +235,9 @@ else
                     let htmlStr = `
                         <div>${arg.dayNumberText}</div>
                         <div>${todayDom}</div>
-                        <div>${numEl}</div>
                         `;
                     return { html: htmlStr };
                 }
-                },
-                //cell click事件
-                handleDateClick(info) {
-                    location.href = `@Url.Action("AttendanceDay")?date=${info.date.toLocaleDateString()}`;
                 },
             }
         })

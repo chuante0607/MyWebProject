@@ -310,7 +310,17 @@ namespace UCOMProject.Methods
         {
             ScheduleApiModel schedule = new ScheduleApiModel();
             schedule.calendars = await GetCalendars(user);
-            schedule.employees = await user.GetEmployees();
+            if (user.GetRole() == RoleType.User)
+            {
+                EmployeeViewModel result = await user.GetUser();
+                List<EmployeeViewModel> emplist = new List<EmployeeViewModel>();
+                emplist.Add(result);
+                schedule.employees = emplist;
+            }
+            else
+            {
+                schedule.employees = await user.GetEmployees();
+            }
             var details = await user.GetHolidayDetails();
             schedule.plans = await GetPlans();
             string[] file = System.IO.File.ReadAllLines(System.Web.Hosting.HostingEnvironment.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
@@ -365,6 +375,7 @@ namespace UCOMProject.Methods
             schedule.attendance = list;
             return schedule;
         }
+
 
         /// <summary>
         /// 取得指定日期所有人員出勤表

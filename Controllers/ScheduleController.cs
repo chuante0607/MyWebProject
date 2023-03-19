@@ -20,8 +20,14 @@ namespace UCOMProject.Controllers
     {
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
-        // GET: Production
+        //User主管與管理員的頁面
         public ActionResult Index()
+        {
+            return View();
+        }
+
+        //User使用的頁面
+        public ActionResult IndexByUser()
         {
             return View();
         }
@@ -53,7 +59,6 @@ namespace UCOMProject.Controllers
         public async Task<ActionResult> NotifyDay(DateTime? date)
         {
             RoleManage user = ConfirmIdentity();
-
 
 
             return View();
