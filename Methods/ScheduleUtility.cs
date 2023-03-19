@@ -484,6 +484,5 @@ namespace UCOMProject.Methods
             return vmList;
         }
 
-        public static 
     }
 }
