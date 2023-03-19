@@ -1,16 +1,64 @@
 ﻿@using UCOMProject.Methods;
 @{
-    ViewBag.Title = "出勤總覽";
+    ViewBag.Title = "每日出勤總覽";
     var currentEmp = SessionEmp.CurrentEmp;
 
 }
 
-
 <div id="app" v-cloak>
-    <h4 class="text-center">出勤總覽(@currentEmp.Branch)</h4>
-    <h4 class="text-center">{{viewDateTitle}}</h4>
-    <div class="row mt-5">
-        <div class="col-3 input-group mb-3">
+    <div class="back">
+        <a class="btn btn-warning" href="@Url.Action("Index" , "Schedule")">返回員工休假計畫</a>
+        <a class="btn btn-outline-info" href="@Url.Action("Notify")">發布加班</a>
+    </div>
+    <h4 class="text-center">
+        每日出勤總覽
+    </h4>
+    <br />
+
+
+    <div class="row mt-3">
+        <div class="col-4">
+            <div>
+                <label for="searchDate">查詢其他日期：</label>
+                <input type="date" id="searchDate" class="btn btn-sm btn-outline-info" v-model="searchDate" v-on:change="handleSearchDate" />
+                <input class="btn btn-sm btn-outline-info" value="前一天" v-on:click="handleBtnSearchDate(-1)" />
+                <input class="btn btn-sm btn-outline-info" value="後一天" v-on:click="handleBtnSearchDate(1)" />
+            </div>
+            <br />
+            <div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio"
+                           id="customRadioInline1"
+                           name="customRadioInline"
+                           class="custom-control-input"
+                           value="全顯示"
+                           v-model="radioValue"
+                           v-on:click="handleSearchValue">
+                    <label class="custom-control-label" for="customRadioInline1">全顯示</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio"
+                           id="customRadioInline2"
+                           name="customRadioInline"
+                           class="custom-control-input"
+                           value="只顯示出勤"
+                           v-model="radioValue"
+                           v-on:click="handleSearchValue">
+                    <label class="custom-control-label" for="customRadioInline2">只顯示出勤</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio"
+                           id="customRadioInline3"
+                           name="customRadioInline"
+                           class="custom-control-input"
+                           value="只顯示休假"
+                           v-model="radioValue"
+                           v-on:click="handleSearchValue">
+                    <label class="custom-control-label" for="customRadioInline3">只顯示休假</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 input-group mb-3">
             <div class="input-group-prepend">
                 <div class="dropdown">
                     <input class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false" v-model="searchTitle">
@@ -32,16 +80,15 @@
                    v-model="searchValue"
                    v-on:keyup="handleSearchValue">
         </div>
-        <div class="col">
-            查詢其他日期：
-            <input type="date" class="btn btn-sm btn-outline-info" v-model="searchDate" v-on:change="handleSearchDate" />
-            <input class="btn btn-sm btn-outline-danger" value="前一周" />
-            <input class="btn btn-sm btn-outline-secondary" value="當周" />
-            <input class="btn btn-sm btn-outline-success" value="後一周" />
-        </div>
+        <div class="col-4"></div>
     </div>
-    <div class="badge badge-info">實到{{workEmp.length}}人</div>
-    <div class="badge badge-danger">休息{{leaveEmp.length}}人</div>
+
+    <div>
+        <div class="badge text-center mt-3" style="font-size:1rem">{{searchDate}}</div>
+        <div class="badge badge-info" style="font-size:1rem">實到{{workEmp.length}}人</div>
+        <div class="badge badge-danger" style="font-size:1rem">休假{{leaveEmp.length}}人</div>
+    </div>
+
     <table class="table table-hover mt-3 w-50">
         <thead>
             <tr>
@@ -50,7 +97,7 @@
                 <th scope="col">工號</th>
                 <th scope="col">姓名</th>
                 <th scope="col">班別</th>
-                <th scope="col" v-for="(date , index) in viewDate" :key="index">{{date.toLocaleDateString()}}</th>
+                <th scope="col">{{searchDate}}</th>
             </tr>
         </thead>
         <tbody>
@@ -61,7 +108,7 @@
                 <td>{{data.Name}}</td>
                 <td>{{data.Shift}}</td>
                 <td v-if="data.IsLeave">
-                    <span class="btn btn-sm btn-outline-danger" v-on:click="handleDetail(data.Id)">請假</span>
+                    <span class="btn btn-sm btn-outline-danger" v-on:click="handleDetail(data.Id)">休假</span>
                 </td>
                 <td v-else><span class="text-success">出勤</span></td>
             </tr>
@@ -78,39 +125,35 @@
                 source:[],
                 workEmp:[],
                 leaveEmp: [],
-                search: [{ id: 0, value: '工號' }, { id: 1, value: '姓名' }, { id: 2, value: '班別' }],
+                search: [{ id: 0, value: '工號' }, { id: 1, value: '姓名' }, { id: 2, value: '班別' }, { id: 3, value: '部門' }],
                 searchWait:[],
                 searchTitle: '姓名',
                 searchValue: '',
                 searchResult: [],
                 searchDate: '',
-                viewDate: [],
-                viewDateTitle:'',
+                radioValue:'',
             },
             mounted() {
                 let source = @Html.Raw(ViewBag.source);
-                this.source = source;
                 this.initialData(source);
             },
             methods: {
                 initialData(data) {
+                    moment.locale('zh-tw');
+                    this.source = data;
                     this.searchResult = [];
-                    this.viewDate = [];
                     this.workEmp = [];
                     this.leaveEmp = [];
-                    this.viewDateTitle = '';
-                    data.forEach(att => {
-                    this.searchResult.push(att);
-                    att.IsLeave ? this.leaveEmp.push(att) : this.workEmp.push(att);
-                    let viewDate = new Date(att.ViewDate);
-                    let isRepeat = this.viewDate.some(date => date.valueOf() === viewDate.valueOf());
-                    if (!isRepeat) {
-                        this.viewDate.push(viewDate);
-                    }
-                    this.viewDateTitle = this.viewDate[0].toLocaleDateString();
-                })
-                this.searchWait = this.search.filter(s => s.value != this.searchTitle);
+                    this.source.forEach(att => {
+                        this.searchDate = moment(att.ViewDate).format('yyyy-MM-DD');
+                        this.searchResult.push(att);
+                        att.IsLeave ? this.leaveEmp.push(att) : this.workEmp.push(att);
+                    })
+                    this.searchWait = this.search.filter(s => s.value != this.searchTitle);
+                    //保留搜尋內容
+                    this.handleSearchValue();
                 },
+                //變換搜尋條件
                 handleSearchTitle(id) {
                     this.searchWait = this.search.filter(s => {
                         if (s.id == id)
@@ -118,9 +161,9 @@
                        return s.id != id
                     });
                 },
+                //搜尋內容
                 handleSearchValue() {
                     let kw = this.searchValue;
-                    this.searchResult = [];
                     switch (this.searchTitle) {
                         case '工號':
                             this.searchResult = this.source.filter(att => {
@@ -137,15 +180,56 @@
                                 return att.Shift.includes(kw);
                             })
                             break;
+                        case '部門':
+                            this.searchResult = this.source.filter(att => {
+                                return att.Branch.includes(kw);
+                            })
+                            break;
                         default:
                             break;
                     }
+                    switch (this.radioValue) {
+                        case '只顯示出勤':
+                            this.searchResult = this.searchResult.filter(att => !att.IsLeave);
+                            break;
+                        case '只顯示休假':
+                            this.searchResult = this.searchResult.filter(att => att.IsLeave);
+                            break;
+                        default:
+                    }
                 },
+                handleRadio() {
+                    switch (this.radioValue) {
+                        case '全顯示':
+                            this.searchResult = this.source;
+                            break;
+                        case '只顯示出勤':
+                            this.searchResult = this.workEmp;
+                            break;
+                        case '只顯示休假':
+                            this.searchResult = this.leaveEmp;
+                            break;
+                        default:
+                    }
+                },
+                //請假人員明細
+                handleDetail(id) {
+                    location.href = '@Url.Action("Record", "Holiday")?id=' + id;
+                },
+                //切換前一天或後一天
+                async handleBtnSearchDate(select) {
+                    let date = new Date(this.searchDate);
+                    let result = date.setDate(date.getDate() + select);
+                    this.searchDate = moment(result).format('yyyy-MM-DD');
+                    //計算完日期後呼叫handleSearchDate 索取更新資料
+                    await this.handleSearchDate();
+                },
+                //切換查詢日期
                 async handleSearchDate() {
                     let current = '@currentEmp.EId';
                     const myHeaders = new Headers();
                     myHeaders.append('Authorization', `${current}`);
-                    let date = new Date(this.searchDate).toLocaleDateString()
+                    let date = new Date(this.searchDate).toLocaleDateString();
                     let url = 'http://localhost:51010/api/apiAttendance?date=' + date;
                     let result = await this.searchData(url, myHeaders);
                     if (result.success) {
@@ -156,9 +240,7 @@
                     }
 
                 },
-                handleDetail(id) {
-                    location.href = '@Url.Action("Record", "Holiday")?id=' + id;
-                },
+                //fetch更新出勤清單
                 searchData(url, headers) {
                     return fetch(url, { headers: headers }).then(response => {
                         if (response.ok)
@@ -175,6 +257,14 @@
     <style>
         td {
             width: 100px;
+        }
+        #app{
+            position:relative;
+        }
+        .back{
+            position:absolute;
+            top:0;
+            left:0;
         }
     </style>
 

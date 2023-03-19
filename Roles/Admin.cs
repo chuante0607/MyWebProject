@@ -84,9 +84,17 @@ namespace UCOMProject.Roles
             return await HolidayUtility.GetHolidayInfosByEmp(eid);
         }
 
-        public override Task<List<AttendanceViewModel>> GetAttendances(DateTime date)
+        public override async Task<List<AttendanceViewModel>> GetAttendances(DateTime date)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await ScheduleUtility.GetAttendances(date);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

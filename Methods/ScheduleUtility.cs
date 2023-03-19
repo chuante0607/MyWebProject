@@ -367,14 +367,40 @@ namespace UCOMProject.Methods
         }
 
         /// <summary>
-        /// 取得出勤表
+        /// 取得指定日期所有人員出勤表
         /// </summary>
         /// <returns></returns>
-        public static async Task<List<Attendance>> GetAttendances()
+        public static async Task<List<AttendanceViewModel>> GetAttendances(DateTime date)
         {
             using (MyDBEntities db = new MyDBEntities())
             {
-                return await db.Attendances.ToListAsync();
+                DateTime currentDate = date;
+                //出勤表
+                List<Attendance> attendances = await db.Attendances.ToListAsync();
+                Attendance attendance = attendances.FirstOrDefault(f => f.WorkDate == currentDate);
+                if (attendance == null)
+                {
+                    throw new Exception($"{date.ToShortDateString()}沒有資訊");
+                }
+                ShiftType shift = attendance.Shift.xTranShiftEnum();
+                //人員清單
+                List<EmployeeViewModel> emps = await EmployeeUtility.GetEmployees();
+                if (attendance.WeekWork)
+                {
+                    //如果常日班上班列入常日班
+                    emps = emps.Where(w => w.ShiftType == shift || w.ShiftType == ShiftType.常日班).ToList();
+                }
+                else
+                {
+                    //只列入輪班
+                    emps = emps.Where(w => w.ShiftType == shift).ToList();
+                }
+                //請假的人員名單
+                List<HolidayDetailViewModel> details = await HolidayUtility.GetHolidayDetails(currentDate);
+                details = details.Where(d => d.RangDate.Contains(currentDate)).ToList();
+
+
+                return getAttendanceViewModel(emps, details, currentDate);
             }
         }
 
@@ -392,49 +418,63 @@ namespace UCOMProject.Methods
                 Attendance attendance = attendances.FirstOrDefault(f => f.WorkDate == currentDate);
                 if (attendance == null)
                 {
-                    throw new Exception($"{date.ToShortDateString()}沒有指定日期的資訊");
+                    throw new Exception($"{date.ToShortDateString()}沒有資訊");
                 }
                 ShiftType shift = attendance.Shift.xTranShiftEnum();
                 //人員清單
                 List<EmployeeViewModel> emps = await EmployeeUtility.GetEmployees(new List<int> { (int)branch });
-                emps = emps.Where(w => w.ShiftType == shift).ToList();
+                if (branch == BranchType.製造部)
+                {
+                    //主管是製造部就列入輪班
+                    emps = emps.Where(w => w.ShiftType == shift).ToList();
+                }
+                else
+                {
+                    //否則就只列入常日班
+                    emps = emps.Where(w => w.ShiftType == ShiftType.常日班).ToList();
+                }
                 //請假的人員名單
                 List<HolidayDetailViewModel> details = await HolidayUtility.GetHolidayDetails(currentDate);
                 details = details.Where(d => d.RangDate.Contains(currentDate)).ToList();
 
-                //統計出勤
-                List<AttendanceViewModel> vmList = new List<AttendanceViewModel>();
-                foreach (EmployeeViewModel emp in emps)
-                {
-                    AttendanceViewModel vm = new AttendanceViewModel();
-                    vm.ViewDate = currentDate;
-                    vm.EId = emp.EId;
-                    vm.Shift = emp.Shift;
-                    vm.ShiftType = emp.ShiftType;
-                    vm.Name = emp.Name;
-                    vm.EnglishName = emp.EnglishName;
-                    vm.Image = emp.Image;
-                    vm.BranchType = emp.BranchType;
-                    vm.JobType = emp.JobType;
-                    vm.JobRank = emp.JobRank;
-                    vm.IsLeave = details.Any(hasEmp => hasEmp.EId == emp.EId);
-                    //請假的人
-                    if (vm.IsLeave)
-                    {
-                        HolidayDetailViewModel detail = details.Where(w => w.EId == vm.EId).FirstOrDefault();
-                        vm.Id = detail.Id;
-                        vm.HId = detail.HId;
-                        vm.Title = detail.Title;
-                        vm.TitleType = detail.TitleType;
-                        vm.BeginDate = detail.BeginDate;
-                        vm.EndDate = detail.EndDate;
-                        vm.RangDate = detail.RangDate;
-                        vm.Remark = detail.Remark;
-                    }
-                    vmList.Add(vm);
-                }
-                return vmList;
+                return getAttendanceViewModel(emps, details, currentDate);
             }
+        }
+
+        private static List<AttendanceViewModel> getAttendanceViewModel(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> details, DateTime currentDate)
+        {
+            //統計出勤
+            List<AttendanceViewModel> vmList = new List<AttendanceViewModel>();
+            foreach (EmployeeViewModel emp in emps)
+            {
+                AttendanceViewModel vm = new AttendanceViewModel();
+                vm.ViewDate = currentDate;
+                vm.EId = emp.EId;
+                vm.Shift = emp.Shift;
+                vm.ShiftType = emp.ShiftType;
+                vm.Name = emp.Name;
+                vm.EnglishName = emp.EnglishName;
+                vm.Image = emp.Image;
+                vm.BranchType = emp.BranchType;
+                vm.JobType = emp.JobType;
+                vm.JobRank = emp.JobRank;
+                vm.IsLeave = details.Any(hasEmp => hasEmp.EId == emp.EId);
+                //請假的人
+                if (vm.IsLeave)
+                {
+                    HolidayDetailViewModel detail = details.Where(w => w.EId == vm.EId).FirstOrDefault();
+                    vm.Id = detail.Id;
+                    vm.HId = detail.HId;
+                    vm.Title = detail.Title;
+                    vm.TitleType = detail.TitleType;
+                    vm.BeginDate = detail.BeginDate;
+                    vm.EndDate = detail.EndDate;
+                    vm.RangDate = detail.RangDate;
+                    vm.Remark = detail.Remark;
+                }
+                vmList.Add(vm);
+            }
+            return vmList;
         }
     }
 }
