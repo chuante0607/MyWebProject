@@ -16,6 +16,8 @@
         <AssociationConnector Association="MyDBModel.FK_HolidayDetails_Holidays1" />
         <AssociationConnector Association="MyDBModel.FK_Branch_Employees" />
         <EntityTypeShape EntityType="MyDBModel.Attendance" Width="1.5" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="MyDBModel.OverTimeDetail" Width="1.5" PointX="3" PointY="5.75" />
+        <AssociationConnector Association="MyDBModel.FK_OverTimeDetails_Employees" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -155,17 +155,17 @@
                         </a>
                         <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
+                                <a class="collapse-item" href="@Url.Action("IndexByUser" , "schedule")">
+                                    <i class="fas fa-table fa-sm fa-fw mr-2"></i>
+                                    個人休假總覽
+                                </a>
                                 <a class="collapse-item" href="@Url.Action("index" , "schedule")">
                                     <i class="fas fa-table fa-sm fa-fw mr-2"></i>
                                     部門休假總覽
                                 </a>
-                                <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule")">
+                                <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule" , new { date = DateTime.Now.ToShortDateString()})">
                                     <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
-                                    員工出勤總覽
-                                </a>
-                                <a class="collapse-item" href="#">
-                                    <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
-                                    人力調度
+                                    每日員工出勤
                                 </a>
                             </div>
                         </div>
@@ -208,17 +208,17 @@
                         </a>
                         <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
+                                <a class="collapse-item" href="@Url.Action("IndexByUser" , "schedule")">
+                                    <i class="fas fa-table fa-sm fa-fw mr-2"></i>
+                                    個人休假總覽
+                                </a>
                                 <a class="collapse-item" href="@Url.Action("index" , "schedule")">
                                     <i class="fas fa-table fa-sm fa-fw mr-2"></i>
                                     員工休假總覽
                                 </a>
-                                <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule")">
+                                <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule" , new { date = DateTime.Now.ToShortDateString()})">
                                     <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
-                                    員工出勤總覽
-                                </a>
-                                <a class="collapse-item" href="#">
-                                    <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
-                                    人力調度
+                                    每日員工出勤
                                 </a>
                             </div>
                         </div>

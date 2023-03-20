@@ -57,11 +57,36 @@ namespace UCOMProject.Controllers
 
         }
 
+
+        [HttpPost]
+        public async Task<ActionResult> AttendanceDay(EmployeeViewModel emp , DateTime date)
+        {
+
+            return View();
+            //const decimal totalPages = 10;
+            //try
+            //{
+            //    DateTime currentDate = (DateTime)date;
+            //    RoleManage user = ConfirmIdentity();
+            //    List<AttendanceViewModel> attendances = await user.GetAttendances(currentDate);
+            //    ViewBag.source = JsonConvert.SerializeObject(attendances);
+            //    ViewBag.viewDate = currentDate.ToLongDateString();
+            //    return View();
+            //}
+            //catch
+            //{
+            //    return RedirectToAction("Index", "NotFound");
+            //}
+
+        }
+
+
+
+
         public async Task<ActionResult> NotifyDay(DateTime? date)
         {
+            
             RoleManage user = ConfirmIdentity();
-
-
             return View();
         }
 

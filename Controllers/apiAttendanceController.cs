@@ -19,8 +19,8 @@ namespace UCOMProject.Controllers
     public class apiAttendanceController : ApiController
     {
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-       
-        
+
+
         public async Task<IHttpActionResult> Get(DateTime? date)
         {
             var head = Request.Headers.Select(s => new { s.Key, s.Value }).FirstOrDefault(w => w.Key == "Authorization");
@@ -39,7 +39,6 @@ namespace UCOMProject.Controllers
                     RoleManage user = ConfirmIdentity(emp.JobRank, emp.Branch.xTranBranchEnum());
                     DateTime currentDate = (DateTime)date;
                     List<AttendanceViewModel> attendances = await user.GetAttendances(currentDate);
-                    var query = attendances.Skip(5).Take(10);
                     return Json(new { success = true, attendances = attendances });
                 }
             }
@@ -67,37 +66,41 @@ namespace UCOMProject.Controllers
             }
             return user;
         }
-        // GET: api/apiAttendance/5
-        public string Get(int id)
+
+        public class Payload
         {
-            return "value";
+            public string eid { get; set; }
+            public string name { get; set; }
+            public string shift { get; set; }
+            public string date { get; set; }
         }
 
         // POST: api/apiAttendance
-        public async Task<IHttpActionResult> Post([FromBody] DateTime? date)
+        public async Task<IHttpActionResult> Post([FromBody] List<Payload> data)
         {
-            var head = Request.Headers.Select(s => new { s.Key, s.Value }).FirstOrDefault(w => w.Key == "Authorization");
-            string eid = "";
-            foreach (var id in head.Value)
+            DateTime date = new DateTime();
+            using (MyDBEntities db = new MyDBEntities())
             {
-                eid = id;
-            }
-            try
-            {
-                using (MyDBEntities db = new MyDBEntities())
+                try
                 {
-                    Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.EId == eid);
-                    if (emp == null)
-                        throw new Exception("無目前使用者資訊");
-                    RoleManage user = ConfirmIdentity(emp.JobRank, emp.Branch.xTranBranchEnum());
-                    DateTime currentDate = (DateTime)date;
-                    List<AttendanceViewModel> attendances = await user.GetAttendances(currentDate);
-                    return Json(new { success = true, attendances = attendances });
+                    foreach (var d in data)
+                    {
+                        date = DateTime.Parse(d.date);
+                        OverTimeDetail overTime = new OverTimeDetail
+                        {
+                            EId = d.eid,
+                            OverTimeDate = date,
+                            UserCheck = false,
+                        };
+                        db.OverTimeDetails.Add(overTime);
+                        await db.SaveChangesAsync();
+                    }
+                    return Json(new { success = true, date = date });
                 }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, msg = ex.Message });
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, msg = ex.Message });
+                }
             }
         }
 

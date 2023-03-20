@@ -376,6 +376,129 @@ namespace UCOMProject.Methods
             return schedule;
         }
 
+        /// <summary>
+        /// 取得自己Calendars所展示的資訊請假與加班
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<List<CalendarApiModel>> GetCalendarsBySelf(string eid)
+        {
+            var query = await HolidayUtility.GetHolidayDetails(eid);
+            List<CalendarApiModel> calendars = new List<CalendarApiModel>();
+            List<HolidayDetailViewModel> holidayDetails = query.ToList();
+            foreach (HolidayDetailViewModel detail in holidayDetails)
+            {
+                string className = "";
+                string backColor = "";
+                string txtColor = "";
+                if (detail.State != 2)
+                    continue;
+                switch (detail.Shift.xTranShiftEnum())
+                {
+                    case ShiftType.常日班:
+                        className = "event_shiftW";
+                        backColor = "#FED3D3";
+                        txtColor = "#000";
+                        break;
+                    case ShiftType.A班:
+                        className = "event_shiftA";
+
+                        break;
+                    case ShiftType.B班:
+                        className = "event_shiftB";
+                        backColor = "#fff";
+                        txtColor = "#000";
+
+                        break;
+                    default:
+                        break;
+                }
+                foreach (DateTime date in detail.RangDate)
+                {
+                    CalendarApiModel calendar = new CalendarApiModel();
+                    calendar.id = detail.Id.ToString();
+                    calendar.title = $"{detail.Name}";
+                    calendar.start = date;
+                    calendar.end = date.AddDays(1);
+                    calendar.classNames = className;
+                    calendar.backgroundColor = backColor;
+                    calendar.textColor = txtColor;
+                    calendar.remark = $"{ detail.Title} {detail.UsedDays}天：{detail.BeginDate.ToString("M/d")} - {detail.EndDate.ToString("M/d")}";
+                    calendar.shift = detail.Shift;
+                    calendar.eid = detail.EId;
+                    calendars.Add(calendar);
+                }
+            }
+            calendars = calendars.OrderBy(o => o.classNames).ToList();
+            return calendars;
+        }
+
+        /// <summary>
+        /// Schedule頁面的所有資訊
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<ScheduleApiModel> GetScheduleBySelf(RoleManage user, string eid)
+        {
+            ScheduleApiModel schedule = new ScheduleApiModel();
+            schedule.calendars = await GetCalendarsBySelf(eid);
+            EmployeeViewModel result = await user.GetUser();
+            List<EmployeeViewModel> emplist = new List<EmployeeViewModel>();
+            emplist.Add(result);
+            schedule.employees = emplist;
+            var details = await user.GetHolidayDetails();
+            schedule.plans = await GetPlans();
+            string[] file = System.IO.File.ReadAllLines(System.Web.Hosting.HostingEnvironment.MapPath("~/Uploads/112年中華民國政府行政機關辦公日曆表.csv"), Encoding.Default);
+            schedule.shifts = await GetWorkDayOfYearByMonth(ShiftType.A班, DateTime.Now.Year);
+            schedule.weekWorks = GetWorkDayOfYearByMonth(file, DateTime.Now.Year);
+            int empsA = schedule.employees.Where(e => e.ShiftType == ShiftType.A班).ToList().Count();
+            int empsB = schedule.employees.Where(e => e.ShiftType == ShiftType.B班).ToList().Count();
+            int empsW = schedule.employees.Where(e => e.ShiftType == ShiftType.常日班).ToList().Count();
+
+            //計算每天請假的人數
+            schedule.leaveInfos = schedule.calendars.GroupBy(g => g.start).Select(group => new LeaveNumApiModel { date = group.Key, leaveNum = group.Count() }).ToList();
+
+            //以下計算人力
+            List<ScheduleNumApiModel> list = new List<ScheduleNumApiModel>();
+            foreach (Plan p in schedule.plans.OrderBy(p => p.StartDate))
+            {
+                //plan日期是範圍
+                TimeSpan days = p.EndDate.Subtract(p.StartDate);
+                for (int i = 0; i < days.Days; i++)
+                {
+                    DateTime planDate = p.StartDate.AddDays(i);
+                    ScheduleNumApiModel numModel = new ScheduleNumApiModel();
+                    //shifts weekDays leaves索引由0開始表示1月
+                    int month = planDate.Month - 1;
+                    //planNum當天排程需求人力
+                    numModel.planNum = int.Parse(p.PlanTitle);
+                    //確認當天是A或B班出勤
+                    ShiftViewModel shiftByDate = schedule.shifts[month].FirstOrDefault(shift => shift.CheckDate == planDate);
+                    //確認當天常日班是否出勤
+                    ShiftViewModel weekDayByDate = schedule.weekWorks[month].FirstOrDefault(shift => shift.CheckDate == planDate);
+                    if (shiftByDate != null && weekDayByDate != null)
+                    {
+                        //shouldNum 當天應出勤出勤人力
+                        numModel.shouldNum += shiftByDate.IsWork ? empsA : empsB;
+                        numModel.shouldNum += weekDayByDate.IsWork ? empsW : 0;
+                        //當天請假人力
+                        numModel.leaveNum = details.Where(d => d.State == 2 && d.RangDate.Contains(planDate)).ToList().Count();
+                    }
+                    //實際人力不夠  在加到attendance於前端發送通知
+                    if (numModel.realNum < 0)
+                    {
+                        List<string> shifts = new List<string>();
+                        numModel.date = planDate;
+                        //紀錄出勤班別
+                        shifts.Add(shiftByDate.IsWork ? ShiftType.A班.ToString() : ShiftType.B班.ToString());
+                        shifts.Add(weekDayByDate.IsWork ? ShiftType.常日班.ToString() : ShiftType.請選擇.ToString());
+                        numModel.shouldShifts = shifts;
+                        list.Add(numModel);
+                    }
+                }
+            }
+            schedule.attendance = list;
+            return schedule;
+        }
+
 
         /// <summary>
         /// 取得指定日期所有人員出勤表
@@ -411,8 +534,90 @@ namespace UCOMProject.Methods
                 details = details.Where(d => d.RangDate.Contains(currentDate)).ToList();
 
 
-                return getAttendanceViewModel(emps, details, currentDate);
+                return setAttendanceViewModel(emps, details, currentDate, true);
             }
+        }
+
+        /// <summary>
+        /// 取得出勤的班別
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static async Task<Attendance> GetShiftAttendances(DateTime date)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                Attendance attendance = await db.Attendances.FirstOrDefaultAsync(a => a.WorkDate == date);
+                if (attendance == null)
+                {
+                    throw new Exception($"{date.ToShortDateString()}沒有資訊");
+                }
+                return attendance;
+            }
+        }
+
+
+        /// <summary>
+        /// 取得出勤表與可加班人力
+        /// </summary>
+        /// <param name="emps"></param>
+        /// <param name="details"></param>
+        /// <param name="attendance"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static List<AttendanceViewModel> GetAttendances(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> detailsByDate, Attendance attendance, DateTime date)
+        {
+            List<AttendanceViewModel> attendances = new List<AttendanceViewModel>();
+            List<EmployeeViewModel> weekWorkEmps = new List<EmployeeViewModel>();
+            List<EmployeeViewModel> weekOverTimeEmps = new List<EmployeeViewModel>();
+            List<EmployeeViewModel> shiftWorkEmps = new List<EmployeeViewModel>();
+            List<EmployeeViewModel> shiftOverTimeEmps = new List<EmployeeViewModel>();
+
+            //判斷部門裡有無常日班員工
+            if (emps.Any(s => s.ShiftType == ShiftType.常日班))
+            {
+                //紀錄當天應該要出勤人員的名單
+                weekWorkEmps = emps.Where(s => s.ShiftType == ShiftType.常日班 && attendance.WeekWork).ToList();
+                if (weekWorkEmps.Count == 0)
+                {
+                    //可以發布加班
+                    weekOverTimeEmps = emps.Where(s => s.ShiftType == ShiftType.常日班).ToList();
+                }
+            }
+
+            //判斷部門裡有無AB班員工
+            if (emps.Any(s => s.ShiftType == ShiftType.A班 || s.ShiftType == ShiftType.B班))
+            {
+                switch (attendance.Shift.xTranShiftEnum())
+                {
+                    case ShiftType.A班:
+                        shiftWorkEmps = emps.Where(w => w.ShiftType == ShiftType.A班).ToList();
+                        shiftOverTimeEmps = emps.Where(w => w.ShiftType == ShiftType.B班).ToList();
+                        break;
+                    case ShiftType.B班:
+                        shiftWorkEmps = emps.Where(w => w.ShiftType == ShiftType.B班).ToList();
+                        shiftOverTimeEmps = emps.Where(w => w.ShiftType == ShiftType.A班).ToList();
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            List<EmployeeViewModel> workEmps = new List<EmployeeViewModel>();
+            workEmps.AddRange(weekWorkEmps);
+            workEmps.AddRange(shiftWorkEmps);
+            List<EmployeeViewModel> overTimeEMps = new List<EmployeeViewModel>();
+            overTimeEMps.AddRange(weekOverTimeEmps);
+            overTimeEMps.AddRange(shiftOverTimeEmps);
+
+            //請假的人員名單
+
+            List<AttendanceViewModel> workVM = setAttendanceViewModel(workEmps, detailsByDate, date, false);
+            List<AttendanceViewModel> overTimeVM = setAttendanceViewModel(overTimeEMps, detailsByDate, date, true);
+            List<AttendanceViewModel> vm = new List<AttendanceViewModel>();
+            vm.AddRange(workVM);
+            vm.AddRange(overTimeVM);
+            return vm;
         }
 
         /// <summary>
@@ -444,11 +649,12 @@ namespace UCOMProject.Methods
                     //否則就只列入常日班
                     emps = emps.Where(w => w.ShiftType == ShiftType.常日班).ToList();
                 }
+
                 //請假的人員名單
                 List<HolidayDetailViewModel> details = await HolidayUtility.GetHolidayDetails(currentDate);
                 details = details.Where(d => d.RangDate.Contains(currentDate)).ToList();
 
-                return getAttendanceViewModel(emps, details, currentDate);
+                return setAttendanceViewModel(emps, details, currentDate, true);
             }
         }
 
@@ -459,7 +665,7 @@ namespace UCOMProject.Methods
         /// <param name="details"></param>
         /// <param name="currentDate"></param>
         /// <returns></returns>
-        private static List<AttendanceViewModel> getAttendanceViewModel(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> details, DateTime currentDate)
+        private static List<AttendanceViewModel> setAttendanceViewModel(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> details, DateTime currentDate, bool canOverTime)
         {
             //統計出勤
             List<AttendanceViewModel> vmList = new List<AttendanceViewModel>();
@@ -477,6 +683,7 @@ namespace UCOMProject.Methods
                 vm.JobType = emp.JobType;
                 vm.JobRank = emp.JobRank;
                 vm.IsLeave = details.Any(hasEmp => hasEmp.EId == emp.EId);
+                vm.CanOverTime = canOverTime;
                 //請假的人
                 if (vm.IsLeave)
                 {

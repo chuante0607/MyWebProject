@@ -20,6 +20,7 @@ namespace UCOMProject.Models
         {
             this.HolidayDetails = new HashSet<HolidayDetail>();
             this.Branches = new HashSet<Branch>();
+            this.OverTimeDetails = new HashSet<OverTimeDetail>();
         }
     
         public string EId { get; set; }
@@ -37,6 +38,7 @@ namespace UCOMProject.Models
         public System.DateTime StartDate { get; set; }
         public bool Allow { get; set; }
         public int BranchId { get; set; }
+
         [JsonIgnore]
         public virtual Branch Branch1 { get; set; }
         [JsonIgnore]
@@ -45,5 +47,8 @@ namespace UCOMProject.Models
         [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Branch> Branches { get; set; }
+        [JsonIgnore]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OverTimeDetail> OverTimeDetails { get; set; }
     }
 }

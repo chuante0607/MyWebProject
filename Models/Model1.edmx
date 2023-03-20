@@ -71,6 +71,15 @@
           <Property Name="ProveType" Type="bit" Nullable="false" />
           <Property Name="AnyOne" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="OverTimeDetails">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EId" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="OverTimeDate" Type="date" Nullable="false" />
+          <Property Name="UserCheck" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="Plans">
           <Key>
             <PropertyRef Name="Id" />
@@ -138,12 +147,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_OverTimeDetails_Employees">
+          <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+          <End Role="OverTimeDetails" Type="Self.OverTimeDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="EId" />
+            </Principal>
+            <Dependent Role="OverTimeDetails">
+              <PropertyRef Name="EId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="MyDBModelStoreContainer">
           <EntitySet Name="Attendance" EntityType="Self.Attendance" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HolidayDetails" EntityType="Self.HolidayDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Holidays" EntityType="Self.Holidays" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OverTimeDetails" EntityType="Self.OverTimeDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Plans" EntityType="Self.Plans" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Branch_Employees" Association="Self.FK_Branch_Employees">
@@ -161,6 +183,10 @@
           <AssociationSet Name="FK_HolidayDetails_Holidays" Association="Self.FK_HolidayDetails_Holidays">
             <End Role="Holidays" EntitySet="Holidays" />
             <End Role="HolidayDetails" EntitySet="HolidayDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OverTimeDetails_Employees" Association="Self.FK_OverTimeDetails_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="OverTimeDetails" EntitySet="OverTimeDetails" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -191,6 +217,11 @@
             <End Role="Branch" EntitySet="Branches" />
           </AssociationSet>
           <EntitySet Name="Attendances" EntityType="MyDBModel.Attendance" />
+          <EntitySet Name="OverTimeDetails" EntityType="MyDBModel.OverTimeDetail" />
+          <AssociationSet Name="FK_OverTimeDetails_Employees" Association="MyDBModel.FK_OverTimeDetails_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="OverTimeDetail" EntitySet="OverTimeDetails" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Branch">
           <Key>
@@ -234,6 +265,7 @@
           <NavigationProperty Name="Branch1" Relationship="MyDBModel.FK_Employees_Branch1" FromRole="Employee" ToRole="Branch" />
           <NavigationProperty Name="HolidayDetails" Relationship="MyDBModel.FK_HolidayDetails_Employees" FromRole="Employee" ToRole="HolidayDetail" />
           <NavigationProperty Name="Branches" Relationship="MyDBModel.FK_Branch_Employees" FromRole="Employee" ToRole="Branch" />
+          <NavigationProperty Name="OverTimeDetails" Relationship="MyDBModel.FK_OverTimeDetails_Employees" FromRole="Employee" ToRole="OverTimeDetail" />
         </EntityType>
         <Association Name="FK_Employees_Branch1">
           <End Type="MyDBModel.Branch" Role="Branch" Multiplicity="1" />
@@ -333,6 +365,28 @@
           <Property Name="Shift" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="WeekWork" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="OverTimeDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OverTimeDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="UserCheck" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="MyDBModel.FK_OverTimeDetails_Employees" FromRole="OverTimeDetail" ToRole="Employee" />
+        </EntityType>
+        <Association Name="FK_OverTimeDetails_Employees">
+          <End Type="MyDBModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="MyDBModel.OverTimeDetail" Role="OverTimeDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="EId" />
+            </Principal>
+            <Dependent Role="OverTimeDetail">
+              <PropertyRef Name="EId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -427,6 +481,16 @@
                 <ScalarProperty Name="WeekWork" ColumnName="WeekWork" />
                 <ScalarProperty Name="Shift" ColumnName="Shift" />
                 <ScalarProperty Name="WorkDate" ColumnName="WorkDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OverTimeDetails">
+            <EntityTypeMapping TypeName="MyDBModel.OverTimeDetail">
+              <MappingFragment StoreEntitySet="OverTimeDetails">
+                <ScalarProperty Name="UserCheck" ColumnName="UserCheck" />
+                <ScalarProperty Name="OverTimeDate" ColumnName="OverTimeDate" />
+                <ScalarProperty Name="EId" ColumnName="EId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -1,13 +1,13 @@
 ﻿@using UCOMProject.Methods;
 @{
-    ViewBag.Title = "每日出勤總覽";
+    ViewBag.Title = "每日員工出勤";
     var currentEmp = SessionEmp.CurrentEmp;
 
 }
 <div class="page-banner overlay-dark bg-image titleBackImg">
     <div class="banner-section">
         <div class="container text-center wow fadeInUp">
-            <h1 class="font-weight-normal">每日出勤總覽</h1>
+            <h1 class="font-weight-normal">每日員工出勤</h1>
         </div>
     </div>
 </div>
@@ -16,9 +16,12 @@
 
 
 <div id="app" v-cloak>
+
+
+
     <div class="back">
         <div class="btn-group" role="group" aria-label="Basic example" style="z-index:10">
-            <a class="btn btn-warning" href="@Url.Action("Index" , "Schedule")">返回員工休假計畫</a>
+            <a class="btn btn-warning" href="@Url.Action("Index" , "Schedule")">返回休假總覽</a>
         </div>
     </div>
     <br />
@@ -60,35 +63,12 @@
     </div>
 
 
+
+
+
     <div class="page-section">
         <div class="row">
             <div class="col-lg-6 mt-4">
-                @*<table id="myTable" class="display text-center">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>部門</th>
-                    <th>工號</th>
-                    <th>姓名</th>
-                    <th>班別</th>
-                    <th>{{searchDate}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(data , index) in searchResult" :key="data.eId">
-                    <td>{{index + 1}}</td>
-                    <td>{{data.Branch}}</td>
-                    <td>{{data.EId}}</td>
-                    <td>{{data.Name}}</td>
-                    <td>{{data.Shift}}</td>
-                    <td v-if="data.IsLeave">
-                        <span class="hBtn" v-on:click="handleDetail(data.Id)">休假</span>
-                    </td>
-                    <td v-else><span>出勤</span></td>
-                </tr>
-            </tbody>
-        </table>*@
-
                 <div class="row">
 
                     <table class="table table-hover mt-3 text-center">
@@ -119,25 +99,25 @@
 
 
                     @*<div class="col-12 my-5 py-3">
-                        <nav aria-label="Page Navigation">
-                            <ul class="pagination justify-content-center">
-                                <li :class="'page-item ' + prevDisabled">
-                                    <a class="page-link" tabindex="2" aria-disabled="true">Previous</a>
-                                </li>
+                            <nav aria-label="Page Navigation">
+                                <ul class="pagination justify-content-center">
+                                    <li :class="'page-item ' + prevDisabled">
+                                        <a class="page-link" tabindex="2" aria-disabled="true">Previous</a>
+                                    </li>
 
-                                <li :class="'page-item ' + p.active" 
-                                    aria-current="page"
-                                    v-for="p in totalPages"
-                                    :key="p.index"
-                                    >
-                                    <a class="page-link" href="#">{{p.index}}</a>
-                                </li>
-                                <li :class="'page-item ' + nextDisabled" >
-                                    <a class="page-link">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>*@
+                                    <li :class="'page-item ' + p.active"
+                                        aria-current="page"
+                                        v-for="p in totalPages"
+                                        :key="p.index"
+                                        >
+                                        <a class="page-link" href="#">{{p.index}}</a>
+                                    </li>
+                                    <li :class="'page-item ' + nextDisabled" >
+                                        <a class="page-link">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>*@
                 </div>
             </div>
             <div class="col-lg-1 py-3 mt-4">
@@ -148,10 +128,52 @@
                     <h3 class="sidebar-title">
                         人力總覽
                         <span class="badge">{{searchDate}}</span>
-                        <a class="btn btn-outline-danger" v-on:click="goToNotify">
-                            發布加班
-                        </a>
-
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                data-toggle="modal"
+                                data-target="#exampleModalCenter1"
+                                v-show="releaseOverTimeBtnShow">
+                            發佈加班
+                        </button>
+                        <div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <p class="modal-title" id="exampleModalLongTitle">{{searchDate}}發佈加班</p>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="modal_table">
+                                            <thead>
+                                                <tr>
+                                                    <th>工號</th>
+                                                    <th>姓名</th>
+                                                    <th>班別</th>
+                                                    <th>#</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(emp , index) in canOverTimeEmps" :key="index">
+                                                    <td>{{emp.eid}}</td>
+                                                    <td>{{emp.name}}</td>
+                                                    <td>{{emp.shift}}</td>
+                                                    <td>
+                                                        <label :for="'check' + index">
+                                                            通知
+                                                            <input type="checkbox" v-model="emp.check" :id="'check' + index">
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <hr />
+                                        <input type="submit" class="btn btn-sm btn-outline-danger" v-on:click="handleOverTime" value="發佈加班">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </h3>
                     <ul class="categories">
                         <li><a class="bg-success text-light h4">實到<span style="font-size:16px">{{workEmp.length}}人</span></a></li>
@@ -162,11 +184,11 @@
                 <div class="sidebar-block">
                     <div>
                         <label for="searchDate" class="sidebar-title h3">查詢其他日期：</label>
-                        <input type="date" id="searchDate" class="btn btn-sm btn-outline-info" v-model="searchDate" v-on:change="handleSearchDate" />
+                        <input type="date" id="searchDate" class="btn btn-outline-info" v-model="searchDate" v-on:change="handleSearchDate" />
                     </div>
                     <div>
-                        <input class="btn btn-sm btn-outline-info" value="前一天" v-on:click="handleBtnSearchDate(-1)" />
-                        <input class="btn btn-sm btn-outline-info" value="後一天" v-on:click="handleBtnSearchDate(1)" />
+                        <input class="btn btn-outline-info" value="前一天" v-on:click="handleBtnSearchDate(-1)" />
+                        <input class="btn btn-outline-info" value="後一天" v-on:click="handleBtnSearchDate(1)" />
                     </div>
                 </div>
 
@@ -227,6 +249,8 @@
                 source:[],
                 workEmp:[],
                 leaveEmp: [],
+                canOverTimeEmps: [],
+                releaseOverTimeBtnShow: false,
                 search: [{ id: 0, value: '工號' }, { id: 1, value: '姓名' }, { id: 2, value: '班別' }, { id: 3, value: '部門' }],
                 searchWait:[],
                 searchTitle: '姓名',
@@ -247,18 +271,42 @@
             },
             methods: {
                 initialData(data) {
+                    //日期格式化
                     moment.locale('zh-tw');
-                    this.source = data;
+                    //每次ajax更新後加班列表清空
+                    this.canOverTimeEmps = [];
+                    //排除可以被列入加班人員
+                    this.source = data.filter(item => {
+                        //常日班放假依然會有可加班名單,可在在source未被篩選時先儲存目前搜尋的日期,防止searchDate一開始null
+                        this.searchDate = moment(item.ViewDate).format('yyyy-MM-DD');
+                        return !item.CanOverTime
+                    });
+                    //加入可以被列入加班人員
+                    let overTimeEmps = data.filter(item => item.CanOverTime);
+                    //建立可以被列入加班人員物件 (多一個checkbox)
+                    overTimeEmps.forEach(emp => {
+                        let obj = { eid: emp.EId, name: emp.Name, shift: emp.Shift, date: this.searchDate, check: false };
+                        this.canOverTimeEmps.push(obj);
+                    })
+                    //有加班名單就顯示發布加班btn
+                    if (this.canOverTimeEmps.length) {
+                        this.releaseOverTimeBtnShow = true;
+                    } else {
+                        this.releaseOverTimeBtnShow = false;
+                    }
+                    //搜尋出勤表結果要顯示的人員名單(出勤與休假人員)
                     this.searchResult = [];
+                    //出勤人員
                     this.workEmp = [];
+                    //休假人員
                     this.leaveEmp = [];
                     this.source.forEach(att => {
-                        this.searchDate = moment(att.ViewDate).format('yyyy-MM-DD');
                         this.searchResult.push(att);
                         att.IsLeave ? this.leaveEmp.push(att) : this.workEmp.push(att);
                     })
+                    //搜尋列的篩選按鈕變化
                     this.searchWait = this.search.filter(s => s.value != this.searchTitle);
-                    //保留搜尋內容
+                    //ajax更新資料後依然保留目前搜尋的內容
                     this.handleSearchValue();
                     ////分頁功能
                     //for (let i = 1; i <= pages; i++) {
@@ -277,7 +325,7 @@
                     //if (this.currentPage == this.totalPages.length) {
                     //    this.nextDisabled = 'disabled';
                     //}
-                   
+
                 },
                 //變換搜尋條件
                 handleSearchTitle(id) {
@@ -375,8 +423,41 @@
                             return response.json();
                     })
                 },
-                goToNotify() {
-                    location.href = `@Url.Action("NotifyDay")?date=${this.searchDate}`;
+                //發布加班
+                handleOverTime() {
+                    let checkEmps = this.canOverTimeEmps.filter(emp => emp.check);
+                    if (!checkEmps.length) {
+                        alert('請先選擇人員');
+                        return;
+                    }
+                    if (confirm('確認發佈加班？')) {
+                        fetch('http://localhost:51010/api/apiAttendance', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(checkEmps)
+                        }).then(res => {
+                            if (res.ok) {
+                                return res.json();
+                            }
+                        }).then(result => {
+                            if (result.success) {
+                                let date = moment(new Date(result.date)).format('l');
+                                sAlert(`已對人員發佈${date}加班需求！`);
+                                $(Swal.getConfirmButton()).click(function () {
+                                    window.location.href = '@Url.Action("AttendanceDay" , "Schedule")?date=' + date;
+                                })
+                            }
+                            else {
+                                location.href = '@Url.Action("Index" , "Home")';
+                            }
+                        }).catch(error => {
+                            console.log(error.msg);
+                        })
+                    } else {
+                       return
+                    }
                 }
             },
         })
@@ -431,6 +512,11 @@
 
         .page-section {
             padding-top: 0;
+        }
+
+        .modal_table {
+            font-size: 16px;
+            text-align: center;
         }
     </style>
 

@@ -88,8 +88,10 @@ namespace UCOMProject.Roles
         {
             try
             {
-                return await ScheduleUtility.GetAttendances(date);
-
+                List<EmployeeViewModel> emps = await GetEmployees();
+                Attendance attendance = await ScheduleUtility.GetShiftAttendances(date);
+                List<HolidayDetailViewModel> details = await HolidayUtility.GetHolidayDetails(date);
+                return ScheduleUtility.GetAttendances(emps, details, attendance, date);
             }
             catch (Exception ex)
             {

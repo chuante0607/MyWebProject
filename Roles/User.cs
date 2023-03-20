@@ -77,6 +77,11 @@ namespace UCOMProject.Roles
             }
         }
 
+        /// <summary>
+        /// 員工不需要取得出勤列表
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public override Task<List<AttendanceViewModel>> GetAttendances(DateTime date)
         {
             throw new NotImplementedException();

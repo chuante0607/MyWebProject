@@ -20,6 +20,8 @@ namespace UCOMProject.Controllers
 {
     public class apiScheduleController : ApiController
     {
+
+        //主管取得部門或全員工休假總覽
         public async Task<IHttpActionResult> Get()
         {
             var head = Request.Headers.Select(s => new { s.Key, s.Value }).FirstOrDefault(w => w.Key == "Authorization");
@@ -31,11 +33,29 @@ namespace UCOMProject.Controllers
             using (MyDBEntities db = new MyDBEntities())
             {
                 Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.EId == eid);
-                if(emp == null)
+                if (emp == null)
                 {
                     return Json(new { success = false, msg = "無目前使用者資訊" });
                 }
                 RoleManage user = ConfirmIdentity(emp.JobRank, emp.Branch.xTranBranchEnum());
+                user.CurrentUser = emp;
+                ScheduleApiModel schedule = await ScheduleUtility.GetSchedule(user);
+                schedule.plansByDay = await ScheduleUtility.GetPlansByDay();
+                return Json(schedule);
+            }
+        }
+
+        //取得自己的休假總覽
+        public async Task<IHttpActionResult> Get(string eid)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                Employee emp = await db.Employees.FirstOrDefaultAsync(e => e.EId == eid);
+                if (emp == null)
+                {
+                    return Json(new { success = false, msg = "無目前使用者資訊" });
+                }
+                RoleManage user = new User(RoleType.User);
                 user.CurrentUser = emp;
                 ScheduleApiModel schedule = await ScheduleUtility.GetSchedule(user);
                 schedule.plansByDay = await ScheduleUtility.GetPlansByDay();

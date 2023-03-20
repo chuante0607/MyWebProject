@@ -93,5 +93,15 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="OverTimeDetails">
+      <EntityTypeMapping TypeName="MyDBModel.OverTimeDetail">
+        <MappingFragment StoreEntitySet="OverTimeDetails">
+          <ScalarProperty Name="UserCheck" ColumnName="UserCheck" />
+          <ScalarProperty Name="OverTimeDate" ColumnName="OverTimeDate" />
+          <ScalarProperty Name="EId" ColumnName="EId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

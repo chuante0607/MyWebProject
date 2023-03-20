@@ -33,7 +33,7 @@
                 let currentEmp = '@SessionEmp.CurrentEmp.EId';
                 const myHeaders = new Headers();
                 myHeaders.append('Authorization', `${currentEmp}`);
-                fetch('http://localhost:51010/api/apiSchedule', {
+                fetch('http://localhost:51010/api/apiSchedule?eid=' + currentEmp, {
                     headers: myHeaders,
                     }).then(response => {
                         if (response.ok) {

@@ -164,6 +164,9 @@
     <Compile Include="Models\Attendance.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\OverTimeDetail.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Plan.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
