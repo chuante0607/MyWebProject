@@ -702,5 +702,32 @@ namespace UCOMProject.Methods
             return vmList;
         }
 
+
+        public static async Task<List<OverTimeDetail>> GetOverTimeDetails()
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                return await db.OverTimeDetails.ToListAsync();
+            }
+        }
+
+        public static async Task<List<OverTimeDetail>> GetOverTimeDetails(DateTime date)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var query = db.OverTimeDetails.Where(w => w.OverTimeDate == date);
+                return await query.ToListAsync();
+            }
+        }
+
+        public static async Task<List<OverTimeDetail>> GetOverTimeDetails(string eid)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var query = db.OverTimeDetails.Where(w => w.EId == eid && !w.UserCheck);
+                return await query.ToListAsync();
+            }
+        }
+
     }
 }

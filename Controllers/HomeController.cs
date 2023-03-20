@@ -62,6 +62,17 @@ namespace UCOMProject.Controllers
             }
             Session["seniority"] = seniority;
 
+            //加班需求通知
+            List<OverTimeDetail> overDetails = await ScheduleUtility.GetOverTimeDetails(user.CurrentUser.EId);
+            if(overDetails != null && overDetails.Count > 0)
+            {
+                ViewBag.overTime = JsonConvert.SerializeObject(overDetails);
+            }
+            else
+            {
+                ViewBag.overTime = 0;
+            }
+
             //vm.Attendance = await ScheduleUtility.GetAttendance();
             year = year == null ? DateTime.Now.Year : year;
             vm.Employee = SessionEmp.CurrentEmp;
