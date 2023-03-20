@@ -1,11 +1,11 @@
 ﻿@using UCOMProject.Models
 @using UCOMProject.Methods
 @{
-    ViewBag.Title = "員工休假計畫";
+    ViewBag.Title = "休假總覽";
     Employee emp = SessionEmp.CurrentEmp;
 }
 
-<h4 class="text-center">@SessionEmp.CurrentEmp.Name 休假計畫</h4>
+<h4 class="text-center">@SessionEmp.CurrentEmp.Name 休假總覽</h4>
 <br />
 <div id="app" v-cloak>
     <div id="calendar" class=""></div>

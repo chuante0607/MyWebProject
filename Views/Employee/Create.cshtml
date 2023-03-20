@@ -4,11 +4,11 @@
     ViewBag.Title = "建立員工檔案";
 }
 
+<h4 class="text-center">建立員工檔案</h4>
 
 @using (Html.BeginForm("Create", "employee", FormMethod.Post, new { enctype = "multipart/form-data", @class = "container mt-5", id = "form" }))
 {
     @Html.AntiForgeryToken()
-    <h4 class="col text-center">建立員工檔案</h4>
     <div class="form-horizontal">
         <div class="btn btn-secondary createDemo">Demo</div>
         <hr />
@@ -268,7 +268,7 @@
             let end = $("#endDatepicker").datepicker("option", "minDate", start).datepicker("getDate");
         })
 
- 
+
     </script>
 }
 

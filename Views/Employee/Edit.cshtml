@@ -1,14 +1,13 @@
 ﻿@model UCOMProject.Models.EmployeeViewModel
 
 @{
-    ViewBag.Title = "修改員工檔案";
+    ViewBag.Title = "修改個人資料";
 }
 
-
+<h4 class="text-center">修改個人資料</h4>
 @using (Html.BeginForm("edit", "employee", FormMethod.Post, new { enctype = "multipart/form-data", @class = "container mt-5", id = "form" }))
 {
     @Html.AntiForgeryToken()
-    <h4 class="col text-center">修改員工檔案</h4>
     <div class="form-horizontal">
         <hr />
         <div class="input-group mb-3" style="justify-content: space-between;">
@@ -21,7 +20,7 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                @Html.ValidationMessageFor(model => model.EId, "", new { @class = "text-danger"})
+                @Html.ValidationMessageFor(model => model.EId, "", new { @class = "text-danger" })
                 <span class="input-group-text" id="basic-addon1"><i class="fi fi-rs-users-alt"></i></span>
             </div>
             @Html.EditorFor(model => model.EId, new { htmlAttributes = new { @class = "form-control", placeholder = "工號", @readonly = "readonly " } })
@@ -29,7 +28,7 @@
                 @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                 <span class="input-group-text" id="basic-addon1"><i class="fi fi-rr-globe"></i></span>
             </div>
-            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "身分證字號" ,  @readonly = "readonly "} })
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "身分證字號", @readonly = "readonly " } })
         </div>
 
         <div class="input-group mb-3">

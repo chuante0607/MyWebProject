@@ -1,16 +1,23 @@
 ﻿@using UCOMProject.Models
 @using UCOMProject.Methods
 @{
-    ViewBag.Title = "員工休假計畫";
     Employee emp = SessionEmp.CurrentEmp;
+    if (emp.JobRank == 0)
+    {
+        ViewBag.Title = "員工休假總覽";
+    }
+    else
+    {
+        ViewBag.Title = "部門休假總覽";
+    }
 }
 @if (emp.JobRank == 0)
 {
-    <h4 class="text-center">員工休假計畫(全部門)</h4>
+    <h4 class="text-center">員工休假總覽</h4>
 }
 else
 {
-    <h4 class="text-center">員工休假計畫(@SessionEmp.CurrentEmp.Branch)</h4>
+    <h4 class="text-center">部門休假總覽(@SessionEmp.CurrentEmp.Branch)</h4>
 }
 <br />
 <div id="app" v-cloak>

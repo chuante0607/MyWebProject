@@ -101,40 +101,81 @@
 
 
             <div class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                   aria-expanded="true" aria-controls="collapseTwo">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse1"
+                   aria-expanded="true" aria-controls="collapse1">
                     <i class="fas fa-info-circle"></i>
-                    <span>個人相關</span>
+                    <span>個人資料</span>
                 </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div id="collapse1" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="@Url.Action("detail" , "employee")">
                             <i class="fas fa-user fa-sm fa-fw mr-2"></i>
-                            檢視個人資訊
+                            檢視
                         </a>
                         <a class="collapse-item" href="@Url.Action("edit","employee")">
                             <i class="fas fa-cogs fa-sm fa-fw mr-2"></i>
-                            修改個人資訊
+                            修改
                         </a>
+
+                    </div>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse2"
+                   aria-expanded="true" aria-controls="collapse2">
+                    <i class="fas fa-holly-berry"></i>
+                    <span>休假相關</span>
+                </a>
+                <div id="collapse2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="@Url.Action("apply","holiday" , new { eid = employee.EId , shift = employee.Shift})">
                             <i class="fas fa-house-damage fa-sm fa-fw mr-2"></i>
-                            休假申請
+                            申請
                         </a>
                         <a class="collapse-item" href="@Url.Action("index","holiday")">
                             <i class="fas fa-inbox fa-sm fa-fw mr-2"></i>
-                            休假審核進度
+                            審核進度
                         </a>
                         <a class="collapse-item" href="@Url.Action("record","holiday")">
                             <i class="fas fa-table fa-sm fa-fw mr-2"></i>
-                            休假歷史紀錄
+                            歷史紀錄
                         </a>
+
                     </div>
                 </div>
             </div>
 
+
             @switch (SessionEmp.CurrentEmp.JobRank)
             {
                 case (int)RoleType.Manager:
+                    <div class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                           aria-expanded="true" aria-controls="collapsePages">
+                            <i class="fas fa-address-book"></i>
+                            <span>主管相關</span>
+                        </a>
+                        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <a class="collapse-item" href="@Url.Action("create" , "employee")">
+                                        <i class="fas fa-newspaper fa-sm fa-fw mr-2"></i>
+                                        建立員工資料
+                                    </a>
+                                    <a class="collapse-item" href="@Url.Action("review","holiday")">
+                                        <i class="fas fa-umbrella-beach fa-sm fa-fw mr-2"></i>
+                                        休假審核
+                                    </a>
+                                    <a class="collapse-item" href="@Url.Action("review" , "employee")">
+                                        <i class="fas fa-laptop-code fa-sm fa-fw mr-2"></i>
+                                        部門權限設定
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
                            aria-expanded="true" aria-controls="collapse3">
@@ -145,7 +186,7 @@
                             <div class="bg-white py-2 collapse-inner rounded">
                                 <a class="collapse-item" href="@Url.Action("index" , "schedule")">
                                     <i class="fas fa-table fa-sm fa-fw mr-2"></i>
-                                    員工休假計畫
+                                    部門休假總覽
                                 </a>
                                 <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule")">
                                     <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
@@ -158,33 +199,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="nav-item">
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                           aria-expanded="true" aria-controls="collapsePages">
-                            <i class="fas fa-address-book"></i>
-                            <span>主管相關</span>
-                        </a>
-                        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <div class="bg-white py-2 collapse-inner rounded">
-                                    <a class="collapse-item" href="@Url.Action("review","holiday")">
-                                        <i class="fas fa-umbrella-beach fa-sm fa-fw mr-2"></i>
-                                        休假審核
-                                    </a>
-                                    <a class="collapse-item" href="@Url.Action("create" , "employee")">
-                                        <i class="fas fa-newspaper fa-sm fa-fw mr-2"></i>
-                                        建立員工檔案
-                                    </a>
-                                    <a class="collapse-item" href="@Url.Action("review" , "employee")">
-                                        <i class="fas fa-laptop-code fa-sm fa-fw mr-2"></i>
-                                        員工權限設定
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+
                     break;
                 case (int)RoleType.Admin:
+
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
                            aria-expanded="true" aria-controls="collapse3">
@@ -195,19 +214,21 @@
                             <div class="bg-white py-2 collapse-inner rounded">
                                 <a class="collapse-item" href="@Url.Action("index" , "schedule")">
                                     <i class="fas fa-table fa-sm fa-fw mr-2"></i>
-                                    員工休假計畫
+                                    員工休假總覽
                                 </a>
                                 <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule")">
                                     <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
                                     員工出勤總覽
                                 </a>
-                                <a class="collapse-item" href="@Url.Action("plan" , "schedule")">
-                                    <i class="fas fa-chair fa-sm fa-fw mr-2"></i>
-                                    人力計畫
+                                <a class="collapse-item" href="#">
+                                    <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
+                                    人力調度
                                 </a>
                             </div>
                         </div>
                     </div>
+
+
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                            aria-expanded="true" aria-controls="collapsePages">
