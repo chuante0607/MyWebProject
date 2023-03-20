@@ -144,11 +144,33 @@
                     </div>
                 </div>
             </div>
-
-
             @switch (SessionEmp.CurrentEmp.JobRank)
             {
                 case (int)RoleType.Manager:
+                    <div class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
+                           aria-expanded="true" aria-controls="collapse3">
+                            <i class="fas fa-calendar"></i>
+                            <span>生產相關</span>
+                        </a>
+                        <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <a class="collapse-item" href="@Url.Action("index" , "schedule")">
+                                    <i class="fas fa-table fa-sm fa-fw mr-2"></i>
+                                    部門休假總覽
+                                </a>
+                                <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule")">
+                                    <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
+                                    員工出勤總覽
+                                </a>
+                                <a class="collapse-item" href="#">
+                                    <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
+                                    人力調度
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                            aria-expanded="true" aria-controls="collapsePages">
@@ -174,32 +196,6 @@
                             </div>
                         </div>
                     </div>
-
-
-                    <div class="nav-item">
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse3"
-                           aria-expanded="true" aria-controls="collapse3">
-                            <i class="fas fa-calendar"></i>
-                            <span>生產相關</span>
-                        </a>
-                        <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item" href="@Url.Action("index" , "schedule")">
-                                    <i class="fas fa-table fa-sm fa-fw mr-2"></i>
-                                    部門休假總覽
-                                </a>
-                                <a class="collapse-item" href="@Url.Action("AttendanceDay" , "schedule")">
-                                    <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
-                                    員工出勤總覽
-                                </a>
-                                <a class="collapse-item" href="#">
-                                    <i class="fas fa-plane fa-sm fa-fw mr-2"></i>
-                                    人力調度
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
 
                     break;
                 case (int)RoleType.Admin:

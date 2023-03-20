@@ -19,7 +19,8 @@ namespace UCOMProject.Controllers
     public class apiAttendanceController : ApiController
     {
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
-        // GET: api/apiAttendance
+       
+        
         public async Task<IHttpActionResult> Get(DateTime? date)
         {
             var head = Request.Headers.Select(s => new { s.Key, s.Value }).FirstOrDefault(w => w.Key == "Authorization");
@@ -38,6 +39,7 @@ namespace UCOMProject.Controllers
                     RoleManage user = ConfirmIdentity(emp.JobRank, emp.Branch.xTranBranchEnum());
                     DateTime currentDate = (DateTime)date;
                     List<AttendanceViewModel> attendances = await user.GetAttendances(currentDate);
+                    var query = attendances.Skip(5).Take(10);
                     return Json(new { success = true, attendances = attendances });
                 }
             }

@@ -40,6 +40,7 @@ namespace UCOMProject.Controllers
 
         public async Task<ActionResult> AttendanceDay(DateTime? date)
         {
+            //const decimal totalPages = 10;
             try
             {
                 DateTime currentDate = (DateTime)date;
