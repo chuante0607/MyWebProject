@@ -26,6 +26,7 @@
             <button v-on:click="myOp" class="btn btn-outline-success">員工</button>
             <button v-on:click="myManager" class="btn btn-outline-info">主管</button>
             <button v-on:click="myAdmin" class="btn btn-outline-danger">管理員</button>
+            <button v-on:click="myProcess" class="btn btn-outline-dark">製程</button>
         </div>
     </form>
 
@@ -54,7 +55,7 @@
                     document.querySelector('[class="login"]').submit();
                 },
                 myOp() {
-                    this.acc = "E030";
+                    this.acc = "E033";
                     this.pwd = "F123456789";
                     this.mySubmit();
                 },
@@ -67,7 +68,12 @@
                     this.acc = "admin";
                     this.pwd = "admin";
                     this.mySubmit();
-                }
+                },
+                myProcess() {
+                    this.acc = "E003";
+                    this.pwd = "F123456789";
+                    this.mySubmit();
+                },
             }
         })
     </script>
