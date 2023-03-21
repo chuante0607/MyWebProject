@@ -128,7 +128,7 @@
                 overTime: {},
             },
             mounted() {
-                
+
                 this.rank = @rank;
                 this.source = @Html.Raw(ViewBag.Source);
                 this.source.holidays.forEach((item, index) => {
@@ -186,7 +186,7 @@
                     this.toastShow = false;
                 }
 
-               
+
             },
             watch: {
                 showAlarm(newValue, oldValue) {
@@ -340,7 +340,22 @@
                 handleOverTime(check) {
                     let self = this;
                     if (check) {
-                        alert('感謝您的配合');
+                        this.overTime.UserCheck = check;
+                        let url = 'http://localhost:51010/api/apiSchedule'
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.overTime)
+                        }).then(response => {
+                            if (response.ok)
+                                return response.json();
+                        }).then(result => {
+                            if (!result.success)
+                                alert(result.msg);
+                        })
+                        alert('感謝您的配合!');
                         self.toastShow = false;
                     } else {
                         self.toastShow = false;

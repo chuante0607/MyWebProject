@@ -92,6 +92,7 @@
                                 <td v-if="data.IsLeave">
                                     <span class="hBtn" v-on:click="handleDetail(data.Id)">休假</span>
                                 </td>
+                                <td v-else-if="data.IsOvertime" class="bg-success">加班</td>
                                 <td v-else><span>出勤</span></td>
                             </tr>
                         </tbody>

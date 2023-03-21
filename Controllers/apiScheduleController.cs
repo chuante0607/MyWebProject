@@ -81,6 +81,27 @@ namespace UCOMProject.Controllers
             return user;
         }
 
+
+
+        public async Task<IHttpActionResult> Post([FromBody] OverTimeDetail data)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                var query = await db.OverTimeDetails
+                    .FirstOrDefaultAsync(f => f.OverTimeDate == data.OverTimeDate && f.EId == data.EId);
+                if (query != null)
+                {
+                    query.UserCheck = data.UserCheck;
+                    await db.SaveChangesAsync();
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    return Json(new { success = false, msg = "查無加班通知!請與部門主管確認" });
+                }
+            }
+        }
+
         public void Put(int id, [FromBody] string value)
         {
         }

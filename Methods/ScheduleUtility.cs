@@ -558,14 +558,14 @@ namespace UCOMProject.Methods
 
 
         /// <summary>
-        /// 取得出勤表與可加班人力
+        /// 取得當天所有出勤人力(包括加班)，以及可被主管發布加班的人力，
         /// </summary>
         /// <param name="emps"></param>
         /// <param name="details"></param>
         /// <param name="attendance"></param>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static List<AttendanceViewModel> GetAttendances(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> detailsByDate, Attendance attendance, DateTime date)
+        public static async Task<List<AttendanceViewModel>> GetAttendances(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> detailsByDate, Attendance attendance, DateTime date)
         {
             List<AttendanceViewModel> attendances = new List<AttendanceViewModel>();
             List<EmployeeViewModel> weekWorkEmps = new List<EmployeeViewModel>();
@@ -603,16 +603,36 @@ namespace UCOMProject.Methods
                 }
 
             }
+
+
+            //應出勤人力
             List<EmployeeViewModel> workEmps = new List<EmployeeViewModel>();
             workEmps.AddRange(weekWorkEmps);
             workEmps.AddRange(shiftWorkEmps);
+
+            //可以報加班人力
             List<EmployeeViewModel> overTimeEMps = new List<EmployeeViewModel>();
             overTimeEMps.AddRange(weekOverTimeEmps);
             overTimeEMps.AddRange(shiftOverTimeEmps);
 
-            //請假的人員名單
-
-            List<AttendanceViewModel> workVM = setAttendanceViewModel(workEmps, detailsByDate, date, false);
+            //當天同意加班人員名單
+            List<EmployeeViewModel> agreeOverTimeEmps = await GetOverTimeEmps(date);
+            if (agreeOverTimeEmps.Count > 0)
+            {
+                workEmps.AddRange(agreeOverTimeEmps);
+                //如果在agreeOverTimeEmps名單裡則排除在可被發布加班的人力裡
+                overTimeEMps.RemoveAll(m => agreeOverTimeEmps.Any(w => w.EId == m.EId));
+            }
+            //workVM有包含加班人員
+            List<AttendanceViewModel> waitSetWorkVM = setAttendanceViewModel(workEmps, detailsByDate, date, false);
+            List<AttendanceViewModel> workVM = new List<AttendanceViewModel>();
+            //替加班人員做一個標示  前端使用
+            foreach (AttendanceViewModel att in waitSetWorkVM)
+            {
+                if (agreeOverTimeEmps.Any(a => a.EId == att.EId))
+                    att.IsOvertime = true;
+                workVM.Add(att);
+            }
             List<AttendanceViewModel> overTimeVM = setAttendanceViewModel(overTimeEMps, detailsByDate, date, true);
             List<AttendanceViewModel> vm = new List<AttendanceViewModel>();
             vm.AddRange(workVM);
@@ -620,6 +640,28 @@ namespace UCOMProject.Methods
             return vm;
         }
 
+        /// <summary>
+        /// 取得當天同意加班人力
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static async Task<List<EmployeeViewModel>> GetOverTimeEmps(DateTime date)
+        {
+            using (MyDBEntities db = new MyDBEntities())
+            {
+                List<EmployeeViewModel> emps = new List<EmployeeViewModel>();
+                var overTimeDetails = db.OverTimeDetails.Where(w => w.OverTimeDate == date && w.UserCheck);
+                if (overTimeDetails != null)
+                {
+                    foreach (var overTime in overTimeDetails)
+                    {
+                        EmployeeViewModel emp = await EmployeeUtility.GetEmpById(overTime.EId);
+                        emps.Add(emp);
+                    }
+                }
+                return emps;
+            }
+        }
         /// <summary>
         /// 取得部門出勤表指定日期
         /// </summary>
@@ -665,7 +707,8 @@ namespace UCOMProject.Methods
         /// <param name="details"></param>
         /// <param name="currentDate"></param>
         /// <returns></returns>
-        private static List<AttendanceViewModel> setAttendanceViewModel(List<EmployeeViewModel> emps, List<HolidayDetailViewModel> details, DateTime currentDate, bool canOverTime)
+        private static List<AttendanceViewModel> setAttendanceViewModel(
+            List<EmployeeViewModel> emps, List<HolidayDetailViewModel> details, DateTime currentDate, bool canOverTime)
         {
             //統計出勤
             List<AttendanceViewModel> vmList = new List<AttendanceViewModel>();
@@ -728,6 +771,5 @@ namespace UCOMProject.Methods
                 return await query.ToListAsync();
             }
         }
-
     }
 }

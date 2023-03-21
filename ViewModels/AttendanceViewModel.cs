@@ -23,6 +23,7 @@ namespace UCOMProject.Models
         public string JobTitle { get { return JobType.ToString(); } set { } }
         public bool IsLeave { get; set; }
         public bool CanOverTime { get; set; }
+        public bool IsOvertime { get; set; }
 
         public int Id { get; set; }
         public int HId { get; set; }
