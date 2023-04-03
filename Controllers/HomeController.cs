@@ -20,6 +20,8 @@ namespace UCOMProject.Controllers
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
         public async Task<ActionResult> Index(int? year)
         {
+            
+
             RoleManage user = ConfirmIdentity();
             List<HolidayDetailViewModel> details = new List<HolidayDetailViewModel>();
             List<EmployeeViewModel> emps = new List<EmployeeViewModel>();
@@ -64,7 +66,7 @@ namespace UCOMProject.Controllers
 
             //加班需求通知
             List<OverTimeDetail> overDetails = await ScheduleUtility.GetOverTimeDetails(user.CurrentUser.EId);
-            if(overDetails != null && overDetails.Count > 0)
+            if (overDetails != null && overDetails.Count > 0)
             {
                 ViewBag.overTime = JsonConvert.SerializeObject(overDetails);
             }
