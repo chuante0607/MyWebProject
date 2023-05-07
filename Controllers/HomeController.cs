@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -21,22 +20,6 @@ namespace UCOMProject.Controllers
         JsonSerializerSettings camelSetting = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
         public async Task<ActionResult> Index(int? year)
         {
-            //try
-            //{
-            //    using (MyDBEntities db = new MyDBEntities())
-            //    {
-            //        var result = db.GetEmployeeByID("E1").First();
-            //    }
-            //}
-            //catch(ArgumentNullException error)
-            //{
-            //    throw;
-            //}
-            //finally {
-            //    Debug.WriteLine("繼續執行");
-            //}
-
-
             RoleManage user = ConfirmIdentity();
             List<HolidayDetailViewModel> details = new List<HolidayDetailViewModel>();
             List<EmployeeViewModel> emps = new List<EmployeeViewModel>();
@@ -81,7 +64,7 @@ namespace UCOMProject.Controllers
 
             //加班需求通知
             List<OverTimeDetail> overDetails = await ScheduleUtility.GetOverTimeDetails(user.CurrentUser.EId);
-            if (overDetails != null && overDetails.Count > 0)
+            if(overDetails != null && overDetails.Count > 0)
             {
                 ViewBag.overTime = JsonConvert.SerializeObject(overDetails);
             }
@@ -100,7 +83,7 @@ namespace UCOMProject.Controllers
             {
                 ViewBag.Source = JsonConvert.SerializeObject(vm, camelSetting);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
             {
                 string msg = ex.Message;
             }
