@@ -154,6 +154,9 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Function Name="GetEmployeeByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="EId" Type="nvarchar" Mode="In" />
+  </Function>
   <EntityContainer Name="MyDBModelStoreContainer">
     <EntitySet Name="Attendance" EntityType="Self.Attendance" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />

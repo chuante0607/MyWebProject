@@ -29,6 +29,9 @@
       <End Role="Employee" EntitySet="Employees" />
       <End Role="OverTimeDetail" EntitySet="OverTimeDetails" />
     </AssociationSet>
+    <FunctionImport Name="GetEmployeeByID" ReturnType="Collection(MyDBModel.GetEmployeeByID_Result)">
+      <Parameter Name="EId" Mode="In" Type="String" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="Branch">
     <Key>
@@ -194,4 +197,21 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <ComplexType Name="GetEmployeeByID_Result">
+    <Property Type="String" Name="EId" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Image" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Branch" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="JobTitle" Nullable="false" MaxLength="50" />
+    <Property Type="Int32" Name="JobRank" Nullable="false" />
+    <Property Type="String" Name="Sex" Nullable="false" MaxLength="10" />
+    <Property Type="String" Name="Email" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Phone" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="EnglishName" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Password" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Shift" Nullable="false" MaxLength="50" />
+    <Property Type="DateTime" Name="StartDate" Nullable="false" />
+    <Property Type="Boolean" Name="Allow" Nullable="false" />
+    <Property Type="Int32" Name="BranchId" Nullable="false" />
+  </ComplexType>
 </Schema>
